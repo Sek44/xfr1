@@ -4,10 +4,22 @@
   class SpaceGame {
     constructor(random=Math.random){this.random=random;this.reset()}
     reset(){this.lives=3;this.bombs=2;this.score=0;this.enemies=[];this.missiles=[];this.effects=[];this.time=0;this.spawnIn=.6;this.over=false;this.nextId=0}
+    get level(){return 1+Math.floor(this.score/5)}
+    operation(){
+      const int=(min,max)=>min+Math.floor(this.random()*(max-min+1));
+      const level=this.level;
+      let a,b;
+      if(level===1){a=int(1,8);b=int(1,10-a)}
+      else if(level===2){a=int(10,18);b=int(1,9-a%10)}
+      else if(level===3){a=int(2,4)*10+int(1,9);b=int(10-a%10,9)}
+      else if(level===4){a=int(5,9)*10+int(1,9);b=int(10-a%10,9)}
+      else{const hundreds=Math.min(9,level-4);a=int(hundreds*100,hundreds*100+90);b=int(1,9)}
+      return {a,b};
+    }
     spawn(){
       if(this.enemies.length>=8)return;
       const answers=new Set(this.enemies.map(e=>e.answer));let a,b;
-      for(let i=0;i<100;i++){a=1+Math.floor(this.random()*19);b=1+Math.floor(this.random()*9);if(!answers.has(a+b))break}
+      for(let i=0;i<100;i++){({a,b}=this.operation());if(!answers.has(a+b))break}
       if(answers.has(a+b))return;
       const lanes=[.16,.5,.84];const free=lanes.filter(x=>!this.enemies.some(e=>Math.abs(e.x-x)<.2&&e.y<.24));if(!free.length)return;
       this.enemies.push({id:++this.nextId,a,b,answer:a+b,x:free[Math.floor(this.random()*free.length)],y:-.08,speed:.026+Math.min(this.score,60)*.0006,bomb:this.random()<.08,targeted:false});
