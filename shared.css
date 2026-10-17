@@ -3,3 +3,6 @@
 .page-header{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:8px;flex-wrap:nowrap;margin:0 0 4px}.page-header .page-title{font-size:clamp(1.35rem,4.5vw,2rem);line-height:1.2;text-align:center;margin:0;min-width:0}.page-header .nav-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;padding:0;font-size:2rem;font-weight:800;line-height:1}.page-header .nav-icon:last-child{justify-self:end}.page-header .nav-icon:first-child{justify-self:start}
 
 @media (orientation:landscape) and (max-height:700px){.page-header{margin:0 0 2px}.page-header .page-title{font-size:1.55rem}}
+
+/* Clear, full-size vector icons in the existing 44px buttons */
+.page-header .nav-icon svg{display:block;width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
