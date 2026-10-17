@@ -3,6 +3,19 @@
 const $=id=>document.getElementById(id),game=new SpaceGame();
 let running=false,paused=false,answer="",last=0,saved=false,message="Résous le calcul d’un alien.";
 const sprites=new Map();
+// Independent visual randomness keeps the sky irregular without affecting gameplay.
+const starfield=$("stars");
+for(let i=0;i<90;i++){
+  const star=document.createElement("span"),bright=i%19===0,near=i%5===0;
+  star.className="star"+(bright?" radiant":"");
+  star.style.left=(Math.random()*100)+"%";star.style.top=(Math.random()*100)+"%";
+  star.style.setProperty("--size",(bright?2.4:near?1.5+Math.random()*.7:.7+Math.random()*.7)+"px");
+  star.style.setProperty("--light",bright?.85:near?.6:.2+Math.random()*.25);
+  star.style.setProperty("--duration",(4+Math.random()*7)+"s");
+  star.style.setProperty("--delay",(-Math.random()*12)+"s");
+  star.style.setProperty("--tint",i%7===0?"#b9caff":i%11===0?"#ffe5c0":"#e4f1ff");
+  starfield.append(star);
+}
 function sync(){
   $("points").textContent=game.score;$("level").textContent=game.level;$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";$("feedback").textContent=message;
   const disabled=!running||paused||game.over;for(const key of $("keypad").children)key.disabled=disabled;$("bomb").disabled=disabled||!game.bombs;$("pause").disabled=!running||game.over;$("pause").textContent=paused?"▶":"Ⅱ";$("pause").setAttribute("aria-label",paused?"Reprendre":"Mettre en pause");
