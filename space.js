@@ -1,8 +1,8 @@
 "use strict";
 (()=>{
-const $=id=>document.getElementById(id),canvas=$("space"),ctx=canvas.getContext("2d"),game=new SpaceGame();
-let running=false,paused=false,answer="",last=0,width=0,height=0,saved=false,message="Résous le calcul d’un alien.";
-const stars=Array.from({length:65},()=>({x:Math.random(),y:Math.random(),r:.5+Math.random()*1.2}));
+const $=id=>document.getElementById(id),game=new SpaceGame();
+let running=false,paused=false,answer="",last=0,saved=false,message="Résous le calcul d’un alien.";
+const sprites=new Map();
 function sync(){
   $("points").textContent=game.score;$("level").textContent=game.level;$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";$("feedback").textContent=message;
   const disabled=!running||paused||game.over;for(const key of $("keypad").children)key.disabled=disabled;$("bomb").disabled=disabled||!game.bombs;$("pause").disabled=!running||game.over;$("pause").textContent=paused?"▶":"Ⅱ";$("pause").setAttribute("aria-label",paused?"Reprendre":"Mettre en pause");
@@ -16,15 +16,23 @@ function finish(){if(saved)return;saved=true;running=false;ExerciseScores.save({
 $("start").onclick=()=>paused?pause():start();$("bomb").onclick=bomb;$("pause").onclick=pause;
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&running&&!paused)pause()});window.addEventListener("blur",()=>{if(running&&!paused)pause()});
 document.addEventListener("keydown",e=>{if(e.ctrlKey||e.altKey||e.metaKey||e.target.closest("a"))return;if(e.code==="Escape"){e.preventDefault();pause();return}if(!running||paused||game.over)return;if(/^\d$/.test(e.key)){e.preventDefault();edit(e.key)}else if(e.key==="Backspace"){e.preventDefault();edit("erase")}else if(e.key==="Delete"){e.preventDefault();edit("clear")}});
-function resize(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);width=rect.width;height=rect.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}new ResizeObserver(resize).observe(canvas);
-function ship(x,y,size,alien,color){ctx.save();ctx.translate(x,y);ctx.fillStyle=color;ctx.beginPath();if(alien){ctx.ellipse(0,0,size,size*.33,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#a5f3fc";ctx.beginPath();ctx.ellipse(0,-size*.25,size*.48,size*.4,0,Math.PI,Math.PI*2);ctx.fill();ctx.fillStyle="#13243e";for(let i=-1;i<=1;i++){ctx.beginPath();ctx.arc(i*size*.48,0,size*.1,0,Math.PI*2);ctx.fill()}}else{ctx.moveTo(0,-size);ctx.lineTo(size*.8,size*.65);ctx.lineTo(0,size*.3);ctx.lineTo(-size*.8,size*.65);ctx.closePath();ctx.fill();ctx.fillStyle="#fdba74";ctx.beginPath();ctx.moveTo(-size*.22,size*.65);ctx.lineTo(0,size*(.95+Math.sin(game.time*25)*.2));ctx.lineTo(size*.22,size*.65);ctx.fill();ctx.fillStyle="#dffaff";ctx.fillRect(-size*.12,-size*.35,size*.24,size*.35)}ctx.restore()}
+// SVG and CSS render without a canvas context or resize-dependent backing buffer.
+const alienSVG='<svg viewBox="0 0 80 45" aria-hidden="true"><path fill="#a5f3fc" d="M22 24a18 18 0 0 1 36 0Z"/><ellipse fill="currentColor" cx="40" cy="28" rx="36" ry="12"/><g fill="#13243e"><circle cx="21" cy="28" r="4"/><circle cx="40" cy="30" r="4"/><circle cx="59" cy="28" r="4"/></g></svg>';
 function draw(){
-ctx.clearRect(0,0,width,height);ctx.fillStyle="#c9e1ff";for(const s of stars){ctx.globalAlpha=.3+s.r*.3;ctx.beginPath();ctx.arc(s.x*width,((s.y+game.time*.009)%1)*height,s.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
-ctx.strokeStyle="#fb718580";ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(0,height*.9);ctx.lineTo(width,height*.9);ctx.stroke();ctx.setLineDash([]);
-const size=Math.min(26,width*.055,height*.065);ship(width*.5,height*.95,size,false,"#67e8f9");
-for(const e of game.enemies){const x=e.x*width,y=e.y*height;ship(x,y,size,true,e.bomb?"#fbbf24":"#b69aff");const font=Math.max(14,Math.min(23,width*.045,height*.055));ctx.font="750 "+font+"px system-ui";const text=e.a+" + "+e.b,tw=ctx.measureText(text).width;ctx.fillStyle=e.targeted?"#153d45":"#162640";ctx.fillRect(x-tw/2-7,y+size*.4,tw+14,font+9);ctx.fillStyle=e.targeted?"#67e8f9":"#ffffff";ctx.textAlign="center";ctx.textBaseline="top";ctx.fillText(text,x,y+size*.4+3);if(e.bomb){ctx.font="14px system-ui";ctx.fillText("💣",x+size*.8,y-size)}}
-ctx.strokeStyle="#a7fff0";ctx.lineWidth=3;for(const m of game.missiles){ctx.beginPath();ctx.moveTo(m.x*width,m.y*height+9);ctx.lineTo(m.x*width,m.y*height-5);ctx.stroke()}
-for(const e of game.effects){const p=e.age/.65;ctx.globalAlpha=1-p;ctx.strokeStyle=e.color;ctx.lineWidth=3;ctx.beginPath();ctx.arc(e.x*width,e.y*height,5+p*45,0,Math.PI*2);ctx.stroke();for(let i=0;i<8;i++){const angle=i*Math.PI/4;ctx.fillStyle=e.color;ctx.fillRect(e.x*width+Math.cos(angle)*p*60,e.y*height+Math.sin(angle)*p*60,4,4)}}ctx.globalAlpha=1;
+  const active=new Set();
+  function sprite(key,type,x,y){
+    active.add(key);let node=sprites.get(key);
+    if(!node){node=document.createElement("div");node.className=type;$("sprites").append(node);sprites.set(key,node)}
+    node.style.left=(x*100)+"%";node.style.top=(y*100)+"%";return node;
+  }
+  for(const e of game.enemies){
+    const node=sprite("enemy-"+e.id,"alien",e.x,e.y);
+    if(!node.firstChild){node.innerHTML=alienSVG;const label=document.createElement("span");label.className="calculus";label.textContent=e.a+" + "+e.b;node.append(label);if(e.bomb){const badge=document.createElement("span");badge.className="bomb-badge";badge.textContent="💣";node.append(badge)}}
+    node.classList.toggle("carrier",e.bomb);node.classList.toggle("targeted",e.targeted);
+  }
+  for(const m of game.missiles)sprite("missile-"+m.target,"missile",m.x,m.y);
+  game.effects.forEach((e,i)=>{const node=sprite("effect-"+i,"explosion",e.x,e.y);node.style.color=e.color;node.style.opacity=1-e.age/.65;node.style.transform="translate(-50%,-50%) scale("+(.2+e.age/.65*2.5)+")"});
+  for(const [key,node] of sprites){if(!active.has(key)){node.remove();sprites.delete(key)}}
 }
 function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;game.step(dt);sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
 })();
