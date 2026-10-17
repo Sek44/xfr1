@@ -30,7 +30,7 @@ $("start").onclick=()=>paused?pause():start();$("bomb").onclick=bomb;$("pause").
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&running&&!paused)pause()});window.addEventListener("blur",()=>{if(running&&!paused)pause()});
 document.addEventListener("keydown",e=>{if(e.ctrlKey||e.altKey||e.metaKey||e.target.closest("a"))return;if(e.code==="Escape"){e.preventDefault();pause();return}if(!running||paused||game.over)return;if(/^\d$/.test(e.key)){e.preventDefault();edit(e.key)}else if(e.key==="Backspace"){e.preventDefault();edit("erase")}else if(e.key==="Delete"){e.preventDefault();edit("clear")}});
 // SVG and CSS render without a canvas context or resize-dependent backing buffer.
-const alienSVG='<svg viewBox="0 0 80 45" aria-hidden="true"><path fill="#a5f3fc" d="M22 24a18 18 0 0 1 36 0Z"/><ellipse fill="currentColor" cx="40" cy="28" rx="36" ry="12"/><g fill="#13243e"><circle cx="21" cy="28" r="4"/><circle cx="40" cy="30" r="4"/><circle cx="59" cy="28" r="4"/></g></svg>';
+
 function draw(){
   const active=new Set();
   function sprite(key,type,x,y){
@@ -40,7 +40,7 @@ function draw(){
   }
   for(const e of game.enemies){
     const node=sprite("enemy-"+e.id,"alien",e.x,e.y);
-    if(!node.firstChild){node.innerHTML=alienSVG;const label=document.createElement("span");label.className="calculus";label.textContent=e.a+" + "+e.b;node.append(label);if(e.bomb){const badge=document.createElement("span");badge.className="bomb-badge";badge.textContent="💣";node.append(badge)}}
+    if(!node.firstChild){const visual=SpaceEnemies.visual(e.level||1);node.innerHTML=visual.svg;node.style.setProperty("--enemy-color",visual.color);node.style.setProperty("--enemy-armor",visual.armor);const label=document.createElement("span");label.className="calculus";label.textContent=e.a+" + "+e.b;node.append(label);if(e.bomb){const badge=document.createElement("span");badge.className="bomb-badge";badge.textContent="💣";node.append(badge)}}
     node.classList.toggle("carrier",e.bomb);node.classList.toggle("targeted",e.targeted);
   }
   for(const m of game.missiles)sprite("missile-"+m.target,"missile",m.x,m.y);
