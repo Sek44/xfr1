@@ -1,0 +1,34 @@
+"use strict";
+// Pure simulation: normalized coordinates keep gameplay identical on every screen.
+(function(root){
+  class SpaceGame {
+    constructor(random=Math.random){this.random=random;this.reset()}
+    reset(){this.lives=3;this.bombs=2;this.score=0;this.enemies=[];this.missiles=[];this.effects=[];this.time=0;this.spawnIn=.6;this.over=false;this.nextId=0}
+    spawn(){
+      if(this.enemies.length>=8)return;
+      const answers=new Set(this.enemies.map(e=>e.answer));let a,b;
+      for(let i=0;i<100;i++){a=1+Math.floor(this.random()*19);b=1+Math.floor(this.random()*9);if(!answers.has(a+b))break}
+      if(answers.has(a+b))return;
+      const lanes=[.16,.5,.84];const free=lanes.filter(x=>!this.enemies.some(e=>Math.abs(e.x-x)<.2&&e.y<.24));if(!free.length)return;
+      this.enemies.push({id:++this.nextId,a,b,answer:a+b,x:free[Math.floor(this.random()*free.length)],y:-.08,speed:.026+Math.min(this.score,60)*.0006,bomb:this.random()<.08,targeted:false});
+    }
+    shoot(answer){
+      if(this.over||!/^\d+$/.test(answer))return false;
+      const target=this.enemies.filter(e=>!e.targeted&&e.answer===Number(answer)).sort((a,b)=>b.y-a.y)[0];if(!target)return false;
+      target.targeted=true;this.missiles.push({target:target.id,x:.5,y:.93});return true;
+    }
+    explode(e,color){this.effects.push({x:e.x,y:e.y,age:0,color})}
+    bomb(){if(this.over||this.bombs===0||!this.enemies.length)return false;this.bombs--;for(const e of this.enemies)this.explode(e,"#fbbf24");this.enemies=[];this.missiles=[];return true}
+    step(dt){
+      if(this.over)return;dt=Math.min(dt,.05);this.time+=dt;
+      for(const e of this.enemies)e.y+=e.speed*dt;
+      for(const m of this.missiles){const target=this.enemies.find(e=>e.id===m.target);if(!target){m.done=true;continue}const dx=target.x-m.x,dy=target.y-m.y,d=Math.hypot(dx,dy),move=1.9*dt;if(d<=move){m.done=true;target.dead=true;this.score++;if(target.bomb)this.bombs++;this.explode(target,target.bomb?"#fbbf24":"#67e8f9")}else{m.x+=dx/d*move;m.y+=dy/d*move}}
+      for(const e of this.enemies){if(!e.dead&&e.y>=.9){e.dead=true;this.lives=Math.max(0,this.lives-1);this.explode({...e,y:.9},"#fb7185")}}
+      this.enemies=this.enemies.filter(e=>!e.dead);this.missiles=this.missiles.filter(m=>!m.done&&this.enemies.some(e=>e.id===m.target));
+      for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<.65);
+      if(this.lives===0){this.over=true;return}
+      this.spawnIn-=dt;if(this.spawnIn<=0){this.spawn();this.spawnIn=Math.max(2.5,5-this.score*.04)}
+    }
+  }
+  root.SpaceGame=SpaceGame;
+})(typeof module!=="undefined"?module.exports:window);
