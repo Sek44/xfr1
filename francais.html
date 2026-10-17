@@ -2,8 +2,8 @@
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Français - Exercices</title>
 <style>
 *{box-sizing:border-box}body{margin:0;padding:16px;background:#f3f6fb;color:#233047;font-family:system-ui,Arial,sans-serif}main{max-width:760px;margin:auto}h1{font-size:clamp(1.5rem,5vw,2.1rem)}.tabs,.choices,.actions{display:flex;gap:10px;flex-wrap:wrap}button{font:inherit;border:2px solid #cad5e5;border-radius:12px;padding:12px 18px;background:white;color:#233047;cursor:pointer}button.active,.selected,.primary{background:#2064c7;border-color:#2064c7;color:white}button:disabled{opacity:.45;cursor:default}.score-card{display:flex;align-items:center;justify-content:space-between;gap:16px;background:white;border:2px solid #dae5f6;border-radius:16px;padding:16px 24px;margin-top:18px;box-shadow:0 4px 18px #1e3d6812}.score-card[hidden]{display:none}.score-card strong{font-size:1.7rem;color:#175fc4}.panel{background:white;border-radius:18px;padding:clamp(18px,4vw,30px);margin-top:18px;box-shadow:0 4px 18px #1e3d6812}.muted{color:#637188}.sentence{font-size:clamp(1.4rem,5vw,2rem);line-height:1.7;margin:24px 0}.word{white-space:nowrap}.hole{display:inline-block;min-width:1.6em;border-bottom:3px solid #2064c7;text-align:center;color:#2064c7;font-weight:700;line-height:1.1}.choices button{min-width:75px;font-size:1.35rem;font-weight:700}.feedback{min-height:44px;margin-top:16px;font-weight:700}.bad{color:#bd3535}.good{color:#177447}.actions{margin-top:12px}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd}
-</style></head><body><main><p><a href="./" style="color:#2064c7">← Accueil</a></p><h1>Français</h1><p>Choisis les lettres manquantes et vérifie ta réponse.</p><div class="tabs" id="tabs"></div><div class="score-card" id="score-card" aria-live="polite"></div><div class="panel" id="panel"></div></main>
-<script>
+</style><link rel="stylesheet" href="./shared.css"></head><body><main><nav class="page-nav"><a class="nav-link" href="./">← Accueil</a><a class="nav-link" href="./scores.html?game=francais">▤ Mes scores</a></nav><h1>Français</h1><p>Choisis les lettres manquantes et vérifie ta réponse.</p><div class="tabs" id="tabs"></div><div class="score-card" id="score-card" aria-live="polite"></div><div class="panel" id="panel"></div></main>
+<script src="./scores.js"></script><script>
 "use strict";
 const sets={
 g:{name:"g / gu / ge",options:["g","gu","ge"],items:[
@@ -14,9 +14,9 @@ const SESSION_SIZE=10;
 let tab="g",index=0,selected=null,failed=false,correct=false,score=0;
 let questions=shuffleSession(tab);
 const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
-function getHistory(){try{return JSON.parse(localStorage.getItem("exercices_francais_scores")||"[]")}catch{return []}}
+
 function shuffleSession(t){const shuffled=sets[t].items.slice();for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}return shuffled.slice(0,SESSION_SIZE)}
-function save(){try{const h=getHistory();h.unshift({date:new Date().toISOString(),tab,score,total:questions.length});localStorage.setItem("exercices_francais_scores",JSON.stringify(h.slice(0,100)))}catch{}}
+function save(){ExerciseScores.save({tab,score,total:questions.length})}
 function switchTab(t){tab=t;index=0;selected=null;failed=false;correct=false;score=0;questions=t==="history"?[]:shuffleSession(t);render()}
 function select(v){if(!correct){selected=v;render()}}
 function verify(){if(selected===null||correct)return;if(selected===questions[index][2]){correct=true;if(!failed)score++}else failed=true;render()}
@@ -24,10 +24,10 @@ function advance(){if(!correct)return;index++;selected=null;failed=false;correct
 function render(){
 const tabs=document.getElementById("tabs"),panel=document.getElementById("panel"),scoreCard=document.getElementById("score-card");tabs.replaceChildren();panel.replaceChildren();scoreCard.replaceChildren();scoreCard.hidden=true;
 for(const [key,entry] of Object.entries(sets)){const b=make("button",tab===key?"active":"",entry.name);b.onclick=()=>switchTab(key);tabs.append(b)}
-const historyButton=make("button",tab==="history"?"active":"","Mes résultats");historyButton.onclick=()=>switchTab("history");tabs.append(historyButton);
-if(tab==="history"){panel.append(make("h2","","Mes résultats"));const records=getHistory();if(!records.length){panel.append(make("p","","Aucun exercice terminé."));return}const table=make("table");const head=make("tr");for(const label of ["Date","Exercice","Score"])head.append(make("th","",label));table.append(head);for(const r of records){const tr=make("tr");for(const value of [new Date(r.date).toLocaleDateString("fr-FR"),sets[r.tab]?.name||r.tab,r.score+" / "+r.total])tr.append(make("td","",value));table.append(tr)}panel.append(table);return}
+
+
 const data=sets[tab],total=questions.length;
-if(index===total){panel.append(make("h2","","Exercice terminé !"),make("p","","Score : "+score+" / "+total+"."));const again=make("button","primary","Recommencer");again.onclick=()=>switchTab(tab);panel.append(again);return}
+if(index===total){panel.append(make("h2","","Exercice terminé !"),make("p","","Score : "+score+" / "+total+"."),make("p","encouragement",ExerciseScores.encourage(score,total)));const again=make("button","primary","Recommencer");again.onclick=()=>switchTab(tab);panel.append(again);return}
 scoreCard.hidden=false;scoreCard.append(make("span","","Score actuel"),make("strong","",score+" / "+total));
 panel.append(make("div","muted","Phrase "+(index+1)+" / "+total));
 const [before,after]=questions[index],sentence=make("div","sentence");const match=before.match(/^(.*?)([^\s]*)$/s),prefix=match[1],fragment=match[2];sentence.append(document.createTextNode(prefix));const word=make("span","word");word.append(document.createTextNode(fragment));const hole=make("span","hole",selected===null?"\u00a0":prefix===""&&fragment===""?selected.toUpperCase():selected);word.append(hole);const suffix=after.match(/^[^\s]*/)[0];word.append(document.createTextNode(suffix));sentence.append(word,document.createTextNode(after.slice(suffix.length)));panel.append(sentence);
