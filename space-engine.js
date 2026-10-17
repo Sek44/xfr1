@@ -3,7 +3,7 @@
 (function(root){
   class SpaceGame {
     constructor(random=Math.random){this.random=random;this.reset()}
-    reset(){this.lives=3;this.bombs=2;this.score=0;this.enemies=[];this.missiles=[];this.effects=[];this.time=0;this.spawnIn=.6;this.over=false;this.nextId=0}
+    reset(){this.lives=3;this.bombs=2;this.score=0;this.enemies=[];this.missiles=[];this.effects=[];this.time=0;this.spawnIn=.6;this.over=false;this.nextId=0;this.nextEffectId=0}
     get level(){return 1+Math.floor(this.score/5)}
     operation(){
       const int=(min,max)=>min+Math.floor(this.random()*(max-min+1));
@@ -29,7 +29,7 @@
       const target=this.enemies.filter(e=>!e.targeted&&e.answer===Number(answer)).sort((a,b)=>b.y-a.y)[0];if(!target)return false;
       target.targeted=true;this.missiles.push({target:target.id,x:.5,y:.93});return true;
     }
-    explode(e,color){this.effects.push({x:e.x,y:e.y,age:0,color})}
+    explode(e,color){this.effects.push({id:++this.nextEffectId,x:e.x,y:e.y,age:0,color})}
     bomb(){if(this.over||this.bombs===0||!this.enemies.length)return false;this.bombs--;for(const e of this.enemies)this.explode(e,"#fbbf24");this.enemies=[];this.missiles=[];return true}
     step(dt){
       if(this.over)return;dt=Math.min(dt,.05);this.time+=dt;
@@ -37,7 +37,7 @@
       for(const m of this.missiles){const target=this.enemies.find(e=>e.id===m.target);if(!target){m.done=true;continue}const dx=target.x-m.x,dy=target.y-m.y,d=Math.hypot(dx,dy),move=1.9*dt;if(d<=move){m.done=true;target.dead=true;this.score++;if(target.bomb)this.bombs++;this.explode(target,target.bomb?"#fbbf24":"#67e8f9")}else{m.x+=dx/d*move;m.y+=dy/d*move}}
       for(const e of this.enemies){if(!e.dead&&e.y>=.9){e.dead=true;this.lives=Math.max(0,this.lives-1);this.explode({...e,y:.9},"#fb7185")}}
       this.enemies=this.enemies.filter(e=>!e.dead);this.missiles=this.missiles.filter(m=>!m.done&&this.enemies.some(e=>e.id===m.target));
-      for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<.65);
+      for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<.85);
       if(this.lives===0){this.over=true;return}
       this.spawnIn-=dt;if(this.spawnIn<=0){this.spawn();this.spawnIn=Math.max(2.5,5-this.score*.04)}
     }

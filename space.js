@@ -41,10 +41,25 @@ function draw(){
   for(const e of game.enemies){
     const node=sprite("enemy-"+e.id,"alien",e.x,e.y);
     if(!node.firstChild){const visual=SpaceEnemies.visual(e.level||1);node.innerHTML=visual.svg;node.style.setProperty("--enemy-color",visual.color);node.style.setProperty("--enemy-armor",visual.armor);const label=document.createElement("span");label.className="calculus";label.textContent=e.a+" + "+e.b;node.append(label);if(e.bomb){const badge=document.createElement("span");badge.className="bomb-badge";badge.textContent="💣";node.append(badge)}}
-    node.classList.toggle("carrier",e.bomb);node.classList.toggle("targeted",e.targeted);
+    node.classList.toggle("carrier",e.bomb);
   }
   for(const m of game.missiles)sprite("missile-"+m.target,"missile",m.x,m.y);
-  game.effects.forEach((e,i)=>{const node=sprite("effect-"+i,"explosion",e.x,e.y);node.style.color=e.color;node.style.opacity=1-e.age/.65;node.style.transform="translate(-50%,-50%) scale("+(.2+e.age/.65*2.5)+")"});
+  for(const e of game.effects){
+    const node=sprite("effect-"+e.id,"explosion",e.x,e.y);
+    if(!node.firstChild){
+      const ring=document.createElement("span");ring.className="blast-ring";node.append(ring);node.ring=ring;node.fragments=[];
+      const count=10+Math.floor(Math.random()*6);
+      for(let i=0;i<count;i++){
+        const shard=document.createElement("span"),angle=(i+Math.random())/count*Math.PI*2,speed=35+Math.random()*85;
+        shard.className="debris";shard.style.width=(2+Math.random()*4)+"px";shard.style.height=(1.5+Math.random()*3)+"px";
+        shard.style.background=i%3===0?"#f4faff":i%3===1?e.color:"#8295af";
+        node.append(shard);node.fragments.push({shard,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,spin:(Math.random()-.5)*900,angle:Math.random()*360});
+      }
+    }
+    const t=e.age;
+    node.style.color=e.color;node.ring.style.opacity=Math.max(0,1-t/.5);node.ring.style.transform="translate(-50%,-50%) scale("+(.2+t*4)+")";
+    for(const f of node.fragments){f.shard.style.opacity=Math.max(0,1-t/.85);f.shard.style.transform="translate("+(f.vx*t)+"px,"+(f.vy*t+35*t*t)+"px) rotate("+(f.angle+f.spin*t)+"deg)"}
+  }
   for(const [key,node] of sprites){if(!active.has(key)){node.remove();sprites.delete(key)}}
 }
 function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;game.step(dt);sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
