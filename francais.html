@@ -11,16 +11,16 @@ g:{name:"g / gu / ge",options:["g","gu","ge"],items:[
 c:{name:"c / ç",options:["c","ç"],items:[
 ["Le gar","on joue dehors.","ç"],["La le","on est facile.","ç"],["Il a re","u une lettre.","ç"],["Je lan","e le ballon.","c"],["Nous avan","ons doucement.","ç"],["Le ","itron est jaune.","c"],["La fa","ade est blanche.","ç"],["Le ","ygne nage.","c"],["Un gla","on flotte.","ç"],["La ","erise est rouge.","c"],["Nous tra","ons un cercle.","ç"],["Le ","iel est bleu.","c"],["Le ","adeau est emballé.","c"],["La balan","oire bouge.","ç"],["Elle ","ommence à lire.","c"],["Le ma","on construit un mur.","ç"],["Je pla","e mon livre ici.","c"],["Le ","entre est ouvert.","c"],["Nous effa","ons le tableau.","ç"],["Le ","afé est chaud.","c"]]}};
 const SESSION_SIZE=10;
-let tab="g",selected=null;
+let tab="g",selected=null,lastQuestionIndex=0;
 let questions=shuffleSession(tab);
-const game=ExerciseGame.create({onChange:render,onFinish:({score,total})=>ExerciseScores.save({tab,score,total})});
+const game=ExerciseGame.create({onChange:()=>{if(game.index!==lastQuestionIndex){selected=null;lastQuestionIndex=game.index}render()},onFinish:({score,total})=>ExerciseScores.save({tab,score,total})});
 const make=(tag,cls,txt)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e};
 
 function shuffleSession(t){const shuffled=sets[t].items.slice();for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}return shuffled.slice(0,SESSION_SIZE)}
 function switchTab(t){tab=t;selected=null;questions=shuffleSession(t);game.reset(questions.length)}
 function select(v){if(!game.correct){selected=v;render()}}
 function verify(){if(selected!==null&&!game.correct)game.validate(selected===questions[game.index][2])}
-function advance(){game.next();selected=null}
+function advance(){selected=null;game.next()}
 function render(){
 const tabs=document.getElementById("tabs"),panel=document.getElementById("panel"),scoreCard=document.getElementById("score-card");tabs.replaceChildren();panel.replaceChildren();scoreCard.replaceChildren();scoreCard.hidden=false;
 for(const [key,entry] of Object.entries(sets)){const b=make("button",tab===key?"active":"",entry.name);b.onclick=()=>switchTab(key);tabs.append(b)}
