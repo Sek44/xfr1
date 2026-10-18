@@ -3,6 +3,8 @@
 const $=id=>document.getElementById(id),game=new SpaceGame();
 let running=false,paused=false,answer="",last=0,saved=false,displayedLevel=game.level,levelAnimation=null;
 const sprites=new Map();
+let viewingScores=false;
+ScoreView.bind({suspend:()=>{viewingScores=true;last=0},resume:()=>{last=0;viewingScores=false}});
 // Independent visual randomness keeps the sky irregular without affecting gameplay.
 const starfield=$("stars");
 for(let i=0;i<90;i++){
@@ -33,7 +35,7 @@ function start(){game.reset();running=true;paused=false;saved=false;answer="";la
 function pause(){if(!running||game.over)return;paused=!paused;last=0;$("overlay").hidden=!paused;if(paused){$("overlay-title").textContent="Petite pause";$("instructions").textContent="La galaxie peut attendre. Reprends quand tu es prêt !";$("bomb-help").hidden=true;$("result").textContent="";$("start").textContent="Reprendre"}sync()}
 function finish(){if(saved)return;saved=true;running=false;ExerciseScores.save({tab:"space",category:"Mission calcul",score:game.score,total:1,mode:"arcade"});$("overlay-title").textContent="Mission terminée !";$("instructions").textContent=game.score>=10?"Fantastique, tu es un as du calcul !":"Bien joué ! Chaque mission te fait progresser.";$("bomb-help").hidden=true;$("result").textContent=game.score+" point"+(game.score===1?"":"s");$("start").textContent="Rejouer 🚀";$("overlay").hidden=false;sync()}
 $("start").onclick=()=>paused?pause():start();$("bomb").onclick=bomb;$("pause").onclick=pause;
-document.addEventListener("visibilitychange",()=>{if(document.hidden&&running&&!paused)pause()});window.addEventListener("blur",()=>{if(running&&!paused)pause()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&running&&!paused&&!viewingScores)pause()});window.addEventListener("blur",()=>{if(running&&!paused&&!viewingScores)pause()});
 document.addEventListener("keydown",e=>{if(e.ctrlKey||e.altKey||e.metaKey||e.target.closest("a"))return;if(e.code==="Escape"){e.preventDefault();pause();return}if(!running||paused||game.over)return;if(/^\d$/.test(e.key)){e.preventDefault();edit(e.key)}else if(e.key==="Backspace"){e.preventDefault();edit("erase")}else if(e.key==="Delete"){e.preventDefault();edit("clear")}});
 // SVG and CSS render without a canvas context or resize-dependent backing buffer.
 
@@ -72,7 +74,8 @@ function draw(){
   }
   for(const [key,node] of sprites){if(!active.has(key)){node.remove();sprites.delete(key)}}
 }
-function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;const lives=game.lives;game.step(dt);if(game.lives<lives){answer="";}sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
+function frame(now){if(running&&!paused&&!viewingScores){const dt=last?Math.min((now-last)/1000,.05):0;const lives=game.lives;game.step(dt);if(game.lives<lives){answer="";}sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
 })();
+
 
 
