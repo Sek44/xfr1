@@ -20,7 +20,7 @@ function sync(){
   $("points").textContent=game.score;$("level").textContent=game.level;$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";$("feedback").textContent=message;
   const disabled=!running||paused||game.over;for(const key of $("keypad").children)key.disabled=disabled;$("bomb").disabled=disabled||!game.bombs;$("pause").disabled=!running||game.over;$("pause").textContent=paused?"▶":"Ⅱ";$("pause").setAttribute("aria-label",paused?"Reprendre":"Mettre en pause");
 }
-function edit(value){if(!running||paused||game.over)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;message="Résous le calcul d’un alien.";if(answer&&game.shoot(answer)){answer="";message="Missile lancé !"}sync()}
+function edit(value){if(!running||paused||game.over)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;message="Résous le calcul d’un alien.";if(answer&&game.shoot(answer)){answer="";message="Cible repérée !"}sync()}
 for(const value of ["1","2","3","4","5","6","7","8","9","C","0","⌫"]){const key=document.createElement("button");key.type="button";key.textContent=value;if(value==="C"||value==="⌫")key.className="erase";if(value==="C")key.setAttribute("aria-label","Tout effacer");if(value==="⌫")key.setAttribute("aria-label","Effacer le dernier chiffre");key.onclick=()=>edit(value==="C"?"clear":value==="⌫"?"erase":value);$("keypad").append(key)}
 function bomb(){if(!running||paused)return;if(game.bomb()){message="Bombe ! Aucun point marqué.";answer="";sync()}}
 function start(){game.reset();running=true;paused=false;saved=false;answer="";last=0;message="Résous le calcul d’un alien.";$("overlay").hidden=true;sync()}
@@ -32,6 +32,7 @@ document.addEventListener("keydown",e=>{if(e.ctrlKey||e.altKey||e.metaKey||e.tar
 // SVG and CSS render without a canvas context or resize-dependent backing buffer.
 
 function draw(){
+  $("player").style.left=(game.playerX*100)+"%";
   const active=new Set();
   function sprite(key,type,x,y){
     active.add(key);let node=sprites.get(key);
@@ -43,7 +44,10 @@ function draw(){
     if(!node.firstChild){const visual=SpaceEnemies.visual(e.level||1);node.innerHTML=visual.svg;node.style.setProperty("--enemy-color",visual.color);node.style.setProperty("--enemy-armor",visual.armor);const label=document.createElement("span");label.className="calculus";label.textContent=e.a+" + "+e.b;node.append(label);if(e.bomb){const badge=document.createElement("span");badge.className="bomb-badge";badge.textContent="💣";node.append(badge)}}
     node.classList.toggle("carrier",e.bomb);
   }
-  for(const m of game.missiles)sprite("missile-"+m.target,"missile",m.x,m.y);
+  for(const m of game.missiles){
+    const node=sprite("missile-"+m.target,"missile",m.x,m.y);
+    if(!node.firstChild)node.innerHTML='<span class="missile-trail"></span><span class="missile-body"></span><span class="missile-flame"></span>';
+  }
   for(const e of game.effects){
     const node=sprite("effect-"+e.id,"explosion",e.x,e.y);
     if(!node.firstChild){
@@ -64,3 +68,4 @@ function draw(){
 }
 function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;game.step(dt);sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
 })();
+

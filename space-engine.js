@@ -3,7 +3,7 @@
 (function(root){
   class SpaceGame {
     constructor(random=Math.random){this.random=random;this.reset()}
-    reset(){this.lives=3;this.bombs=2;this.score=0;this.enemies=[];this.missiles=[];this.effects=[];this.time=0;this.spawnIn=.6;this.over=false;this.nextId=0;this.nextEffectId=0}
+    reset(){this.lives=3;this.bombs=2;this.score=0;this.enemies=[];this.missiles=[];this.effects=[];this.time=0;this.spawnIn=.6;this.over=false;this.nextId=0;this.nextEffectId=0;this.playerX=.5;this.shots=[];this.alignment=null}
     get level(){return 1+Math.floor(this.score/5)}
     operation(){
       const int=(min,max)=>min+Math.floor(this.random()*(max-min+1));
@@ -27,14 +27,37 @@
     shoot(answer){
       if(this.over||!/^\d+$/.test(answer))return false;
       const target=this.enemies.filter(e=>!e.targeted&&e.answer===Number(answer)).sort((a,b)=>b.y-a.y)[0];if(!target)return false;
-      target.targeted=true;this.missiles.push({target:target.id,x:.5,y:.93});return true;
+      target.targeted=true;this.shots.push(target.id);this.alignNext();return true;
+    }
+    alignNext(){
+      if(this.alignment)return;
+      while(this.shots.length){
+        const id=this.shots.shift(),target=this.enemies.find(e=>e.id===id);
+        if(target){this.alignment={target:target.id,fromX:this.playerX,elapsed:0,duration:.08};return}
+      }
+    }
+    moveAndLaunch(dt){
+      let remaining=dt;this.alignNext();
+      while(this.alignment&&remaining>0){
+        const a=this.alignment,target=this.enemies.find(e=>e.id===a.target&&!e.dead);
+        if(!target){this.alignment=null;this.alignNext();continue}
+        const used=Math.min(remaining,a.duration-a.elapsed);a.elapsed+=used;remaining-=used;
+        const t=Math.min(1,a.elapsed/a.duration),ease=t*t*(3-2*t);
+        this.playerX=a.fromX+(target.x-a.fromX)*ease;
+        if(t<1)break;
+        this.playerX=target.x;
+        this.missiles.push({target:target.id,x:target.x,y:.915});
+        this.alignment=null;this.alignNext();
+      }
     }
     explode(e,color){this.effects.push({id:++this.nextEffectId,x:e.x,y:e.y,age:0,color})}
-    bomb(){if(this.over||this.bombs===0||!this.enemies.length)return false;this.bombs--;for(const e of this.enemies)this.explode(e,"#fbbf24");this.enemies=[];this.missiles=[];return true}
+    bomb(){if(this.over||this.bombs===0||!this.enemies.length)return false;this.bombs--;for(const e of this.enemies)this.explode(e,"#fbbf24");this.enemies=[];this.missiles=[];this.shots=[];this.alignment=null;return true}
     step(dt){
       if(this.over)return;dt=Math.min(dt,.05);this.time+=dt;
       for(const e of this.enemies)e.y+=e.speed*dt;
-      for(const m of this.missiles){const target=this.enemies.find(e=>e.id===m.target);if(!target){m.done=true;continue}const dx=target.x-m.x,dy=target.y-m.y,d=Math.hypot(dx,dy),move=1.9*dt;if(d<=move){m.done=true;target.dead=true;this.score++;if(target.bomb)this.bombs++;this.explode(target,target.bomb?"#fbbf24":"#67e8f9")}else{m.x+=dx/d*move;m.y+=dy/d*move}}
+      this.moveAndLaunch(dt);
+      for(const m of this.missiles){const target=this.enemies.find(e=>e.id===m.target);if(!target){m.done=true;continue}const move=4*dt;if(m.y-target.y<=move){m.done=true;target.dead=true;this.score++;if(target.bomb)this.bombs++;this.explode(target,target.bomb?"#fbbf24":"#67e8f9")}else m.y-=move}
+
       for(const e of this.enemies){if(!e.dead&&e.y>=.9){e.dead=true;this.lives=Math.max(0,this.lives-1);this.explode({...e,y:.9},"#fb7185")}}
       this.enemies=this.enemies.filter(e=>!e.dead);this.missiles=this.missiles.filter(m=>!m.done&&this.enemies.some(e=>e.id===m.target));
       for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<.85);
@@ -44,3 +67,4 @@
   }
   root.SpaceGame=SpaceGame;
 })(typeof module!=="undefined"?module.exports:window);
+
