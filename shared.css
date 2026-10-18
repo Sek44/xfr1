@@ -6,3 +6,13 @@
 
 /* Clear, full-size vector icons in the existing 44px buttons */
 .page-header .nav-icon svg{display:block;width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* Score history chart: one shared renderer for each game's score page. */
+.score-evolution{margin-top:28px;padding-top:18px;border-top:1px solid #dce5f0;min-width:0}
+.score-evolution h3{margin:0 0 12px;font-size:1.15rem}
+.score-evolution svg{display:block;width:100%;height:auto;overflow:visible;font-family:inherit;font-size:12px;fill:#637188}
+.score-grid{stroke:#dce5f0;stroke-width:1}
+.score-line{fill:none;stroke:#2064c7;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.score-dot{fill:#2064c7;stroke:white;stroke-width:1.5}
+.score-evolution p{color:#637188;font-size:.9rem}
+@media(max-width:420px){.score-evolution svg{font-size:14px}}

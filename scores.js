@@ -19,11 +19,47 @@ window.ExerciseScores=(()=>{
   }
   function label(record){if(record.tab==="space")return "Mission calcul";if(record.tab==="math")return record.category||"Additions";if(record.tab==="g")return"Français · g / gu / ge";if(record.tab==="c")return"Français · c / ç";return String(record.category||record.tab||"Exercice")}
   function encourage(score,total){const ratio=score/total;const group=ratio===1?"perfect":ratio>=.8?"high":ratio>=.5?"middle":"low";const choices=encouragements[group];return choices[Math.floor(Math.random()*choices.length)]}
+  function renderGraph(container,records,game){
+    const section=document.createElement("section");section.className="score-evolution";
+    const heading=document.createElement("h3");heading.textContent="Évolution des scores";section.append(heading);
+    // Saved history is newest first. Reverse a copy; never modify stored records.
+    const sessions=records.slice().reverse();
+    const points=sessions.flatMap((record,index)=>record.score!==null&&record.score!==undefined&&String(record.score).trim()!==""&&Number.isFinite(Number(record.score))&&Number(record.score)>=0?[{record,index,value:Number(record.score)}]:[]);
+    if(!points.length){const empty=document.createElement("p");empty.textContent="Pas encore de score à afficher sur le graphique.";section.append(empty);container.append(section);return}
+    const width=640,height=260,left=64,right=20,top=24,bottom=46;
+    const maximum=Math.max(game==="space"?1:10,...points.map(point=>point.value));
+    const step=Math.max(1,Math.ceil(maximum/5)),ceiling=step*5;
+    const x=index=>sessions.length===1?(left+width-right)/2:left+index/(sessions.length-1)*(width-left-right);
+    const y=value=>height-bottom-value/ceiling*(height-top-bottom);
+    function svgNode(tag,attributes={},text){const node=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [name,value] of Object.entries(attributes))node.setAttribute(name,String(value));if(text!==undefined)node.textContent=text;return node}
+    const svg=svgNode("svg",{viewBox:`0 0 ${width} ${height}`,role:"img","aria-label":"Évolution des scores : "+points.length+" résultat(s), du plus ancien au plus récent. Scores en points."});
+    for(let tick=0;tick<=5;tick++){
+      const value=tick*step,position=y(value);
+      svg.append(svgNode("line",{x1:left,x2:width-right,y1:position,y2:position,class:"score-grid"}),svgNode("text",{x:left-10,y:position+4,"text-anchor":"end"},value));
+    }
+    svg.append(svgNode("text",{x:left,y:14},"Score"));
+    // Leave a gap for legacy records without a usable score instead of inventing zeroes.
+    let segment=[],previousIndex=-1;
+    function drawSegment(){if(segment.length>1)svg.append(svgNode("polyline",{points:segment.join(" "),class:"score-line"}));segment=[]}
+    for(const point of points){if(point.index!==previousIndex+1)drawSegment();segment.push(`${x(point.index)},${y(point.value)}`);previousIndex=point.index;}
+    drawSegment();
+    for(const point of points){
+      const dot=svgNode("circle",{cx:x(point.index),cy:y(point.value),r:4,class:"score-dot"});
+      const date=new Date(point.record.date),dateLabel=Number.isNaN(date.getTime())?"—":date.toLocaleDateString("fr-FR");
+      dot.append(svgNode("title",{},`Partie ${point.index+1} · ${dateLabel} ${time(point.record)} · ${label(point.record)} · ${point.value} points`));svg.append(dot);
+    }
+    const ticks=new Set([0,Math.floor((sessions.length-1)/2),sessions.length-1]);
+    for(const index of ticks)svg.append(svgNode("text",{x:x(index),y:height-bottom+22,"text-anchor":"middle"},index+1));
+    svg.append(svgNode("text",{x:(left+width-right)/2,y:height-4,"text-anchor":"middle"},"Parties · de la plus ancienne à la plus récente"));
+    section.append(svg);
+    if(points.length<sessions.length){const note=document.createElement("p");note.textContent="Les résultats sans score renseigné ne sont pas tracés.";section.append(note)}
+    container.append(section);
+  }
   function render(container,game=null){
     container.replaceChildren();
     const records=read().filter(r=>game===null||(game==="math"?r.tab==="math":game==="space"?r.tab==="space":r.tab==="g"||r.tab==="c"));
     const title=document.createElement("h2");title.textContent=game===null?"Tous mes résultats":game==="math"?"Mes résultats en calcul":game==="space"?"Mes missions spatiales":"Mes résultats en français";container.append(title);
-    if(!records.length){const p=document.createElement("p");p.textContent="Aucun exercice terminé pour le moment.";container.append(p);return}
+    if(!records.length){const p=document.createElement("p");p.textContent="Aucun exercice terminé pour le moment.";container.append(p);if(game!==null)renderGraph(container,records,game);return}
     const summary=document.createElement("p");summary.className="history-summary";const exercises=records.filter(r=>r.mode!=="arcade"&&Number.isFinite(Number(r.score))&&Number(r.total)>0);const points=exercises.reduce((n,r)=>n+Number(r.score),0),total=exercises.reduce((n,r)=>n+Number(r.total),0);summary.textContent=records.length+" session(s) · "+(exercises.length?Math.round(points/total*100)+" % de réussite":"Record : "+Math.max(0,...records.map(r=>Number(r.score)||0))+" points");container.append(summary);
     const hint=document.createElement("p");hint.className="history-hint";hint.textContent="Appui long sur un résultat pour le supprimer.";container.append(hint);
     async function askDelete(record){
@@ -45,6 +81,7 @@ window.ExerciseScores=(()=>{
     const scroll=document.createElement("div");scroll.className="history-scroll";const table=document.createElement("table");table.className="history-table";
     const head=document.createElement("thead"),hr=document.createElement("tr");for(const name of ["Date","Heure","Exercice","Score"]){const th=document.createElement("th");th.textContent=name;hr.append(th)}head.append(hr);table.append(head);
     const body=document.createElement("tbody");for(const r of records){const tr=document.createElement("tr");const date=new Date(r.date);for(const value of [Number.isNaN(date.getTime())?"—":date.toLocaleDateString("fr-FR"),time(r),label(r),r.score==null?"—":r.mode==="arcade"?r.score+" points":r.score+" / "+(r.total??"—")]){const td=document.createElement("td");td.textContent=value;tr.append(td)}longPress(tr,r);body.append(tr)}table.append(body);scroll.append(table);container.append(scroll);
+    if(game!==null)renderGraph(container,records,game);
   }
   return {read,save,render,encourage,time,remove};
 })();
