@@ -28,23 +28,27 @@ function sync(){
   }$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";
   const disabled=!running||paused||game.over;for(const key of $("keypad").children)key.disabled=disabled;$("bomb").disabled=disabled||!game.bombs;$("pause").disabled=!running||game.over;$("end-game").disabled=!running||game.over;$("pause").textContent=paused?"▶":"Ⅱ";$("pause").setAttribute("aria-label",paused?"Reprendre":"Mettre en pause");
 }
-function edit(value){if(!running||paused||game.over)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;if(answer&&game.shoot(answer)){answer="";}sync()}
+function edit(value){if(!running||paused||game.over||confirmingLeave)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;if(answer&&game.shoot(answer)){answer="";}sync()}
 for(const value of ["1","2","3","4","5","6","7","8","9","C","0","⌫"]){const key=document.createElement("button");key.type="button";key.textContent=value;if(value==="C"||value==="⌫")key.className="erase";if(value==="C")key.setAttribute("aria-label","Tout effacer");if(value==="⌫")key.setAttribute("aria-label","Effacer le dernier chiffre");key.onclick=()=>edit(value==="C"?"clear":value==="⌫"?"erase":value);$("keypad").append(key)}
 function bomb(){if(!running||paused)return;if(game.bomb()){answer="";sync()}}
 function start(){game.reset();running=true;paused=false;saved=false;answer="";last=0;$("overlay").hidden=true;sync()}
 function pause(){if(!running||game.over)return;paused=!paused;last=0;$("overlay").hidden=!paused;if(paused){$("overlay-title").textContent="Petite pause";$("instructions").textContent="La galaxie peut attendre. Reprends quand tu es prêt !";$("bomb-help").hidden=true;$("result").textContent="";$("start").textContent="Reprendre"}sync()}
 function finish(){if(saved)return;saved=true;running=false;paused=false;game.over=true;ExerciseScores.save({tab:"space",category:"Mission calcul",score:game.score,total:1,mode:"arcade"});$("overlay-title").textContent="Mission terminée !";$("instructions").textContent=game.score>=10?"Fantastique, tu es un as du calcul !":"Bien joué ! Chaque mission te fait progresser.";$("bomb-help").hidden=true;$("result").textContent=game.score+" point"+(game.score===1?"":"s");$("start").textContent="Rejouer 🚀";$("overlay").hidden=false;sync()}
-$("start").onclick=()=>paused?pause():start();$("bomb").onclick=bomb;$("pause").onclick=pause;$("end-game").onclick=()=>{if(running&&!saved)finish()};
+async function confirmEnd(home=false){
+ if(!running||saved||confirmingLeave)return;
+ confirmingLeave=true;last=0;
+ try{
+  const confirmed=await AppConfirm.ask({theme:"dark",title:home?"Revenir à l’accueil ?":"Terminer la partie ?",message:"Ton score actuel sera enregistré.",confirmText:home?"Quitter et enregistrer":"Terminer et enregistrer",cancelText:"Continuer"});
+  if(confirmed){finish();if(home)window.location.assign($("home-link").href)}
+ }finally{confirmingLeave=false;last=0}
+}
+$("start").onclick=()=>paused?pause():start();$("bomb").onclick=bomb;$("pause").onclick=pause;$("end-game").onclick=()=>confirmEnd();
 $("home-link").addEventListener("click",event=>{
-  if(!running||saved||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
-  event.preventDefault();confirmingLeave=true;
-  let leave=false;
-  try{leave=window.confirm("Quitter la partie et revenir à l’accueil ? Ton score actuel sera enregistré.")}
-  finally{confirmingLeave=false;last=0}
-  if(leave){finish();window.location.assign($("home-link").href)}
+ if(!running||saved||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+ event.preventDefault();confirmEnd(true);
 });
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&running&&!paused&&!viewingScores&&!confirmingLeave)pause()});window.addEventListener("blur",()=>{if(running&&!paused&&!viewingScores&&!confirmingLeave)pause()});
-document.addEventListener("keydown",e=>{if(e.ctrlKey||e.altKey||e.metaKey||e.target.closest("a"))return;if(e.code==="Escape"){e.preventDefault();pause();return}if(!running||paused||game.over)return;if(/^\d$/.test(e.key)){e.preventDefault();edit(e.key)}else if(e.key==="Backspace"){e.preventDefault();edit("erase")}else if(e.key==="Delete"){e.preventDefault();edit("clear")}});
+document.addEventListener("keydown",e=>{if(confirmingLeave||e.ctrlKey||e.altKey||e.metaKey||e.target.closest("a"))return;if(e.code==="Escape"){e.preventDefault();pause();return}if(!running||paused||game.over)return;if(/^\d$/.test(e.key)){e.preventDefault();edit(e.key)}else if(e.key==="Backspace"){e.preventDefault();edit("erase")}else if(e.key==="Delete"){e.preventDefault();edit("clear")}});
 // SVG and CSS render without a canvas context or resize-dependent backing buffer.
 
 function draw(){

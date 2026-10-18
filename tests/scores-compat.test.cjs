@@ -23,3 +23,16 @@ test('missing times use 00:00 and historical ISO timestamps retain their usable 
 test('unreadable data is never overwritten',()=>{
  for(const original of ['{broken','{"unexpected":"object"}']){const fixture=setup(original);assert.equal(fixture.scores.save({score:1,total:10}),false);assert.equal(fixture.stored,original);assert.equal(fixture.writes,0)}
 });
+test('explicit deletion removes exactly the selected legacy row, preserving duplicates and unknown fields',()=>{
+ const duplicate={tab:'g',score:8,total:10,date:'2026-01-01',extra:'legacy'};
+ const old=[null,duplicate,{tab:'math',score:2,total:10,extra:{keep:true}},duplicate,{custom:'keep'}];
+ const fixture=setup(JSON.stringify(old)),records=fixture.scores.read();
+ assert.equal(fixture.scores.remove(records[2]),true);
+ const expected=old.slice();expected.splice(3,1);assert.deepEqual(JSON.parse(fixture.stored),expected);
+ assert.equal(fixture.scores.remove(records[2]),false);
+});
+test('stale deletion never removes a score added or changed in the meantime',()=>{
+ const old=[{tab:'g',score:4,total:10}];const fixture=setup(JSON.stringify(old)),selected=fixture.scores.read()[0];
+ fixture.scores.save({tab:'space',score:12,total:1,mode:'arcade'});const before=fixture.stored;
+ assert.equal(fixture.scores.remove(selected),false);assert.equal(fixture.stored,before);
+});
