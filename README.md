@@ -25,6 +25,17 @@ own input length and clear-button label.
 Scripts use private scopes to avoid accidental globals; only shared APIs are
 exported on `window`. Load each shared dependency before its game controller.
 
+## Formatting
+
+HTML, JavaScript (including tests), and CSS use Prettier with the repository's
+`.prettierrc.json` configuration. Prettier preserves significant whitespace
+around inline HTML content.
+
+Format source files with `npx prettier@3.6.2 --write "**/*.{html,js,cjs,css}"`.
+Check formatting with `npx prettier@3.6.2 --check "**/*.{html,js,cjs,css}"`.
+Prettier is a development tool; the site still needs no build step or runtime
+dependencies.
+
 ## Validation
 
 Run `node --test tests/*.test.cjs` with Node.js. Tests use Node's built-in test

@@ -1,37 +1,214 @@
-.page-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:6px 0 12px}.nav-link{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border:1px solid #b8cbe7;border-radius:12px;background:#fff;color:#1757a7;text-decoration:none;font-weight:700;box-shadow:0 2px 8px #1e3d6810}.nav-link:hover,.nav-link:focus-visible{background:#e8f1ff;border-color:#2064c7}.history-scroll{overflow-x:auto}.history-table{width:100%;border-collapse:collapse}.history-table th,.history-table td{text-align:left;padding:10px;border-bottom:1px solid #dce5f0}.history-table th{background:#edf3fc}.history-summary{color:#637188;font-weight:600}.encouragement{font-weight:750;color:#1757a7;font-size:1.1rem;line-height:1.5}.history-panel{background:white;border-radius:18px;padding:20px;margin:14px 0;box-shadow:0 4px 18px #1e3d6812}[hidden]{display:none!important}
+.page-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 6px 0 12px;
+}
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: 1px solid #b8cbe7;
+  border-radius: 12px;
+  background: #fff;
+  color: #1757a7;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #1e3d6810;
+}
+.nav-link:hover,
+.nav-link:focus-visible {
+  background: #e8f1ff;
+  border-color: #2064c7;
+}
+.history-scroll {
+  overflow-x: auto;
+}
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.history-table th,
+.history-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #dce5f0;
+}
+.history-table th {
+  background: #edf3fc;
+}
+.history-summary {
+  color: #637188;
+  font-weight: 600;
+}
+.encouragement {
+  font-weight: 750;
+  color: #1757a7;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+.history-panel {
+  background: white;
+  border-radius: 18px;
+  padding: 20px;
+  margin: 14px 0;
+  box-shadow: 0 4px 18px #1e3d6812;
+}
+[hidden] {
+  display: none !important;
+}
 /* Shared compact header for exercises and score pages */
-.page-header{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:8px;flex-wrap:nowrap;margin:0 0 4px}.page-header .page-title{font-size:clamp(1.35rem,4.5vw,2rem);line-height:1.2;text-align:center;margin:0;min-width:0}.page-header .nav-icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;padding:0;font-size:2rem;font-weight:800;line-height:1}.page-header .nav-icon:last-child{justify-self:end}.page-header .nav-icon:first-child{justify-self:start}
+.page-header {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  margin: 0 0 4px;
+}
+.page-header .page-title {
+  font-size: clamp(1.35rem, 4.5vw, 2rem);
+  line-height: 1.2;
+  text-align: center;
+  margin: 0;
+  min-width: 0;
+}
+.page-header .nav-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.page-header .nav-icon:last-child {
+  justify-self: end;
+}
+.page-header .nav-icon:first-child {
+  justify-self: start;
+}
 
-@media (orientation:landscape) and (max-height:700px){.page-header{margin:0 0 2px}.page-header .page-title{font-size:1.55rem}}
+@media (orientation: landscape) and (max-height: 700px) {
+  .page-header {
+    margin: 0 0 2px;
+  }
+  .page-header .page-title {
+    font-size: 1.55rem;
+  }
+}
 
 /* Clear, full-size vector icons in the existing 44px buttons */
-.page-header .nav-icon svg{display:block;width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.page-header .nav-icon svg {
+  display: block;
+  width: 29px;
+  height: 29px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
 
 /* Score history chart: one shared renderer for each game's score page. */
-.score-evolution{margin-top:28px;padding-top:18px;border-top:1px solid #dce5f0;min-width:0}
-.score-evolution h3{margin:0 0 12px;font-size:1.15rem}
-.score-evolution svg{display:block;width:100%;height:auto;overflow:visible;font-family:inherit;font-size:12px;fill:#637188}
-.score-grid{stroke:#dce5f0;stroke-width:1}
-.score-line{fill:none;stroke:#2064c7;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.score-dot{fill:#2064c7;stroke:white;stroke-width:1.5}
-.score-evolution p{color:#637188;font-size:.9rem}
-@media(max-width:420px){.score-evolution svg{font-size:14px}}
+.score-evolution {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #dce5f0;
+  min-width: 0;
+}
+.score-evolution h3 {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+}
+.score-evolution svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: inherit;
+  font-size: 12px;
+  fill: #637188;
+}
+.score-grid {
+  stroke: #dce5f0;
+  stroke-width: 1;
+}
+.score-line {
+  fill: none;
+  stroke: #2064c7;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.score-dot {
+  fill: #2064c7;
+  stroke: white;
+  stroke-width: 1.5;
+}
+.score-evolution p {
+  color: #637188;
+  font-size: 0.9rem;
+}
+@media (max-width: 420px) {
+  .score-evolution svg {
+    font-size: 14px;
+  }
+}
 
 /* Separate progress cards shared by Français and Additions. */
-.score.progress-row,.score-card.progress-row{
-  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;
-  gap:10px;padding:0;border:0;background:transparent;box-shadow:none;border-radius:0
+.score.progress-row,
+.score-card.progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
-.progress-row .progress-label,.progress-row .progress-score{
-  display:flex;align-items:center;min-width:0;padding:8px 12px;
-  background:white;border:2px solid #dae5f6;border-radius:16px;
-  box-shadow:0 4px 18px #1e3d6812;white-space:nowrap
+.progress-row .progress-label,
+.progress-row .progress-score {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 8px 12px;
+  background: white;
+  border: 2px solid #dae5f6;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px #1e3d6812;
+  white-space: nowrap;
 }
-.score.progress-row .progress-label,.score-card.progress-row .progress-label,
-.progress-row .progress-score-label{font-size:.95rem;font-weight:400;color:#637188;line-height:1.4}
-.progress-row .progress-score{justify-content:flex-end;gap:8px}
-@media(max-width:360px){
-  .score.progress-row,.score-card.progress-row{gap:8px}
-  .progress-row .progress-label,.progress-row .progress-score{padding:8px}
-  .progress-row .progress-score{gap:6px}
+.score.progress-row .progress-label,
+.score-card.progress-row .progress-label,
+.progress-row .progress-score-label {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #637188;
+  line-height: 1.4;
+}
+.progress-row .progress-score {
+  justify-content: flex-end;
+  gap: 8px;
+}
+@media (max-width: 360px) {
+  .score.progress-row,
+  .score-card.progress-row {
+    gap: 8px;
+  }
+  .progress-row .progress-label,
+  .progress-row .progress-score {
+    padding: 8px;
+  }
+  .progress-row .progress-score {
+    gap: 6px;
+  }
 }

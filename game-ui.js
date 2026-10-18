@@ -11,19 +11,43 @@ window.GameUI = (() => {
   function editNumber(answer, command, maxLength) {
     if (command === "clear") return "";
     if (command === "erase") return answer.slice(0, -1);
-    return /^\d$/.test(command) && answer.length < maxLength ? answer + command : answer;
+    return /^\d$/.test(command) && answer.length < maxLength
+      ? answer + command
+      : answer;
   }
 
-  function keypad(container, onInput, { clearLabel = "Effacer", disabled = false } = {}) {
+  function keypad(
+    container,
+    onInput,
+    { clearLabel = "Effacer", disabled = false } = {},
+  ) {
     container.replaceChildren();
-    const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "clear", "0", "erase"];
+    const keys = [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "clear",
+      "0",
+      "erase",
+    ];
     for (const command of keys) {
       const editing = command === "clear" || command === "erase";
-      const label = command === "clear" ? clearLabel : command === "erase" ? "⌫" : command;
+      const label =
+        command === "clear" ? clearLabel : command === "erase" ? "⌫" : command;
       const button = element("button", editing ? "erase" : "", label);
       button.type = "button";
       button.disabled = disabled;
-      if (editing) button.setAttribute("aria-label", command === "clear" ? "Tout effacer" : "Effacer le dernier chiffre");
+      if (editing)
+        button.setAttribute(
+          "aria-label",
+          command === "clear" ? "Tout effacer" : "Effacer le dernier chiffre",
+        );
       button.onclick = () => onInput(command);
       container.append(button);
     }
