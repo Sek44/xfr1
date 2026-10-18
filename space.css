@@ -36,3 +36,5 @@
 /* Keep a small breathing space where the former status line sat. */
 .controls{padding-bottom:24px}
 @media(orientation:landscape) and (max-height:500px){.controls{padding-bottom:18px}}
+
+.hud-actions{display:flex;gap:6px;align-items:center}.hud .end-game{display:grid;place-items:center;background:#44283b;color:#fecdd3}.hud .end-game:hover:not(:disabled){background:#633047}.end-game svg{display:block}
