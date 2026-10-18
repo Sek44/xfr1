@@ -16,3 +16,9 @@
 .score-dot{fill:#2064c7;stroke:white;stroke-width:1.5}
 .score-evolution p{color:#637188;font-size:.9rem}
 @media(max-width:420px){.score-evolution svg{font-size:14px}}
+
+/* Shared question/score row for Français and Additions. */
+.score .progress-label,.score-card .progress-label,.progress-score-label{font-size:.95rem;font-weight:400;color:#637188}
+.progress-label{white-space:nowrap}
+.progress-score{display:inline-flex;align-items:baseline;justify-content:flex-end;gap:8px;white-space:nowrap}
+.score,.score-card{gap:12px}
