@@ -28,10 +28,10 @@ function sync(){
   }$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";
   const disabled=!running||paused||game.over;for(const key of $("keypad").children)key.disabled=disabled;$("bomb").disabled=disabled||!game.bombs;$("pause").disabled=!running||game.over;$("end-game").disabled=!running||game.over;$("pause").textContent=paused?"▶":"Ⅱ";$("pause").setAttribute("aria-label",paused?"Reprendre":"Mettre en pause");
 }
-function edit(value){if(!running||paused||game.over||confirmingLeave)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;if(answer&&game.shoot(answer)){answer="";}sync()}
-for(const value of ["1","2","3","4","5","6","7","8","9","C","0","⌫"]){const key=document.createElement("button");key.type="button";key.textContent=value;if(value==="C"||value==="⌫")key.className="erase";if(value==="C")key.setAttribute("aria-label","Tout effacer");if(value==="⌫")key.setAttribute("aria-label","Effacer le dernier chiffre");key.onclick=()=>edit(value==="C"?"clear":value==="⌫"?"erase":value);$("keypad").append(key)}
+function edit(value){if(!running||paused||game.over||confirmingLeave)return;answer=GameUI.editNumber(answer,value,3);if(answer&&game.shoot(answer)){answer="";}sync()}
+GameUI.keypad($("keypad"),edit,{clearLabel:"C"});
 function bomb(){if(!running||paused)return;if(game.bomb()){answer="";sync()}}
-function start(){game.reset();running=true;paused=false;saved=false;answer="";last=0;$("overlay").hidden=true;sync()}
+function start(){for(const node of sprites.values())node.remove();sprites.clear();game.reset();running=true;paused=false;saved=false;answer="";last=0;$("overlay").hidden=true;sync()}
 function pause(){if(!running||game.over)return;paused=!paused;last=0;$("overlay").hidden=!paused;if(paused){$("overlay-title").textContent="Petite pause";$("instructions").textContent="La galaxie peut attendre. Reprends quand tu es prêt !";$("bomb-help").hidden=true;$("result").textContent="";$("start").textContent="Reprendre"}sync()}
 function finish(){if(saved)return;saved=true;running=false;paused=false;game.over=true;ExerciseScores.save({tab:"space",category:"Mission calcul",score:game.score,total:1,mode:"arcade"});$("overlay-title").textContent="Mission terminée !";$("instructions").textContent=game.score>=10?"Fantastique, tu es un as du calcul !":"Bien joué ! Chaque mission te fait progresser.";$("bomb-help").hidden=true;$("result").textContent=game.score+" point"+(game.score===1?"":"s");$("start").textContent="Rejouer 🚀";$("overlay").hidden=false;sync()}
 async function confirmEnd(home=false){
@@ -88,6 +88,7 @@ function draw(){
 }
 function frame(now){if(running&&!paused&&!viewingScores&&!confirmingLeave){const dt=last?Math.min((now-last)/1000,.05):0;const lives=game.lives;game.step(dt);if(game.lives<lives){answer="";}sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
 })();
+
 
 
 
