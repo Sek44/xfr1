@@ -38,7 +38,7 @@ async function confirmEnd(home=false){
  if(!running||saved||confirmingLeave)return;
  confirmingLeave=true;last=0;
  try{
-  const confirmed=await AppConfirm.ask({theme:"dark",title:home?"Revenir à l’accueil ?":"Terminer la partie ?",message:"Ton score actuel sera enregistré.",confirmText:home?"Quitter et enregistrer":"Terminer et enregistrer",cancelText:"Continuer"});
+  const confirmed=game.score===0||await AppConfirm.ask({theme:"dark",title:home?"Revenir à l’accueil ?":"Terminer la partie ?",message:"Ton score actuel sera enregistré.",confirmText:home?"Quitter et enregistrer":"Terminer et enregistrer",cancelText:"Continuer"});
   if(confirmed){finish();if(home)window.location.assign($("home-link").href)}
  }finally{confirmingLeave=false;last=0}
 }
