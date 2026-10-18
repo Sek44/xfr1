@@ -11,6 +11,7 @@ window.ExerciseGame=(()=>{
     function validate(isRight){if(correct)return;if(isRight){correct=true;if(!failed)score++;cancel();schedule(DELAY_MS)}else failed=true;onChange()}
     function next(){if(!correct)return;cancel();index++;failed=false;correct=false;if(index===total)onFinish({score,total});onChange()}
     function progress(container){
+      container.classList.toggle("progress-row",true);
       container.replaceChildren();
       const left=document.createElement("span");
       left.className="progress-label";
