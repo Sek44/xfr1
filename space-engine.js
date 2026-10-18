@@ -22,7 +22,7 @@
       for(let i=0;i<100;i++){({a,b}=this.operation());if(!answers.has(a+b))break}
       if(answers.has(a+b))return;
       const lanes=[.16,.5,.84];const free=lanes.filter(x=>!this.enemies.some(e=>Math.abs(e.x-x)<.2&&e.y<.24));if(!free.length)return;
-      this.enemies.push({id:++this.nextId,level:this.level,a,b,answer:a+b,x:free[Math.floor(this.random()*free.length)],y:-.08,speed:.026+Math.min(this.score,60)*.0006,bomb:this.random()<.08,targeted:false});
+      this.enemies.push({id:++this.nextId,level:this.level,a,b,answer:a+b,x:free[Math.floor(this.random()*free.length)],y:.04,speed:.026+Math.min(this.score,60)*.0006,bomb:this.random()<.08,targeted:false});
     }
     shoot(answer){
       if(this.over||!/^\d+$/.test(answer))return false;
@@ -67,7 +67,7 @@
       this.enemies=this.enemies.filter(e=>!e.dead);this.missiles=this.missiles.filter(m=>!m.done&&this.enemies.some(e=>e.id===m.target));
       for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<.85);
       if(this.lives===0){this.over=true;return}
-      this.spawnIn-=dt;if(this.spawnIn<=0){this.spawn();this.spawnIn=Math.max(2.5,5-this.score*.04)}
+      this.spawnIn-=dt;if(!this.enemies.length||this.spawnIn<=0){this.spawn();this.spawnIn=1.5*Math.max(2.5,5-this.score*.04)}
     }
   }
   root.SpaceGame=SpaceGame;
