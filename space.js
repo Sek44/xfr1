@@ -66,6 +66,7 @@ function draw(){
   }
   for(const [key,node] of sprites){if(!active.has(key)){node.remove();sprites.delete(key)}}
 }
-function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;game.step(dt);sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
+function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;const lives=game.lives;game.step(dt);if(game.lives<lives){answer="";message="Une vie perdue ! Nouvelle vague, niveau "+game.level+"."}sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
 })();
+
 

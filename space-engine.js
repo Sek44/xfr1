@@ -51,14 +51,19 @@
       }
     }
     explode(e,color){this.effects.push({id:++this.nextEffectId,x:e.x,y:e.y,age:0,color})}
-    bomb(){if(this.over||this.bombs===0||!this.enemies.length)return false;this.bombs--;for(const e of this.enemies)this.explode(e,"#fbbf24");this.enemies=[];this.missiles=[];this.shots=[];this.alignment=null;return true}
+    clearWave(){this.enemies=[];this.missiles=[];this.shots=[];this.alignment=null}
+    bomb(){if(this.over||this.bombs===0||!this.enemies.length)return false;this.bombs--;for(const e of this.enemies)this.explode(e,"#fbbf24");this.clearWave();return true}
     step(dt){
       if(this.over)return;dt=Math.min(dt,.05);this.time+=dt;
       for(const e of this.enemies)e.y+=e.speed*dt;
+      const escaped=this.enemies.find(e=>!e.dead&&e.y>=.9);
+      if(escaped){
+        this.lives=Math.max(0,this.lives-1);this.explode({...escaped,y:.9},"#fb7185");
+        this.clearWave();this.spawnIn=1.1;this.over=this.lives===0;
+      }
       this.moveAndLaunch(dt);
-      for(const m of this.missiles){const target=this.enemies.find(e=>e.id===m.target);if(!target){m.done=true;continue}const move=4*dt;if(m.y-target.y<=move){m.done=true;target.dead=true;this.score++;if(target.bomb)this.bombs++;this.explode(target,target.bomb?"#fbbf24":"#67e8f9")}else m.y-=move}
+      for(const m of this.missiles){const target=this.enemies.find(e=>e.id===m.target);if(!target){m.done=true;continue}const move=2*dt;if(m.y-target.y<=move){m.done=true;target.dead=true;this.score++;if(target.bomb)this.bombs++;this.explode(target,target.bomb?"#fbbf24":"#67e8f9")}else m.y-=move}
 
-      for(const e of this.enemies){if(!e.dead&&e.y>=.9){e.dead=true;this.lives=Math.max(0,this.lives-1);this.explode({...e,y:.9},"#fb7185")}}
       this.enemies=this.enemies.filter(e=>!e.dead);this.missiles=this.missiles.filter(m=>!m.done&&this.enemies.some(e=>e.id===m.target));
       for(const e of this.effects)e.age+=dt;this.effects=this.effects.filter(e=>e.age<.85);
       if(this.lives===0){this.over=true;return}
@@ -67,4 +72,5 @@
   }
   root.SpaceGame=SpaceGame;
 })(typeof module!=="undefined"?module.exports:window);
+
 
