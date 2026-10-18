@@ -32,3 +32,7 @@
 @media(orientation:landscape) and (max-height:500px){.player{width:48px}}
 
 #level{display:inline-block;transform-origin:50% 55%;position:relative;z-index:1}
+
+/* Keep a small breathing space where the former status line sat. */
+.controls{padding-bottom:24px}
+@media(orientation:landscape) and (max-height:500px){.controls{padding-bottom:18px}}
