@@ -9,8 +9,8 @@
       const int=(min,max)=>min+Math.floor(this.random()*(max-min+1));
       const level=this.level;
       let a,b;
-      if(level===1){a=int(1,8);b=int(1,10-a)}
-      else if(level===2){a=int(10,18);b=int(1,9-a%10)}
+      if(level===1){a=int(1,9);b=int(1,10-a)}
+      else if(level===2){a=int(1,9);b=int(10-a,9)}
       else if(level===3){a=int(2,4)*10+int(1,9);b=int(10-a%10,9)}
       else if(level===4){a=int(5,9)*10+int(1,9);b=int(10-a%10,9)}
       else{const hundreds=Math.min(9,level-4);a=int(hundreds*100,hundreds*100+90);b=int(1,9)}
