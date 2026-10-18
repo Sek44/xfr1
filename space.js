@@ -1,7 +1,7 @@
 "use strict";
 (()=>{
 const $=id=>document.getElementById(id),game=new SpaceGame();
-let running=false,paused=false,answer="",last=0,saved=false,message="Résous le calcul d’un alien.";
+let running=false,paused=false,answer="",last=0,saved=false,displayedLevel=game.level,levelAnimation=null;
 const sprites=new Map();
 // Independent visual randomness keeps the sky irregular without affecting gameplay.
 const starfield=$("stars");
@@ -17,13 +17,19 @@ for(let i=0;i<90;i++){
   starfield.append(star);
 }
 function sync(){
-  $("points").textContent=game.score;$("level").textContent=game.level;$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";$("feedback").textContent=message;
+  $("points").textContent=game.score;if(game.level!==displayedLevel){
+    const level=$("level"),increase=game.level>displayedLevel;displayedLevel=game.level;level.textContent=game.level;
+    if(levelAnimation){levelAnimation.cancel();levelAnimation=null}
+    if(increase&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+      levelAnimation=level.animate([{transform:"scale(1)"},{transform:"scale(1.55)",offset:.38},{transform:"scale(.92)",offset:.76},{transform:"scale(1)"}],{duration:380,easing:"ease-out"});
+    }
+  }$("lives").textContent="♥ ".repeat(game.lives).trim()||"—";$("lives").setAttribute("aria-label",game.lives+" vies");$("bomb-count").textContent=game.bombs;$("answer").textContent=answer||"?";
   const disabled=!running||paused||game.over;for(const key of $("keypad").children)key.disabled=disabled;$("bomb").disabled=disabled||!game.bombs;$("pause").disabled=!running||game.over;$("pause").textContent=paused?"▶":"Ⅱ";$("pause").setAttribute("aria-label",paused?"Reprendre":"Mettre en pause");
 }
-function edit(value){if(!running||paused||game.over)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;message="Résous le calcul d’un alien.";if(answer&&game.shoot(answer)){answer="";message="Cible repérée !"}sync()}
+function edit(value){if(!running||paused||game.over)return;if(value==="clear")answer="";else if(value==="erase")answer=answer.slice(0,-1);else if(answer.length<3)answer+=value;if(answer&&game.shoot(answer)){answer="";}sync()}
 for(const value of ["1","2","3","4","5","6","7","8","9","C","0","⌫"]){const key=document.createElement("button");key.type="button";key.textContent=value;if(value==="C"||value==="⌫")key.className="erase";if(value==="C")key.setAttribute("aria-label","Tout effacer");if(value==="⌫")key.setAttribute("aria-label","Effacer le dernier chiffre");key.onclick=()=>edit(value==="C"?"clear":value==="⌫"?"erase":value);$("keypad").append(key)}
-function bomb(){if(!running||paused)return;if(game.bomb()){message="Bombe ! Aucun point marqué.";answer="";sync()}}
-function start(){game.reset();running=true;paused=false;saved=false;answer="";last=0;message="Résous le calcul d’un alien.";$("overlay").hidden=true;sync()}
+function bomb(){if(!running||paused)return;if(game.bomb()){answer="";sync()}}
+function start(){game.reset();running=true;paused=false;saved=false;answer="";last=0;$("overlay").hidden=true;sync()}
 function pause(){if(!running||game.over)return;paused=!paused;last=0;$("overlay").hidden=!paused;if(paused){$("overlay-title").textContent="Petite pause";$("instructions").textContent="La galaxie peut attendre. Reprends quand tu es prêt !";$("bomb-help").hidden=true;$("result").textContent="";$("start").textContent="Reprendre"}sync()}
 function finish(){if(saved)return;saved=true;running=false;ExerciseScores.save({tab:"space",category:"Mission calcul",score:game.score,total:1,mode:"arcade"});$("overlay-title").textContent="Mission terminée !";$("instructions").textContent=game.score>=10?"Fantastique, tu es un as du calcul !":"Bien joué ! Chaque mission te fait progresser.";$("bomb-help").hidden=true;$("result").textContent=game.score+" point"+(game.score===1?"":"s");$("start").textContent="Rejouer 🚀";$("overlay").hidden=false;sync()}
 $("start").onclick=()=>paused?pause():start();$("bomb").onclick=bomb;$("pause").onclick=pause;
@@ -66,7 +72,7 @@ function draw(){
   }
   for(const [key,node] of sprites){if(!active.has(key)){node.remove();sprites.delete(key)}}
 }
-function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;const lives=game.lives;game.step(dt);if(game.lives<lives){answer="";message="Une vie perdue ! Nouvelle vague, niveau "+game.level+"."}sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
+function frame(now){if(running&&!paused){const dt=last?Math.min((now-last)/1000,.05):0;const lives=game.lives;game.step(dt);if(game.lives<lives){answer="";}sync();if(game.over)finish()}last=now;draw();requestAnimationFrame(frame)}sync();requestAnimationFrame(frame);
 })();
 
 
