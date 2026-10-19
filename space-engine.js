@@ -84,7 +84,9 @@
       let minResult = 2;
       let maxResult = level === 1 ? 10 : 18;
 
-      if (level === 3) {
+      if (level === 2) {
+        minResult = 5;
+      } else if (level === 3) {
         minResult = 11;
       } else if (level >= 4) {
         // Two levels per decade: no carry, then carry.
@@ -92,7 +94,7 @@
         minA = decade * 10;
         maxA = minA + 9;
         minResult = minA + 1;
-        maxResult = maxA + (level % 2 === 0 ? 1 : 9);
+        maxResult = maxA + (level % 2 === 0 ? 0 : 9);
       }
 
       // Pick only first operands for which a one-digit second operand exists.
