@@ -28,7 +28,12 @@
     operation() {
       const int = (min, max) =>
         min + Math.floor(this.random() * (max - min + 1));
-      const level = this.level;
+      // Preserve the former difficulty on odd levels and blend adjacent
+      // difficulties on even levels, doubling the progression's granularity.
+      const stage = this.level;
+      const level =
+        Math.ceil(stage / 2) +
+        (stage % 2 === 0 && this.random() < 0.5 ? 1 : 0);
       let a, b;
       if (level === 1) {
         a = int(1, 9);
