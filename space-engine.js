@@ -22,6 +22,56 @@
       this.shots = [];
       this.alignment = null;
     }
+    snapshot() {
+      const fields = [
+        "lives", "bombs", "score", "enemies", "missiles", "effects",
+        "time", "spawnIn", "over", "nextId", "nextEffectId",
+        "playerX", "shots", "alignment",
+      ];
+      return Object.fromEntries(
+        fields.map((key) => [key, JSON.parse(JSON.stringify(this[key]))]),
+      );
+    }
+    restore(state) {
+      const finite = (v) => typeof v === "number" && Number.isFinite(v);
+      const count = (v) => Number.isSafeInteger(v) && v >= 0;
+      const object = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+      if (
+        !object(state) ||
+        !count(state.score) || !count(state.bombs) ||
+        !Number.isInteger(state.lives) || state.lives < 1 || state.lives > 3 ||
+        !finite(state.time) || state.time < 0 ||
+        !finite(state.spawnIn) ||
+        !count(state.nextId) || !count(state.nextEffectId) ||
+        !finite(state.playerX) || state.playerX < 0 || state.playerX > 1 ||
+        state.over !== false ||
+        !Array.isArray(state.enemies) ||
+        !Array.isArray(state.missiles) ||
+        !Array.isArray(state.effects) ||
+        !Array.isArray(state.shots) ||
+        !state.enemies.every((e) =>
+          object(e) && count(e.id) && finite(e.a) && finite(e.b) &&
+          finite(e.answer) && finite(e.x) && finite(e.y) &&
+          finite(e.speed) && typeof e.bomb === "boolean" &&
+          typeof e.targeted === "boolean") ||
+        !state.missiles.every((m) =>
+          object(m) && count(m.target) && finite(m.x) && finite(m.y)) ||
+        !state.effects.every((e) =>
+          object(e) && count(e.id) && finite(e.x) && finite(e.y) &&
+          finite(e.age) && typeof e.color === "string") ||
+        !state.shots.every(count) ||
+        (state.alignment !== null &&
+          (!object(state.alignment) || !count(state.alignment.target) ||
+            !finite(state.alignment.fromX) || !finite(state.alignment.elapsed) ||
+            !finite(state.alignment.duration) || state.alignment.duration <= 0))
+      ) return false;
+      for (const [key, value] of Object.entries(state)) {
+        // Never replace the random generator or add arbitrary saved properties.
+        if (Object.hasOwn(this.snapshot(), key))
+          this[key] = JSON.parse(JSON.stringify(value));
+      }
+      return true;
+    }
     get level() {
       return 1 + Math.floor(this.score / 5);
     }
