@@ -85,7 +85,7 @@
       let maxResult = level === 1 ? 10 : 18;
 
       if (level === 2) {
-        minResult = 5;
+        minResult = 6;
       } else if (level === 3) {
         minResult = 11;
       } else if (level >= 4) {
