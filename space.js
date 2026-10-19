@@ -129,7 +129,8 @@
   }
   function edit(value) {
     if (!running || paused || game.over || confirmingLeave) return;
-    answer = GameUI.editNumber(answer, value, 3);
+    const maxDigits = Math.max(3, ...game.enemies.map((enemy) => String(enemy.answer).length));
+    answer = GameUI.editNumber(answer, value, maxDigits);
     if (answer && game.shoot(answer)) {
       answer = "";
     }
