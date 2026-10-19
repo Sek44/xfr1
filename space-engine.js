@@ -65,11 +65,11 @@
             !finite(state.alignment.fromX) || !finite(state.alignment.elapsed) ||
             !finite(state.alignment.duration) || state.alignment.duration <= 0))
       ) return false;
-      for (const [key, value] of Object.entries(state)) {
-        // Never replace the random generator or add arbitrary saved properties.
-        if (Object.hasOwn(this.snapshot(), key))
-          this[key] = JSON.parse(JSON.stringify(value));
-      }
+      const fields = Object.keys(this.snapshot());
+      if (!fields.every((key) => Object.hasOwn(state, key))) return false;
+      // Restore only supported simulation fields, never the random generator.
+      for (const key of fields)
+        this[key] = JSON.parse(JSON.stringify(state[key]));
       return true;
     }
     get level() {
@@ -78,7 +78,12 @@
     operation() {
       const int = (min, max) =>
         min + Math.floor(this.random() * (max - min + 1));
-      const level = this.level;
+      // Keep the former difficulty on odd levels; blend adjacent difficulties
+      // on even levels to make the progression more gradual.
+      const stage = this.level;
+      const level =
+        Math.ceil(stage / 2) +
+        (stage % 2 === 0 && this.random() < 0.5 ? 1 : 0);
       let a, b;
       if (level === 1) {
         a = int(1, 9);

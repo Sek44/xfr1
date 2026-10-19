@@ -415,3 +415,41 @@ test("game state never rewrites historical scores and tolerates broken storage",
   saved.clear();
   assert.equal(f.storage.has("exercices_in_progress_calcul"), false);
 });
+
+test("finishing a question session removes the checkpoint without a duplicate score", () => {
+  const f = setup();
+  f.run("calcul.js");
+  const game = f.sessions[0];
+  assert.ok(f.storage.has("exercices_in_progress_calcul"));
+  for (let i = 0; i < game.total; i++) {
+    const panel = f.elements.get("panel"),
+      equation = panel.children[0].children[0].textContent,
+      [a, b] = equation.match(/\d+/g).map(Number),
+      keypad = panel.children.find((node) => node.className === "keypad");
+    for (const digit of String(a + b))
+      keypad.children[digit === "0" ? 10 : Number(digit) - 1].onclick();
+    panel.children.at(-1).children[0].onclick();
+    game.next();
+  }
+  assert.equal(f.storage.has("exercices_in_progress_calcul"), false);
+  assert.equal(f.saved.length, 1);
+  game.next();
+  assert.equal(f.saved.length, 1);
+});
+
+test("game checkpoints remain independent across all game pages", () => {
+  const storage = new Map();
+  for (const [page, key] of [
+    ["francais.js", "francais"],
+    ["calcul.js", "calcul"],
+  ]) {
+    const f = setup(undefined, storage);
+    f.run(page);
+    assert.ok(storage.has("exercices_in_progress_" + key));
+  }
+  assert.ok(storage.has("exercices_in_progress_francais"));
+  assert.ok(storage.has("exercices_in_progress_calcul"));
+  const one = setup(undefined, storage);
+  one.run("francais.js");
+  assert.ok(storage.has("exercices_in_progress_calcul"));
+});
