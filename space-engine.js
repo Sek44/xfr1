@@ -21,12 +21,13 @@
       this.playerX = 0.5;
       this.shots = [];
       this.alignment = null;
+      this.lastOperation = null;
     }
     snapshot() {
       const fields = [
         "lives", "bombs", "score", "enemies", "missiles", "effects",
         "time", "spawnIn", "over", "nextId", "nextEffectId",
-        "playerX", "shots", "alignment",
+        "playerX", "shots", "alignment", "lastOperation",
       ];
       return Object.fromEntries(
         fields.map((key) => [key, JSON.parse(JSON.stringify(this[key]))]),
@@ -66,10 +67,23 @@
             !finite(state.alignment.duration) || state.alignment.duration <= 0))
       ) return false;
       const fields = Object.keys(this.snapshot());
-      if (!fields.every((key) => Object.hasOwn(state, key))) return false;
+      if (!fields.every((key) => key === "lastOperation" || Object.hasOwn(state, key))) return false;
       // Restore only supported simulation fields, never the random generator.
-      for (const key of fields)
-        this[key] = JSON.parse(JSON.stringify(state[key]));
+      for (const key of fields) {
+        // Older saves predate lastOperation; infer it from the latest enemy.
+        if (key === "lastOperation") {
+          const latest = state.enemies.reduce(
+            (last, enemy) => (!last || enemy.id > last.id ? enemy : last),
+            null,
+          );
+          this.lastOperation =
+            typeof state.lastOperation === "string"
+              ? state.lastOperation
+              : latest ? latest.a + "+" + latest.b : null;
+        } else {
+          this[key] = JSON.parse(JSON.stringify(state[key]));
+        }
+      }
       return true;
     }
     get level() {
@@ -108,14 +122,15 @@
       let a, b;
       for (let i = 0; i < 100; i++) {
         ({ a, b } = this.operation());
-        if (!answers.has(a + b)) break;
+        if (!answers.has(a + b) && this.lastOperation !== a + "+" + b) break;
       }
-      if (answers.has(a + b)) return;
+      if (answers.has(a + b) || this.lastOperation === a + "+" + b) return;
       const lanes = [0.16, 0.5, 0.84];
       const free = lanes.filter(
         (x) => !this.enemies.some((e) => Math.abs(e.x - x) < 0.2 && e.y < 0.24),
       );
       if (!free.length) return;
+      this.lastOperation = a + "+" + b;
       this.enemies.push({
         id: ++this.nextId,
         level: this.level,
