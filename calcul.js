@@ -90,7 +90,7 @@
           q.result === q.a + q.b,
       ) ||
       typeof state.answer !== "string" ||
-      !/^\\d{0,6}$/.test(state.answer) ||
+      !/^\d{0,6}$/.test(state.answer) ||
       state.progress?.total !== state.questions.length
     )
       return false;
