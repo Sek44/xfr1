@@ -1,14 +1,16 @@
 "use strict";
 (() => {
   const $ = (id) => document.getElementById(id),
-    game = new SpaceGame();
+    game = new SpaceGame(),
+    storedGame = GameState.create("space");
   let running = false,
     paused = false,
     answer = "",
     last = 0,
     saved = false,
     displayedLevel = game.level,
-    levelAnimation = null;
+    levelAnimation = null,
+    lastPersist = 0;
   const sprites = new Map();
   let viewingScores = false,
     confirmingLeave = false;
@@ -16,12 +18,45 @@
     suspend: () => {
       viewingScores = true;
       last = 0;
+      persist();
     },
     resume: () => {
       last = 0;
       viewingScores = false;
     },
   });
+  function persist() {
+    if (running && !saved && !game.over)
+      storedGame.save({ game: game.snapshot(), answer, paused });
+  }
+  function showPause() {
+    $("overlay").hidden = false;
+    $("overlay-title").textContent = "Petite pause";
+    $("instructions").textContent =
+      "La galaxie peut attendre. Reprends quand tu es prêt !";
+    $("bomb-help").hidden = true;
+    $("result").textContent = "";
+    $("start").textContent = "Reprendre";
+  }
+  function restore() {
+    const state = storedGame.load();
+    if (
+      !state ||
+      typeof state.answer !== "string" ||
+      !/^[0-9]{0,3}$/.test(state.answer) ||
+      !game.restore(state.game)
+    ) return false;
+    answer = state.answer;
+    running = true;
+    // No enemies should move before the player chooses to resume.
+    paused = true;
+    saved = false;
+    last = 0;
+    displayedLevel = game.level;
+    $("level").textContent = game.level;
+    showPause();
+    return true;
+  }
   // Independent visual randomness keeps the sky irregular without affecting gameplay.
   const starfield = $("stars");
   for (let i = 0; i < 90; i++) {
@@ -99,6 +134,7 @@
       answer = "";
     }
     sync();
+    persist();
   }
   GameUI.keypad($("keypad"), edit, { clearLabel: "C" });
   function bomb() {
@@ -106,6 +142,7 @@
     if (game.bomb()) {
       answer = "";
       sync();
+      persist();
     }
   }
   function start() {
@@ -119,21 +156,16 @@
     last = 0;
     $("overlay").hidden = true;
     sync();
+    persist();
   }
   function pause() {
     if (!running || game.over) return;
     paused = !paused;
     last = 0;
     $("overlay").hidden = !paused;
-    if (paused) {
-      $("overlay-title").textContent = "Petite pause";
-      $("instructions").textContent =
-        "La galaxie peut attendre. Reprends quand tu es prêt !";
-      $("bomb-help").hidden = true;
-      $("result").textContent = "";
-      $("start").textContent = "Reprendre";
-    }
+    if (paused) showPause();
     sync();
+    persist();
   }
   function finish() {
     if (saved) return;
@@ -141,6 +173,7 @@
     running = false;
     paused = false;
     game.over = true;
+    storedGame.clear();
     ExerciseScores.save({
       tab: "space",
       category: "Mission calcul",
@@ -160,7 +193,7 @@
     $("overlay").hidden = false;
     sync();
   }
-  async function confirmEnd(home = false) {
+  async function confirmEnd() {
     if (!running || saved || confirmingLeave) return;
     confirmingLeave = true;
     last = 0;
@@ -169,17 +202,12 @@
         game.score === 0 ||
         (await AppConfirm.ask({
           theme: "dark",
-          title: home ? "Revenir à l’accueil ?" : "Terminer la partie ?",
+          title: "Terminer la partie ?",
           message: "Ton score actuel sera enregistré.",
-          confirmText: home
-            ? "Quitter et enregistrer"
-            : "Terminer et enregistrer",
+          confirmText: "Terminer et enregistrer",
           cancelText: "Continuer",
         }));
-      if (confirmed) {
-        finish();
-        if (home) window.location.assign($("home-link").href);
-      }
+      if (confirmed) finish();
     } finally {
       confirmingLeave = false;
       last = 0;
@@ -189,19 +217,10 @@
   $("bomb").onclick = bomb;
   $("pause").onclick = pause;
   $("end-game").onclick = () => confirmEnd();
-  $("home-link").addEventListener("click", (event) => {
-    if (
-      !running ||
-      saved ||
-      event.button !== 0 ||
-      event.ctrlKey ||
-      event.metaKey ||
-      event.shiftKey ||
-      event.altKey
-    )
-      return;
-    event.preventDefault();
-    confirmEnd(true);
+  // Going home no longer ends the game or records a partial score.
+  window.addEventListener("pagehide", persist);
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted && running && !paused) pause();
   });
   document.addEventListener("visibilitychange", () => {
     if (
@@ -348,11 +367,16 @@
       }
       sync();
       if (game.over) finish();
+      else if (now - lastPersist >= 500) {
+        persist();
+        lastPersist = now;
+      }
     }
     last = now;
     draw();
     requestAnimationFrame(frame);
   }
+  restore();
   sync();
   requestAnimationFrame(frame);
 })();

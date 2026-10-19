@@ -39,7 +39,7 @@ class Node {
   }
   addEventListener() {}
 }
-function setup(files = ["game-ui.js", "game-common.js"]) {
+function setup(files = ["game-state.js", "game-ui.js", "game-common.js"], storage = new Map()) {
   let now = 0,
     id = 0;
   const timers = new Map(),
@@ -48,6 +48,17 @@ function setup(files = ["game-ui.js", "game-common.js"]) {
     saved = [];
   const context = {
     window: null,
+    localStorage: {
+      getItem(key) {
+        return storage.has(key) ? storage.get(key) : null;
+      },
+      setItem(key, value) {
+        storage.set(key, value);
+      },
+      removeItem(key) {
+        storage.delete(key);
+      },
+    },
     document: {
       createElement: (tag) => new Node(tag),
       createTextNode: (text) =>
@@ -112,7 +123,7 @@ function setup(files = ["game-ui.js", "game-common.js"]) {
     }
     now = end;
   }
-  return { context, run, advance, elements, sessions, saved, timers };
+  return { context, run, advance, elements, sessions, saved, timers, storage };
 }
 
 test("numeric controls use identical commands with game-specific labels, limits and disabled state", () => {
@@ -248,7 +259,7 @@ test("French controller starts with shared progress, feedback and resumable sess
 });
 
 test("Mission calcul uses shared input and removes old sprites on restart", () => {
-  const f = setup(["game-ui.js", "space-engine.js"]);
+  const f = setup(["game-state.js", "game-ui.js", "space-engine.js"]);
   const Base = f.context.SpaceGame;
   let game;
   f.context.SpaceGame = class extends Base {
@@ -277,4 +288,168 @@ test("Mission calcul uses shared input and removes old sprites on restart", () =
   f.context.visit.resume();
   f.context.frame(12000);
   assert.equal(game.time, 0);
+});
+
+test("shared exercise countdown resumes after reload with the remaining time", () => {
+  const before = setup();
+  const first = before.context.ExerciseGame.create({
+    onChange() {},
+    onFinish() {},
+  });
+  first.reset(10);
+  first.validate(false);
+  first.validate(true);
+  before.advance(1250);
+  const data = first.snapshot();
+  assert.equal(data.score, 0);
+  assert.equal(data.failed, true);
+  const after = setup();
+  const restored = after.context.ExerciseGame.create({
+    onChange() {},
+    onFinish() {},
+  });
+  assert.equal(restored.restore(data), true);
+  assert.equal(restored.failed, true);
+  after.advance(1749);
+  assert.equal(restored.index, 0);
+  after.advance(1);
+  assert.equal(restored.index, 1);
+  assert.equal(restored.restore({ ...data, index: 99 }), false);
+});
+
+test("French and additions keep the same questions, answers and feedback after a refresh", () => {
+  for (const file of ["calcul.js", "francais.js"]) {
+    const before = setup();
+    before.run(file);
+    const progress = before.sessions[0];
+    const panel = before.elements.get("panel");
+    if (file === "calcul.js") {
+      panel.children.find((n) => n.className === "keypad").children[1].onclick();
+    } else {
+      panel.children.find((n) => n.className === "choices").children[1].onclick();
+      panel.children.at(-1).children[0].onclick(); // May be a correction.
+    }
+    const stored = JSON.parse(
+      before.storage.get(
+        "exercices_in_progress_" + (file === "calcul.js" ? "calcul" : "francais"),
+      ),
+    );
+    assert.equal(stored.version, 1);
+    const after = setup(undefined, before.storage);
+    after.run(file);
+    const loaded = JSON.parse(
+      after.storage.get(
+        "exercices_in_progress_" + (file === "calcul.js" ? "calcul" : "francais"),
+      ),
+    );
+    assert.deepEqual(loaded.session.questions, stored.session.questions);
+    assert.deepEqual(loaded.session.progress, stored.session.progress);
+    assert.equal(loaded.session.answer ?? loaded.session.selected,
+      stored.session.answer ?? stored.session.selected);
+    assert.equal(after.sessions[0].index, progress.index);
+    assert.equal(after.saved.length, 0);
+  }
+});
+
+test("arcade state survives refresh with exact ships, missiles, bombs and score", () => {
+  function open(storage) {
+    const f = setup(["game-state.js", "game-ui.js", "space-engine.js"], storage);
+    const Original = f.context.SpaceGame;
+    let simulation;
+    f.context.SpaceGame = class extends Original {
+      constructor() {
+        super();
+        simulation = this;
+      }
+    };
+    f.context.SpaceEnemies = {
+      visual: () => ({ svg: "<svg/>", color: "blue", armor: "gray" }),
+    };
+    f.run("space.js");
+    return { f, simulation };
+  }
+  const first = open();
+  first.f.elements.get("start").onclick();
+  first.f.context.frame(1000);
+  first.simulation.score = 8;
+  first.simulation.bombs = 4;
+  first.simulation.missiles.push({ target: 1, x: 0.5, y: 0.8 });
+  const original = first.simulation.snapshot();
+  first.f.context.visit.suspend();
+  const second = open(first.f.storage);
+  assert.deepEqual(JSON.parse(JSON.stringify(second.simulation.snapshot())),
+    JSON.parse(JSON.stringify(original)));
+  assert.equal(second.f.elements.get("overlay").hidden, false);
+  assert.equal(second.f.elements.get("start").textContent, "Reprendre");
+  assert.equal(second.f.elements.get("points").textContent, 8);
+  second.f.context.frame(999999);
+  assert.equal(second.simulation.time, original.time);
+  second.f.elements.get("start").onclick();
+  second.f.context.frame(1000000);
+  assert.equal(second.simulation.time, original.time);
+  assert.equal(second.f.saved.length, 0);
+});
+
+test("explicitly ending arcade session clears recovery data and records exactly once", () => {
+  const f = setup(["game-state.js", "game-ui.js", "space-engine.js"]);
+  f.context.SpaceEnemies = {
+    visual: () => ({ svg: "<svg/>", color: "blue", armor: "gray" }),
+  };
+  f.run("space.js");
+  f.elements.get("start").onclick();
+  assert.ok(f.storage.has("exercices_in_progress_space"));
+  f.elements.get("end-game").onclick(); // Zero score needs no confirmation.
+  assert.equal(f.saved.length, 1);
+  assert.equal(f.storage.has("exercices_in_progress_space"), false);
+});
+
+test("game state never rewrites historical scores and tolerates broken storage", () => {
+  const f = setup();
+  const history = '[{"tab":"g","score":6,"legacy":true}]';
+  f.storage.set("exercices_francais_scores", history);
+  f.storage.set("exercices_in_progress_calcul", "{bad json");
+  const saved = f.context.GameState.create("calcul");
+  assert.equal(saved.load(), null);
+  assert.equal(saved.save({ question: 7 }), true);
+  assert.equal(f.storage.get("exercices_francais_scores"), history);
+  saved.clear();
+  assert.equal(f.storage.has("exercices_in_progress_calcul"), false);
+});
+
+test("finishing a question session removes the checkpoint without a duplicate score", () => {
+  const f = setup();
+  f.run("calcul.js");
+  const game = f.sessions[0];
+  assert.ok(f.storage.has("exercices_in_progress_calcul"));
+  for (let i = 0; i < game.total; i++) {
+    const panel = f.elements.get("panel"),
+      equation = panel.children[0].children[0].textContent,
+      [a, b] = equation.match(/\d+/g).map(Number),
+      keypad = panel.children.find((node) => node.className === "keypad");
+    for (const digit of String(a + b))
+      keypad.children[digit === "0" ? 10 : Number(digit) - 1].onclick();
+    panel.children.at(-1).children[0].onclick();
+    game.next();
+  }
+  assert.equal(f.storage.has("exercices_in_progress_calcul"), false);
+  assert.equal(f.saved.length, 1);
+  game.next();
+  assert.equal(f.saved.length, 1);
+});
+
+test("game checkpoints remain independent across all game pages", () => {
+  const storage = new Map();
+  for (const [page, key] of [
+    ["francais.js", "francais"],
+    ["calcul.js", "calcul"],
+  ]) {
+    const f = setup(undefined, storage);
+    f.run(page);
+    assert.ok(storage.has("exercices_in_progress_" + key));
+  }
+  assert.ok(storage.has("exercices_in_progress_francais"));
+  assert.ok(storage.has("exercices_in_progress_calcul"));
+  const one = setup(undefined, storage);
+  one.run("francais.js");
+  assert.ok(storage.has("exercices_in_progress_calcul"));
 });

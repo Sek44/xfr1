@@ -143,6 +143,7 @@
     selected = null,
     lastQuestionIndex = 0;
   let questions = shuffleSession(tab);
+  const storedGame = GameState.create("francais");
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
@@ -150,10 +151,46 @@
         lastQuestionIndex = game.index;
       }
       render();
+      persist();
     },
-    onFinish: ({ score, total }) => ExerciseScores.save({ tab, score, total }),
+    onFinish: ({ score, total }) => {
+      storedGame.clear();
+      ExerciseScores.save({ tab, score, total });
+    },
   });
   const make = GameUI.element;
+  function persist() {
+    if (game.index === game.total) {
+      storedGame.clear();
+      return;
+    }
+    storedGame.save({ tab, questions, selected, progress: game.snapshot() });
+  }
+  function restore() {
+    const state = storedGame.load();
+    if (
+      !state ||
+      !Object.hasOwn(sets, state.tab) ||
+      !Array.isArray(state.questions) ||
+      state.questions.length !== SESSION_SIZE ||
+      !state.questions.every(
+        (item) =>
+          Array.isArray(item) &&
+          item.length === 3 &&
+          item.every((part) => typeof part === "string") &&
+          sets[state.tab].options.includes(item[2]),
+      ) ||
+      (state.selected !== null &&
+        !sets[state.tab].options.includes(state.selected)) ||
+      state.progress?.total !== state.questions.length
+    )
+      return false;
+    tab = state.tab;
+    questions = state.questions;
+    selected = state.selected;
+    lastQuestionIndex = state.progress.index;
+    return game.restore(state.progress);
+  }
 
   function shuffleSession(t) {
     const shuffled = sets[t].items.slice();
@@ -173,6 +210,7 @@
     if (!game.correct) {
       selected = v;
       render();
+      persist();
     }
   }
   function verify() {
@@ -246,10 +284,20 @@
     actions.append(button);
     panel.append(actions);
   }
-  render();
+  if (!restore()) game.reset(questions.length);
 
   ScoreView.bind({
-    suspend: () => game.suspend(),
+    suspend: () => {
+      game.suspend();
+      persist();
+    },
     resume: () => game.resume(),
+  });
+  window.addEventListener("pagehide", () => {
+    game.suspend();
+    persist();
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) game.resume();
   });
 })();
