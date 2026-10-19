@@ -78,30 +78,26 @@
     operation() {
       const int = (min, max) =>
         min + Math.floor(this.random() * (max - min + 1));
-      // Keep the former difficulty on odd levels; blend adjacent difficulties
-      // on even levels to make the progression more gradual.
-      const stage = this.level;
-      const level =
-        Math.ceil(stage / 2) +
-        (stage % 2 === 0 && this.random() < 0.5 ? 1 : 0);
-      let a, b;
-      if (level === 1) {
-        a = int(1, 9);
-        b = int(1, 10 - a);
-      } else if (level === 2) {
-        a = int(1, 9);
-        b = int(10 - a, 9);
-      } else if (level === 3) {
-        a = int(2, 4) * 10 + int(1, 9);
-        b = int(10 - (a % 10), 9);
-      } else if (level === 4) {
-        a = int(5, 9) * 10 + int(1, 9);
-        b = int(10 - (a % 10), 9);
-      } else {
-        const hundreds = Math.min(9, level - 4);
-        a = int(hundreds * 100, hundreds * 100 + 90);
-        b = int(1, 9);
+      const level = this.level;
+      let minA = 1;
+      let maxA = 9;
+      let minResult = 2;
+      let maxResult = level === 1 ? 10 : 18;
+
+      if (level === 3) {
+        minResult = 11;
+      } else if (level >= 4) {
+        // Two levels per decade: no carry, then carry.
+        const decade = Math.floor((level - 4) / 2) + 1;
+        minA = decade * 10;
+        maxA = minA + 9;
+        minResult = minA + 1;
+        maxResult = maxA + (level % 2 === 0 ? 1 : 9);
       }
+
+      // Pick only first operands for which a one-digit second operand exists.
+      const a = int(Math.max(minA, minResult - 9), Math.min(maxA, maxResult - 1));
+      const b = int(Math.max(1, minResult - a), Math.min(9, maxResult - a));
       return { a, b };
     }
     spawn() {
