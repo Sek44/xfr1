@@ -63,6 +63,52 @@ window.ExerciseGame = (() => {
       if (index === total) onFinish({ score, total });
       onChange();
     }
+    // The countdown resumes from the saved remainder, not elapsed wall-clock time.
+    function snapshot() {
+      return {
+        index,
+        score,
+        failed,
+        correct,
+        total,
+        remaining: correct
+          ? timer !== null
+            ? Math.max(0, deadline - Date.now())
+            : remaining
+          : null,
+      };
+    }
+    function restore(state) {
+      if (
+        !state ||
+        !Number.isInteger(state.total) ||
+        state.total < 1 ||
+        state.total > 100 ||
+        !Number.isInteger(state.index) ||
+        state.index < 0 ||
+        state.index >= state.total ||
+        !Number.isInteger(state.score) ||
+        state.score < 0 ||
+        state.score > state.index + 1 ||
+        typeof state.failed !== "boolean" ||
+        typeof state.correct !== "boolean" ||
+        (state.correct &&
+          (!Number.isFinite(state.remaining) ||
+            state.remaining < 0 ||
+            state.remaining > DELAY_MS))
+      )
+        return false;
+      cancel();
+      index = state.index;
+      score = state.score;
+      failed = state.failed;
+      correct = state.correct;
+      total = state.total;
+      remaining = correct ? state.remaining : null;
+      onChange();
+      resume();
+      return true;
+    }
     function progress(container) {
       container.classList.toggle("progress-row", true);
       container.replaceChildren();
@@ -122,6 +168,8 @@ window.ExerciseGame = (() => {
     }
     return {
       reset,
+      restore,
+      snapshot,
       validate,
       next,
       cancel,
