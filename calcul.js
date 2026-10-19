@@ -38,6 +38,7 @@
     questions = [],
     answer = "",
     lastQuestionIndex = 0;
+  const storedGame = GameState.create("calcul");
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
@@ -45,16 +46,61 @@
         lastQuestionIndex = game.index;
       }
       render();
+      persist();
     },
-    onFinish: ({ score, total }) =>
+    onFinish: ({ score, total }) => {
+      storedGame.clear();
       ExerciseScores.save({
         tab: "math",
         category: "Additions " + range + " / niveau " + category,
         score,
         total,
-      }),
+      });
+    },
   });
   const el = (id) => document.getElementById(id);
+  function persist() {
+    if (!questions.length || game.index === game.total) {
+      storedGame.clear();
+      return;
+    }
+    storedGame.save({
+      range,
+      category,
+      questions,
+      answer,
+      progress: game.snapshot(),
+    });
+  }
+  function restore() {
+    const state = storedGame.load();
+    if (
+      !state ||
+      !Object.hasOwn(ranges, state.range) ||
+      !Object.hasOwn(levels, state.category) ||
+      !Array.isArray(state.questions) ||
+      state.questions.length < 1 ||
+      state.questions.length > 10 ||
+      !state.questions.every(
+        (q) =>
+          q &&
+          Number.isInteger(q.a) &&
+          Number.isInteger(q.b) &&
+          Number.isInteger(q.result) &&
+          q.result === q.a + q.b,
+      ) ||
+      typeof state.answer !== "string" ||
+      !/^\\d{0,6}$/.test(state.answer) ||
+      state.progress?.total !== state.questions.length
+    )
+      return false;
+    range = state.range;
+    category = state.category;
+    questions = state.questions;
+    answer = state.answer;
+    lastQuestionIndex = state.progress.index;
+    return game.restore(state.progress);
+  }
   function randint(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
@@ -170,6 +216,7 @@
       answer = GameUI.editNumber(answer, value, 6);
       display.textContent = answer || " ";
       button.disabled = !answer.length;
+      persist();
     }
     GameUI.keypad(keypad, edit, { disabled: game.correct });
     p.append(keypad);
@@ -186,10 +233,20 @@
     actions.append(button);
     p.append(actions);
   }
-  newSession();
+  if (!restore()) newSession();
 
   ScoreView.bind({
-    suspend: () => game.suspend(),
+    suspend: () => {
+      game.suspend();
+      persist();
+    },
     resume: () => game.resume(),
+  });
+  window.addEventListener("pagehide", () => {
+    game.suspend();
+    persist();
+  });
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) game.resume();
   });
 })();
