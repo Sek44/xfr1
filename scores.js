@@ -97,6 +97,7 @@ window.ExerciseScores = (() => {
   }
   function label(record) {
     if (record.tab === "space") return "Mission calcul";
+    if (record.tab === "magic") return "Mission magique";
     if (record.tab === "math") return record.category || "Additions";
     if (record.tab === "g") return "Français · g / gu / ge";
     if (record.tab === "c") return "Français · c / ç";
@@ -146,7 +147,7 @@ window.ExerciseScores = (() => {
       top = 24,
       bottom = 46;
     const maximum = Math.max(
-      game === "space" ? 1 : 10,
+      game === "space" || game === "magic" ? 1 : 10,
       ...points.map((point) => point.value),
     );
     const step = Math.max(1, Math.ceil(maximum / 5)),
@@ -270,8 +271,8 @@ window.ExerciseScores = (() => {
         game === null ||
         (game === "math"
           ? r.tab === "math"
-          : game === "space"
-            ? r.tab === "space"
+          : game === "space" || game === "magic"
+            ? r.tab === game
             : r.tab === "g" || r.tab === "c"),
     );
     const title = document.createElement("h2");
@@ -282,7 +283,9 @@ window.ExerciseScores = (() => {
           ? "Mes résultats en calcul"
           : game === "space"
             ? "Mes missions spatiales"
-            : "Mes résultats en français";
+            : game === "magic"
+              ? "Mes aventures magiques"
+              : "Mes résultats en français";
     container.append(title);
     if (!records.length) {
       const p = document.createElement("p");

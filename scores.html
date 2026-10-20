@@ -75,16 +75,17 @@
         <a href="./scores.html" data-game="all">Tous</a
         ><a href="./scores.html?game=francais" data-game="francais">Français</a
         ><a href="./scores.html?game=calcul" data-game="calcul">Calcul</a
-        ><a href="./scores.html?game=space" data-game="space">Mission calcul</a>
+        ><a href="./scores.html?game=space" data-game="space">Mission calcul</a
+        ><a href="./scores.html?game=magic" data-game="magic">Mission magique</a>
       </div>
       <section id="history" class="history-panel"></section>
     </main>
     <script src="./app-confirm.js?v=20261018-confirm14"></script>
-    <script src="./scores.js?v=20261018-score-graph"></script>
+    <script src="./scores.js?v=20261020-magic1"></script>
     <script>
       "use strict";
       const game = new URLSearchParams(location.search).get("game");
-      const selected = ["francais", "calcul", "space"].includes(game)
+      const selected = ["francais", "calcul", "space", "magic"].includes(game)
         ? game
         : null;
       for (const link of document.querySelectorAll("[data-game]")) {
@@ -97,6 +98,7 @@
         francais: "francais.html",
         calcul: "calcul.html",
         space: "space.html",
+        magic: "magic.html",
       };
       const params = new URLSearchParams(location.search);
       let origin = params.get("from");

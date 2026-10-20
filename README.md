@@ -1,6 +1,6 @@
 # Entraînement
 
-Static French, addition and space-math games, served by GitHub Pages.
+Static French, addition, space-math and magical-forest games, served by GitHub Pages.
 No build step or runtime dependency is required.
 
 ## Code organization
@@ -15,12 +15,15 @@ No build step or runtime dependency is required.
 | `calcul.js`, `francais.js` | Exercise content, question generation and game-specific presentation | Respective exercise page |
 | `space-engine.js` | Pure space simulation and arithmetic difficulty | Mission calcul |
 | `space.js`, `space-enemies.js` | Space controls, lifecycle and visuals | Mission calcul |
+| `magic-engine.js`, `magic.js`, `magic.css` | Pure world simulation, animated isometric woodland and magical adventure controls | Mission magique |
 
 Keep reusable behavior in these shared modules. Keep simulation and exercise
 rules in their own controllers. A question-based game should use `ExerciseGame`
 and register its suspend/resume callbacks with `ScoreView`. Numeric controls
 should use `GameUI.keypad` and `GameUI.editNumber`; each game specifies its
-own input length and clear-button label.
+own input length and clear-button label. Arcade games keep movement and
+targeting rules in a pure engine and share `GameState`, `ScoreView`,
+`AppConfirm` and `ExerciseScores`.
 
 Scripts use private scopes to avoid accidental globals; only shared APIs are
 exported on `window`. Load each shared dependency before its game controller.

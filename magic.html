@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#151f27" />
+    <title>Mission magique — Entraînement</title>
+    <link rel="stylesheet" href="./shared.css" />
+    <link rel="stylesheet" href="./magic.css?v=20261020-1" />
+    <link rel="stylesheet" href="./score-view.css" />
+    <link rel="stylesheet" href="./app-confirm.css" />
+  </head>
+  <body>
+    <main class="magic-app">
+      <nav class="page-nav page-header">
+        <a id="home-link" class="nav-link nav-icon" href="./" aria-label="Retour à l’accueil">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" /></svg>
+        </a>
+        <h1 class="page-title">Mission magique</h1>
+        <a class="nav-link nav-icon" href="./scores.html?game=magic" aria-label="Voir les scores">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="2" />
+            <path d="M8 8h8M8 12h8M8 16h5" />
+          </svg>
+        </a>
+      </nav>
+      <div class="magic-hud">
+        <span class="journey">✦ La forêt enchantée</span>
+        <span class="points">Score <strong id="points" aria-live="polite">0</strong></span>
+        <div class="magic-actions">
+          <button id="pause" title="Pause" aria-label="Mettre en pause" disabled>Ⅱ</button>
+          <button id="end-game" title="Terminer" aria-label="Terminer la partie" disabled>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" /></svg>
+          </button>
+        </div>
+      </div>
+      <div class="magic-layout">
+        <section class="magic-arena" aria-label="Forêt enchantée et créatures avec des additions">
+          <canvas id="ground" aria-hidden="true"></canvas>
+          <div id="creatures" class="creatures" aria-live="off"></div>
+          <div id="magic-effects" aria-hidden="true"></div>
+          <div id="wizard" class="wizard" aria-label="Ton petit magicien">
+            <svg viewBox="0 0 100 132" aria-hidden="true">
+              <ellipse cx="47" cy="124" rx="24" ry="6" fill="#0d241d" opacity=".35"/>
+              <path d="M30 108 27 123l20 1 2-17ZM57 108l-1 16 19-3-7-18" fill="#241b2c" stroke="#37293b" stroke-width="2"/>
+              <path d="M26 66Q9 85 13 119L45 115 78 121Q89 92 66 65Z" fill="#43356b" stroke="#28203e" stroke-width="3"/>
+              <path d="M41 67 51 111 60 69" fill="#8a77bf" opacity=".65"/>
+              <path d="M31 71Q20 81 22 99l15-9 2-19M66 70q12 12 18 24l-12 5-13-22" fill="#594585" stroke="#2d2347" stroke-width="2"/>
+              <path d="M34 42q-5 17 4 26 15 17 28-3l-1-24Z" fill="#b0794d"/>
+              <ellipse cx="50" cy="56" rx="22" ry="20" fill="#f2bd84" stroke="#6c473d" stroke-width="2"/>
+              <path d="M29 49q2-19 19-19 19 0 25 20l-11-7-6 5-12-5-9 10Z" fill="#4a2d29"/>
+              <circle cx="42" cy="57" r="2.5" fill="#2b2629"/><circle cx="59" cy="57" r="2.5" fill="#2b2629"/>
+              <path d="M46 67q6 4 11-1" fill="none" stroke="#924e48" stroke-width="2" stroke-linecap="round"/>
+              <path d="M13 43Q33 31 44 5q5-7 10 3L78 43Q52 56 13 43Z" fill="#303159" stroke="#c39a55" stroke-width="3"/>
+              <path d="M45 13q8 14 13 30L32 44Z" fill="#4d4b83"/>
+              <path d="M15 43q31 10 62 0" fill="none" stroke="#d9b16b" stroke-width="5"/>
+              <path d="M76 89 98 38" stroke="#332322" stroke-width="5" stroke-linecap="round"/>
+              <path d="M97 38 98 30" stroke="#fff3c8" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="98" cy="28" r="4" fill="#fee28a"/>
+              <path d="M96 17v6m0 11v7m-10-13h7m7 0h5" stroke="#ffe79b" stroke-width="2" stroke-linecap="round"/>
+              <path d="M31 81 43 90 65 80" fill="none" stroke="#bd995e" stroke-width="3"/>
+            </svg>
+          </div>
+          <div id="overlay" class="magic-overlay">
+            <div class="magic-dialog">
+              <span class="eyebrow">✧ AVENTURE ENCHANTÉE ✧</span>
+              <h2 id="overlay-title">Bienvenue dans la forêt magique !</h2>
+              <p id="instructions">Ton magicien avance tout seul. Les fantômes et petits monstres portent des additions. Tape un résultat sur le pavé numérique : ta baguette lance un sort sur la bonne créature et tu gagnes 1 point !</p>
+              <p id="result" role="status"></p>
+              <button id="start" class="primary">Commencer l’aventure ✨</button>
+            </div>
+          </div>
+        </section>
+        <section class="magic-controls" aria-label="Pavé numérique">
+          <div class="answer-panel">
+            <span>Résultat du sort</span>
+            <output id="answer" aria-label="Résultat saisi">?</output>
+          </div>
+          <div id="keypad" class="keypad"></div>
+          <p id="hint" class="hint" role="status" aria-live="polite">Trouve le résultat d’une addition affichée !</p>
+        </section>
+      </div>
+    </main>
+    <script src="./game-state.js"></script>
+    <script src="./score-view.js"></script>
+    <script src="./app-confirm.js"></script>
+    <script src="./scores.js?v=20261020-magic1"></script>
+    <script src="./game-ui.js"></script>
+    <script src="./magic-engine.js?v=20261020-1"></script>
+    <script src="./magic.js?v=20261020-1"></script>
+  </body>
+</html>
