@@ -302,9 +302,7 @@
           ctx.fillStyle = "#baae85";
           ctx.fillRect(x - 2, y, 4, 2);
         }
-        if (!onPath && seed > .78 && r % 3 === 0)
-          tree(x, y + 5, .56 + (y / h) * .45, seed > .88 ? "#1b4936" : "#246044");
-        else if (!onPath && seed < .16) {
+        if (!onPath && seed < .16) {
           ctx.fillStyle = seed < .06 ? "#f1cb88" : "#9d92c6";
           ctx.beginPath(); ctx.arc(x, y, 2.2, 0, 2 * Math.PI); ctx.fill();
         }
@@ -312,6 +310,19 @@
           ctx.fillStyle = "#d3b88a";
           ctx.beginPath(); ctx.ellipse(x, y, 5, 2.3, 0, 0, 2 * Math.PI); ctx.fill();
         }
+      }
+    }
+    // Paint trees after the floor, so tiles cannot cover their foliage.
+    for (let r = -1; r < rows; r++) {
+      const worldRow = first + r;
+      const y = r * stride + offset;
+      if (r % 3 !== 0) continue;
+      for (let c = -1; c <= cols; c++) {
+        const x = (c + (worldRow % 2) * .5) * tileW;
+        if (Math.abs(x - w * .5) < w * .33) continue;
+        const seed = rand(worldRow, c);
+        if (seed > .78)
+          tree(x, y + 5, .56 + (y / h) * .45, seed > .88 ? "#1b4936" : "#246044");
       }
     }
     const shade = ctx.createRadialGradient(w*.5, h*.5, h*.15, w*.5, h*.5, h*.86);
@@ -398,6 +409,10 @@
   function frame(now) {
     if (running && !paused && !viewingScores && !confirming) {
       if (last) game.step(Math.min((now - last) / 1000, .05));
+      if (game.score !== Number($("points").textContent)) {
+        sync();
+        persist();
+      }
       if (now - lastPersist >= 1500) {
         sync();
         persist();
