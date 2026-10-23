@@ -319,26 +319,34 @@
   }
 
   function shuffleSession(t) {
-    const pool = sets[t].items.slice();
+    // Sample words, not sentences: many example sentences for a word
+    // must not increase that word's chance of appearing.
+    const sentencesByWord = new Map();
+    for (const item of sets[t].items) {
+      const key = wordKey(t, item);
+      if (!sentencesByWord.has(key)) sentencesByWord.set(key, []);
+      sentencesByWord.get(key).push(item);
+    }
+    const words = [...sentencesByWord.keys()];
     const session = [];
-    const usedWords = new Set();
-    while (pool.length && session.length < SESSION_SIZE) {
-      const candidates = pool.filter((item) => !usedWords.has(wordKey(t, item)));
-      if (!candidates.length) break;
-      const weights = candidates.map((item) => 1 / ((appearanceCount(t, item) + 1) ** 2));
+    while (words.length && session.length < SESSION_SIZE) {
+      const weights = words.map((key) => {
+        const count = wordCounts[key];
+        const appearances = Number.isSafeInteger(count) && count >= 0 ? count : 0;
+        return 1 / ((appearances + 1) ** 2);
+      });
       let draw = Math.random() * weights.reduce((sum, weight) => sum + weight, 0);
-      let selectedIndex = weights.length - 1;
-      for (let i = 0; i < weights.length; i++) {
+      let index = words.length - 1;
+      for (let i = 0; i < words.length; i++) {
         draw -= weights[i];
         if (draw < 0) {
-          selectedIndex = i;
+          index = i;
           break;
         }
       }
-      const item = candidates[selectedIndex];
-      session.push(item);
-      usedWords.add(wordKey(t, item));
-      pool.splice(pool.indexOf(item), 1);
+      const key = words.splice(index, 1)[0];
+      const variants = sentencesByWord.get(key);
+      session.push(variants[Math.floor(Math.random() * variants.length)]);
     }
     return session;
   }
