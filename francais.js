@@ -69,6 +69,66 @@
         ["Le ", "épard observe sa proie.", "gu"],
         ["Elle bou", "e les bras.", "g"],
         ["Nous chan", "ons de place.", "ge"],
+        ["Le ti","reundefined","g"],
+        ["Une fourmi","eundefined","g"],
+        ["La monta","neundefined","g"],
+        ["Ce lé","umeundefined","g"],
+        ["Un nua","eundefined","g"],
+        ["Le froma","eundefined","g"],
+        ["La pa","eundefined","g"],
+        ["Le visa","eundefined","g"],
+        ["Le voya","eundefined","g"],
+        ["Un passa","erundefined","g"],
+        ["La ca","eundefined","g"],
+        ["Un ora","eundefined","g"],
+        ["Le ména","eundefined","g"],
+        ["Un baga","eundefined","g"],
+        ["Le plon","eurundefined","g"],
+        ["Le manè","eundefined","g"],
+        ["Le collè","eundefined","g"],
+        ["La ma","ieundefined","g"],
+        ["Un éleva","eundefined","g"],
+        ["Le coquilla","eundefined","g"],
+        ["Le camoufla","eundefined","g"],
+        ["Le paysa","eundefined","g"],
+        ["Le personna","eundefined","g"],
+        ["Un messa","eundefined","g"],
+        ["Le parta","eundefined","g"],
+        ["Le lava","eundefined","g"],
+        ["Un vira","eundefined","g"],
+        ["Le repassa","eundefined","g"],
+        ["Le jardina","eundefined","g"],
+        ["Le gara","isteundefined","g"],
+        ["Le ga","nantundefined","g"],
+        ["La fi","ueundefined","g"],
+        ["Le lo","ementundefined","g"],
+        ["La si","natureundefined","g"],
+        ["La fati","ueundefined","g"],
+        ["Un dialo","ueundefined","g"],
+        ["La lan","ueundefined","g"],
+        ["La dé","ustationundefined","g"],
+        ["Le re","ardundefined","g"],
+        ["La mar","ueriteundefined","gu"],
+        ["La ba","etteundefined","gu"],
+        ["Une ai","uilleundefined","gu"],
+        ["Une ba","ueundefined","gu"],
+        ["La bla","ueundefined","gu"],
+        ["Nous distin","onsundefined","gu"],
+        ["Nous fati","onsundefined","gu"],
+        ["Nous intri","onsundefined","gu"],
+        ["Nous conju","onsundefined","gu"],
+        ["Nous délé","onsundefined","gu"],
+        ["Nous dialo","onsundefined","gu"],
+        ["La ","imauveundefined","gu"],
+        ["Le ","idonundefined","gu"],
+        ["La ","érillaundefined","gu"],
+        ["Nous zigza","onsundefined","gu"],
+        ["Nous proté","onsundefined","ge"],
+        ["Nous mélan","onsundefined","ge"],
+        ["Nous plon","onsundefined","ge"],
+        ["Nous voya","onsundefined","ge"],
+        ["Nous échan","onsundefined","ge"],
+        ["Nous corri","onsundefined","ge"],
       ],
     },
     c: {
@@ -139,34 +199,56 @@
     },
   };
   const SESSION_SIZE = 10;
+  const WORD_COUNTS_KEY = "entrainement_francais_word_counts_v1";
   const SENTENCE_COUNTS_KEY = "entrainement_francais_sentence_counts_v1";
 
-  function loadSentenceCounts() {
+  function readCounts(key) {
     try {
-      const value = JSON.parse(localStorage.getItem(SENTENCE_COUNTS_KEY));
-      return value && typeof value === "object" && !Array.isArray(value)
-        ? value : {};
+      const value = JSON.parse(localStorage.getItem(key));
+      return value && typeof value === "object" && !Array.isArray(value) ? value : {};
     } catch {
       return {};
     }
   }
-  const sentenceCounts = loadSentenceCounts();
 
-  // The complete sentence remains identifiable when the collection is reordered.
-  function sentenceKey(category, item) {
-    return JSON.stringify([category, ...item]);
+  function wordKey(category, item) {
+    const before = item[0].match(/[\\p{L}]+$/u)?.[0] || "";
+    const after = item[1].match(/^[\\p{L}]+/u)?.[0] || "";
+    return JSON.stringify([category, (before + item[2] + after).toLocaleLowerCase("fr")]);
   }
+
+  function loadWordCounts() {
+    if (localStorage.getItem(WORD_COUNTS_KEY) !== null) return readCounts(WORD_COUNTS_KEY);
+    const counts = {};
+    for (const [key, count] of Object.entries(readCounts(SENTENCE_COUNTS_KEY))) {
+      if (!Number.isSafeInteger(count) || count < 0) continue;
+      try {
+        const [category, ...item] = JSON.parse(key);
+        if (!Object.hasOwn(sets, category) || item.length !== 3) continue;
+        const word = wordKey(category, item);
+        counts[word] = Math.min(Number.MAX_SAFE_INTEGER, (counts[word] || 0) + count);
+      } catch {
+        // Ignore malformed old entries.
+      }
+    }
+    try {
+      localStorage.setItem(WORD_COUNTS_KEY, JSON.stringify(counts));
+    } catch {
+      // The exercise still works without storage.
+    }
+    return counts;
+  }
+  const wordCounts = loadWordCounts();
+
   function appearanceCount(category, item) {
-    const count = sentenceCounts[sentenceKey(category, item)];
+    const count = wordCounts[wordKey(category, item)];
     return Number.isSafeInteger(count) && count >= 0 ? count : 0;
   }
   function recordAppearance(category, item) {
-    const key = sentenceKey(category, item);
-    sentenceCounts[key] = Math.min(
-      Number.MAX_SAFE_INTEGER, appearanceCount(category, item) + 1,
-    );
+    const key = wordKey(category, item);
+    wordCounts[key] = Math.min(Number.MAX_SAFE_INTEGER, appearanceCount(category, item) + 1);
     try {
-      localStorage.setItem(SENTENCE_COUNTS_KEY, JSON.stringify(sentenceCounts));
+      localStorage.setItem(WORD_COUNTS_KEY, JSON.stringify(wordCounts));
     } catch {
       // The exercise remains usable when storage is unavailable.
     }
@@ -229,7 +311,7 @@
     questions = state.questions;
     selected = state.selected;
     lastQuestionIndex = state.progress.index;
-    // Legacy sessions count the current sentence once when first restored.
+    // Legacy sessions count the current word once when first restored.
     countedThrough = Number.isInteger(state.countedThrough)
       ? Math.min(state.progress.index, Math.max(-1, state.countedThrough))
       : state.progress.index - 1;
@@ -239,22 +321,24 @@
   function shuffleSession(t) {
     const pool = sets[t].items.slice();
     const session = [];
+    const usedWords = new Set();
     while (pool.length && session.length < SESSION_SIZE) {
-      // New sentences get weight 1; after 1, 2, 3 uses: 1/4, 1/9, 1/16.
-      const weights = pool.map((item) => {
-        const count = appearanceCount(t, item);
-        return 1 / ((count + 1) ** 2);
-      });
-      let draw = Math.random() * weights.reduce((sum, w) => sum + w, 0);
-      let chosen = weights.length - 1;
+      const candidates = pool.filter((item) => !usedWords.has(wordKey(t, item)));
+      if (!candidates.length) break;
+      const weights = candidates.map((item) => 1 / ((appearanceCount(t, item) + 1) ** 2));
+      let draw = Math.random() * weights.reduce((sum, weight) => sum + weight, 0);
+      let selectedIndex = weights.length - 1;
       for (let i = 0; i < weights.length; i++) {
         draw -= weights[i];
         if (draw < 0) {
-          chosen = i;
+          selectedIndex = i;
           break;
         }
       }
-      session.push(pool.splice(chosen, 1)[0]);
+      const item = candidates[selectedIndex];
+      session.push(item);
+      usedWords.add(wordKey(t, item));
+      pool.splice(pool.indexOf(item), 1);
     }
     return session;
   }
