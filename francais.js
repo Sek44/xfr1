@@ -139,9 +139,43 @@
     },
   };
   const SESSION_SIZE = 10;
+  const SENTENCE_COUNTS_KEY = "entrainement_francais_sentence_counts_v1";
+
+  function loadSentenceCounts() {
+    try {
+      const value = JSON.parse(localStorage.getItem(SENTENCE_COUNTS_KEY));
+      return value && typeof value === "object" && !Array.isArray(value)
+        ? value : {};
+    } catch {
+      return {};
+    }
+  }
+  const sentenceCounts = loadSentenceCounts();
+
+  // The complete sentence remains identifiable when the collection is reordered.
+  function sentenceKey(category, item) {
+    return JSON.stringify([category, ...item]);
+  }
+  function appearanceCount(category, item) {
+    const count = sentenceCounts[sentenceKey(category, item)];
+    return Number.isSafeInteger(count) && count >= 0 ? count : 0;
+  }
+  function recordAppearance(category, item) {
+    const key = sentenceKey(category, item);
+    sentenceCounts[key] = Math.min(
+      Number.MAX_SAFE_INTEGER, appearanceCount(category, item) + 1,
+    );
+    try {
+      localStorage.setItem(SENTENCE_COUNTS_KEY, JSON.stringify(sentenceCounts));
+    } catch {
+      // The exercise remains usable when storage is unavailable.
+    }
+  }
+
   let tab = "g",
     selected = null,
-    lastQuestionIndex = 0;
+    lastQuestionIndex = 0,
+    countedThrough = -1;
   let questions = shuffleSession(tab);
   const storedGame = GameState.create("francais");
   const game = ExerciseGame.create({
@@ -149,6 +183,10 @@
       if (game.index !== lastQuestionIndex) {
         selected = null;
         lastQuestionIndex = game.index;
+      }
+      if (game.index < questions.length && game.index > countedThrough) {
+        recordAppearance(tab, questions[game.index]);
+        countedThrough = game.index;
       }
       render();
       persist();
@@ -164,7 +202,9 @@
       storedGame.clear();
       return;
     }
-    storedGame.save({ tab, questions, selected, progress: game.snapshot() });
+    storedGame.save({
+      tab, questions, selected, countedThrough, progress: game.snapshot(),
+    });
   }
   function restore() {
     const state = storedGame.load();
@@ -189,20 +229,39 @@
     questions = state.questions;
     selected = state.selected;
     lastQuestionIndex = state.progress.index;
+    // Legacy sessions count the current sentence once when first restored.
+    countedThrough = Number.isInteger(state.countedThrough)
+      ? Math.min(state.progress.index, Math.max(-1, state.countedThrough))
+      : state.progress.index - 1;
     return game.restore(state.progress);
   }
 
   function shuffleSession(t) {
-    const shuffled = sets[t].items.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    const pool = sets[t].items.slice();
+    const session = [];
+    while (pool.length && session.length < SESSION_SIZE) {
+      // New sentences get weight 1; after 1, 2, 3 uses: 1/4, 1/9, 1/16.
+      const weights = pool.map((item) => {
+        const count = appearanceCount(t, item);
+        return 1 / ((count + 1) ** 2);
+      });
+      let draw = Math.random() * weights.reduce((sum, w) => sum + w, 0);
+      let chosen = weights.length - 1;
+      for (let i = 0; i < weights.length; i++) {
+        draw -= weights[i];
+        if (draw < 0) {
+          chosen = i;
+          break;
+        }
+      }
+      session.push(pool.splice(chosen, 1)[0]);
     }
-    return shuffled.slice(0, SESSION_SIZE);
+    return session;
   }
   function switchTab(t) {
     tab = t;
     selected = null;
+    countedThrough = -1;
     questions = shuffleSession(t);
     game.reset(questions.length);
   }
