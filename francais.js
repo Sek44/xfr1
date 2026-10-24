@@ -72,7 +72,7 @@
         ["Le ti","re dort dans la jungle.","g"],
         ["Une épon","e flotte dans la baignoire.","g"],
         ["La monta","ne touche les nuages.","g"],
-        ["Ce lé","ume est mûr.","g"],
+        ["Ce lé","me est mûr.","gu"],
         ["Un nua","e cache le soleil.","g"],
         ["Le froma","e sent très bon.","g"],
         ["La pa","e du livre est déchirée.","g"],
@@ -100,13 +100,13 @@
         ["Le jardina","e plaît à ma grand-mère.","g"],
         ["Le gara","iste répare notre voiture.","g"],
         ["Le ga","nant remporte la course.","g"],
-        ["La fi","ue tombe du figuier.","g"],
+        ["La fi","e tombe du figuier.","gu"],
         ["Le lo","ement est lumineux.","g"],
         ["La si","nature est au bas de la page.","g"],
-        ["La fati","ue se fait sentir.","g"],
-        ["Un dialo","ue commence entre les amis.","g"],
-        ["La lan","ue française est belle.","g"],
-        ["La dé","ustation commence à midi.","g"],
+        ["La fati","e se fait sentir.","gu"],
+        ["Un dialo","e commence entre les amis.","gu"],
+        ["La lan","e française est belle.","gu"],
+        ["La dé","station commence à midi.","gu"],
         ["Le re","ard est très attentif.","g"],
         ["La mar","uerite pousse dans le jardin.","gu"],
         ["La ba","ette magique brille.","gu"],
@@ -288,8 +288,23 @@
       tab, questions, selected, countedThrough, progress: game.snapshot(),
     });
   }
+  // Correct questions saved by older versions so refreshing fixes active sessions too.
+  const correctedQuestions = new Map([
+    [["Ce lé","ume est mûr.","g"], ["Ce lé","me est mûr.","gu"]],
+    [["La fi","ue tombe du figuier.","g"], ["La fi","e tombe du figuier.","gu"]],
+    [["La fati","ue se fait sentir.","g"], ["La fati","e se fait sentir.","gu"]],
+    [["Un dialo","ue commence entre les amis.","g"], ["Un dialo","e commence entre les amis.","gu"]],
+    [["La lan","ue française est belle.","g"], ["La lan","e française est belle.","gu"]],
+    [["La dé","ustation commence à midi.","g"], ["La dé","station commence à midi.","gu"]],
+  ].map(([before, after]) => [JSON.stringify(before), after]));
+
   function restore() {
     const state = storedGame.load();
+    if (Array.isArray(state?.questions)) {
+      state.questions = state.questions.map(
+        (item) => correctedQuestions.get(JSON.stringify(item)) || item,
+      );
+    }
     if (
       !state ||
       !Object.hasOwn(sets, state.tab) ||
