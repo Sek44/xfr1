@@ -108,11 +108,11 @@
         ["La lan","e française est belle.","gu"],
         ["La dé","station commence à midi.","gu"],
         ["Le re","ard est très attentif.","g"],
-        ["La mar","uerite pousse dans le jardin.","gu"],
+        ["La mar","erite pousse dans le jardin.","gu"],
         ["La ba","ette magique brille.","gu"],
-        ["Une ai","uille tombe dans la boîte.","gu"],
-        ["Une ba","ue brille à son doigt.","gu"],
-        ["La bla","ue fait rire tout le monde.","gu"],
+        ["Une ai","ille tombe dans la boîte.","gu"],
+        ["Une ba","e brille à son doigt.","gu"],
+        ["La bla","e fait rire tout le monde.","gu"],
         ["Nous distin","ons les couleurs.","gu"],
         ["Nous fati","ons nos jambes en courant.","gu"],
         ["Nous intri","ons le détective.","gu"],
@@ -238,7 +238,21 @@
     }
     return counts;
   }
+  const WORD_ERRORS_KEY = "entrainement_francais_word_errors_v1";
   const wordCounts = loadWordCounts();
+  const wordErrors = readCounts(WORD_ERRORS_KEY);
+
+  function recordError(category, item) {
+    const key = wordKey(category, item);
+    const count = wordErrors[key];
+    wordErrors[key] = Math.min(Number.MAX_SAFE_INTEGER,
+      (Number.isSafeInteger(count) && count >= 0 ? count : 0) + 1);
+    try {
+      localStorage.setItem(WORD_ERRORS_KEY, JSON.stringify(wordErrors));
+    } catch {
+      // Storage may be disabled or full.
+    }
+  }
 
   function appearanceCount(category, item) {
     const count = wordCounts[wordKey(category, item)];
@@ -296,6 +310,10 @@
     [["Un dialo","ue commence entre les amis.","g"], ["Un dialo","e commence entre les amis.","gu"]],
     [["La lan","ue française est belle.","g"], ["La lan","e française est belle.","gu"]],
     [["La dé","ustation commence à midi.","g"], ["La dé","station commence à midi.","gu"]],
+    [["La mar","uerite pousse dans le jardin.","gu"], ["La mar","erite pousse dans le jardin.","gu"]],
+    [["Une ai","uille tombe dans la boîte.","gu"], ["Une ai","ille tombe dans la boîte.","gu"]],
+    [["Une ba","ue brille à son doigt.","gu"], ["Une ba","e brille à son doigt.","gu"]],
+    [["La bla","ue fait rire tout le monde.","gu"], ["La bla","e fait rire tout le monde.","gu"]],
   ].map(([before, after]) => [JSON.stringify(before), after]));
 
   function restore() {
@@ -348,7 +366,11 @@
       const weights = words.map((key) => {
         const count = wordCounts[key];
         const appearances = Number.isSafeInteger(count) && count >= 0 ? count : 0;
-        return 1 / ((appearances + 1) ** 2);
+        const countErrors = wordErrors[key];
+        const errors = Number.isSafeInteger(countErrors) && countErrors >= 0 ? countErrors : 0;
+        // Mistakes offset the appearance penalty and increase future practice.
+        const successfulAppearances = Math.max(0, appearances - errors);
+        return (1 + 3 * errors) / ((successfulAppearances + 1) ** 2);
       });
       let draw = Math.random() * weights.reduce((sum, weight) => sum + weight, 0);
       let index = words.length - 1;
@@ -380,8 +402,11 @@
     }
   }
   function verify() {
-    if (selected !== null && !game.correct)
-      game.validate(selected === questions[game.index][2]);
+    if (selected !== null && !game.correct) {
+      const isCorrect = selected === questions[game.index][2];
+      if (!isCorrect && !game.failed) recordError(tab, questions[game.index]);
+      game.validate(isCorrect);
+    }
   }
   function advance() {
     selected = null;
