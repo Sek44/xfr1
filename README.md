@@ -50,3 +50,14 @@ not replace visual checks on a phone or tablet.
 The localStorage compatibility and navigation requirements in `AGENTS.md`
 apply to every change. Never reset score history or require new fields on old
 records. Missing time is displayed as `00:00`.
+
+## Documentation and development rules
+
+Current-state documentation follows the same methodology as `gmr`, adapted to this repository's **flat source layout**:
+
+- [Documentation index and maintenance rules](docs/README.md)
+- [Site-wide architecture](docs/ARCHITECTURE.md) and [global backlog](docs/BACKLOG.md)
+- [French exercise](docs/games/francais/SPECIFICATIONS.md), [addition exercise](docs/games/calcul/SPECIFICATIONS.md), [Mission calcul](docs/games/space/SPECIFICATIONS.md), and [Mission magique](docs/games/magic/SPECIFICATIONS.md)
+- [Architecture decisions](docs/adr/README.md)
+
+Each game also has its own `ARCHITECTURE.md` and `BACKLOG.md` beside its specifications in `docs/games/<id>/`. Specifications and architecture describe only **what is currently implemented**; pending work uses permanent backlog IDs and important technical decisions use ADRs. No permanent changelog or refactoring journal is kept. [AGENTS.md](AGENTS.md) defines the update and compatibility rules for coding agents.
