@@ -19,10 +19,10 @@ Chaque question de `sets.g` ou `sets.c` est un triplet `[avant, après, réponse
 
 La variante de phrase est ensuite choisie uniformément parmi les variantes du mot. Voir [ADR-0001 — pondération par mot](adr/0001-ponderation-par-mot.md).
 
-Clés `localStorage` : `entrainement_francais_word_counts_v1`, `entrainement_francais_word_errors_v1`. À la première lecture si le compteur de mots n'existe pas, `entrainement_francais_sentence_counts_v1` peut être agrégé vers les mots (sans supprimer l'ancienne clé). Les écritures de suivi sont non bloquantes.
+Clés `localStorage` : `entrainement_francais_word_counts_v1`, `entrainement_francais_word_errors_v1`. À la première lecture si le compteur de mots n'existe pas, `entrainement_francais_sentence_counts_v1` peut être agrégé vers les mots (sans supprimer l'ancienne clé). Les écritures de suivi sont non bloquantes. Une migration ponctuelle, marquée par `entrainement_francais_vowel_u_reset_v1`, retire uniquement les apparitions et erreurs de `légume` et `dégustation` au premier chargement de cette version, sans toucher aux scores ni aux autres mots.
 
 ## Cycle d'une session
 
-`GameState.create("francais")` stocke famille active, questions choisies, option sélectionnée, progression `ExerciseGame` et marqueur d'apparition. Une restauration vérifie les données et adapte certains triplets anciens corrigés. `ScoreView.bind` suspend/reprend le décompte ; `pagehide` persiste la session. `ExerciseScores.save` et `DailyExercises.award("francais")` sont appelés une seule fois en fin de session, quel que soit le score.
+`GameState.create("francais")` stocke famille active, questions choisies, option sélectionnée, progression `ExerciseGame` et marqueur d'apparition. Une restauration vérifie les données et adapte certains triplets anciens corrigés. Si la réponse attendue de la question courante change, cette question est rejouée et son éventuel point est annulé sans modifier les points précédents. `ScoreView.bind` suspend/reprend le décompte ; `pagehide` persiste la session. `ExerciseScores.save` et `DailyExercises.award("francais")` sont appelés une seule fois en fin de session, quel que soit le score.
 
 Règles partagées et format des scores : [architecture transversale](../../ARCHITECTURE.md). Contrôles à renforcer : [backlog](BACKLOG.md).

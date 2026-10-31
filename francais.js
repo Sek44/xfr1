@@ -72,7 +72,7 @@
         ["Le ti","re dort dans la jungle.","g"],
         ["Une épon","e flotte dans la baignoire.","g"],
         ["La monta","ne touche les nuages.","g"],
-        ["Ce lé","me est mûr.","gu"],
+        ["Ce lé", "ume est mûr.", "g"],
         ["Un nua","e cache le soleil.","g"],
         ["Le froma","e sent très bon.","g"],
         ["La pa","e du livre est déchirée.","g"],
@@ -106,7 +106,7 @@
         ["La fati","e se fait sentir.","gu"],
         ["Un dialo","e commence entre les amis.","gu"],
         ["La lan","e française est belle.","gu"],
-        ["La dé","station commence à midi.","gu"],
+        ["La dé", "ustation commence à midi.", "g"],
         ["Le re","ard est très attentif.","g"],
         ["La mar","erite pousse dans le jardin.","gu"],
         ["La ba","ette magique brille.","gu"],
@@ -241,6 +241,25 @@
   const WORD_ERRORS_KEY = "entrainement_francais_word_errors_v1";
   const wordCounts = loadWordCounts();
   const wordErrors = readCounts(WORD_ERRORS_KEY);
+  const VOWEL_U_RESET_KEY = "entrainement_francais_vowel_u_reset_v1";
+
+  // Corrected words start with fresh weighting, only once per browser.
+  function resetCorrectedWordWeights() {
+    try {
+      if (localStorage.getItem(VOWEL_U_RESET_KEY) === "1") return;
+      for (const word of ["légume", "dégustation"]) {
+        const key = JSON.stringify(["g", word]);
+        delete wordCounts[key];
+        delete wordErrors[key];
+      }
+      localStorage.setItem(WORD_COUNTS_KEY, JSON.stringify(wordCounts));
+      localStorage.setItem(WORD_ERRORS_KEY, JSON.stringify(wordErrors));
+      localStorage.setItem(VOWEL_U_RESET_KEY, "1");
+    } catch {
+      // Retry on a future visit if storage is unavailable.
+    }
+  }
+  resetCorrectedWordWeights();
 
   function recordError(category, item) {
     const key = wordKey(category, item);
@@ -305,12 +324,12 @@
   }
   // Correct questions saved by older versions so refreshing fixes active sessions too.
   const correctedQuestions = new Map([
-    [["Ce lé","ume est mûr.","g"], ["Ce lé","me est mûr.","gu"]],
+    [["Ce lé", "me est mûr.", "gu"], ["Ce lé", "ume est mûr.", "g"]],
+    [["La dé", "station commence à midi.", "gu"], ["La dé", "ustation commence à midi.", "g"]],
     [["La fi","ue tombe du figuier.","g"], ["La fi","e tombe du figuier.","gu"]],
     [["La fati","ue se fait sentir.","g"], ["La fati","e se fait sentir.","gu"]],
     [["Un dialo","ue commence entre les amis.","g"], ["Un dialo","e commence entre les amis.","gu"]],
     [["La lan","ue française est belle.","g"], ["La lan","e française est belle.","gu"]],
-    [["La dé","ustation commence à midi.","g"], ["La dé","station commence à midi.","gu"]],
     [["La mar","uerite pousse dans le jardin.","gu"], ["La mar","erite pousse dans le jardin.","gu"]],
     [["Une ai","uille tombe dans la boîte.","gu"], ["Une ai","ille tombe dans la boîte.","gu"]],
     [["Une ba","ue brille à son doigt.","gu"], ["Une ba","e brille à son doigt.","gu"]],
@@ -320,9 +339,33 @@
   function restore() {
     const state = storedGame.load();
     if (Array.isArray(state?.questions)) {
-      state.questions = state.questions.map(
-        (item) => correctedQuestions.get(JSON.stringify(item)) || item,
-      );
+      let correctedCurrentAnswer = false;
+      state.questions = state.questions.map((item, index) => {
+        const replacement = correctedQuestions.get(JSON.stringify(item));
+        if (
+          replacement &&
+          index === state.progress?.index &&
+          replacement[2] !== item[2]
+        ) {
+          correctedCurrentAnswer = true;
+        }
+        return replacement || item;
+      });
+      if (correctedCurrentAnswer && state.progress) {
+        // Replay an active question whose previously expected answer changed.
+        state.selected = null;
+        state.progress = {
+          ...state.progress,
+          score: Math.max(
+            0,
+            state.progress.score -
+              (state.progress.correct && !state.progress.failed ? 1 : 0),
+          ),
+          correct: false,
+          failed: false,
+          remaining: null,
+        };
+      }
     }
     if (
       !state ||

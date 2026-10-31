@@ -453,3 +453,86 @@ test("game checkpoints remain independent across all game pages", () => {
   one.run("francais.js");
   assert.ok(storage.has("exercices_in_progress_calcul"));
 });
+
+
+test("French bank keeps a pronounced u visible and tests the g only", () => {
+  const source = fs.readFileSync(path.join(__dirname, "..", "francais.js"), "utf8");
+  const begin = source.indexOf("  const sets = ") + "  const sets = ".length;
+  const end = source.indexOf("\n  const SESSION_SIZE", begin);
+  assert.ok(begin > 20 && end > begin);
+  const sets = vm.runInNewContext("(" + source.slice(begin, end).trim().replace(/;$/, "") + ")");
+  for (const [before, after, answer] of sets.g.items) {
+    if (answer === "gu") {
+      assert.match(after, /^[aeiouyàâäéèêëîïôöùûü]/i,
+        `Pronounced u should not be hidden: ${before}_${after}`);
+    }
+  }
+  for (const [before, after] of [
+    ["Ce lé", "ume est mûr."],
+    ["La dé", "ustation commence à midi."],
+  ]) {
+    assert.ok(sets.g.items.some((item) =>
+      item[0] === before && item[1] === after && item[2] === "g"));
+  }
+});
+
+test("French migration resets only corrected word weights, not scores", () => {
+  const countsKey = "entrainement_francais_word_counts_v1";
+  const errorsKey = "entrainement_francais_word_errors_v1";
+  const resetKey = "entrainement_francais_vowel_u_reset_v1";
+  const corrected = ['["g","légume"]', '["g","dégustation"]'];
+  const other = '["g","guépard"]';
+  const history = '[{"legacy":true,"score":7}]';
+  const storage = new Map([
+    [countsKey, JSON.stringify({ [corrected[0]]: 20, [corrected[1]]: 30, [other]: 8 })],
+    [errorsKey, JSON.stringify({ [corrected[0]]: 3, [corrected[1]]: 5, [other]: 2 })],
+    ["exercices_francais_scores", history],
+  ]);
+  const first = setup(undefined, storage);
+  first.context.Math = Object.create(Math);
+  first.context.Math.random = () => 0;
+  first.run("francais.js");
+  const counts = JSON.parse(storage.get(countsKey));
+  const errors = JSON.parse(storage.get(errorsKey));
+  for (const key of corrected) {
+    assert.equal(counts[key], undefined);
+    assert.equal(errors[key], undefined);
+  }
+  assert.equal(counts[other], 9);
+  assert.equal(errors[other], 2);
+  assert.equal(storage.get(resetKey), "1");
+  assert.equal(storage.get("exercices_francais_scores"), history);
+
+  storage.set(countsKey, JSON.stringify({ ...counts, [corrected[0]]: 4 }));
+  storage.set(errorsKey, JSON.stringify({ ...errors, [corrected[0]]: 1 }));
+  const second = setup(undefined, storage);
+  second.context.Math = Object.create(Math);
+  second.context.Math.random = () => 0;
+  second.run("francais.js");
+  assert.equal(JSON.parse(storage.get(countsKey))[corrected[0]], 4);
+  assert.equal(JSON.parse(storage.get(errorsKey))[corrected[0]], 1);
+});
+
+test("French resumes obsolete active questions with a fresh answer", () => {
+  for (const [before, after, fixed] of [
+    ["Ce lé", "me est mûr.", "ume est mûr."],
+    ["La dé", "station commence à midi.", "ustation commence à midi."],
+  ]) {
+    const f = setup();
+    f.context.GameState.create("francais").save({
+      tab: "g",
+      questions: Array.from({ length: 10 }, () => [before, after, "gu"]),
+      selected: "gu",
+      countedThrough: 0,
+      progress: { index: 0, score: 1, failed: false, correct: true, total: 10, remaining: 2000 },
+    });
+    f.run("francais.js");
+    const saved = JSON.parse(f.storage.get("exercices_in_progress_francais")).session;
+    assert.deepEqual(Array.from(saved.questions[0]), [before, fixed, "g"]);
+    assert.equal(saved.selected, null);
+    assert.equal(saved.progress.correct, false);
+    assert.equal(saved.progress.score, 0);
+    assert.equal(saved.progress.remaining, null);
+    assert.equal(f.saved.length, 0);
+  }
+});
