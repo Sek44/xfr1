@@ -7,4 +7,5 @@ Conventions : `0001-titre-court.md`, numéro croissant dans son dossier, date, p
 Un ADR accepté reste un témoignage de la décision prise. Lorsqu'elle change, ajouter un ADR successeur et indiquer « Remplacé par » dans l'ancien ; actualiser aussi l'architecture qui décrit toujours la situation présente.
 
 - [ADR-0001 — Préserver la compatibilité des données locales](0001-compatibilite-des-donnees.md).
+- [ADR-0002 — Crédit quotidien inter-sites sur une même origine](0002-credit-quotidien-et-origine-web.md).
 - [ADR Français — pondération par mot](../games/francais/adr/0001-ponderation-par-mot.md).
