@@ -290,6 +290,7 @@
     onFinish: ({ score, total }) => {
       storedGame.clear();
       ExerciseScores.save({ tab, score, total });
+      window.DailyExercises?.award("francais");
     },
   });
   const make = GameUI.element;
