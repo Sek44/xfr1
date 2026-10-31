@@ -3,6 +3,8 @@
   const $ = (id) => document.getElementById(id);
   const game = new MagicGame();
   const storage = GameState.create("magic");
+  // Mission magique: one daily exercise credit for every 20 solved additions.
+  const rewards = window.DailyExercises?.milestones("magic", 20);
   const arena = document.querySelector(".magic-arena");
   const canvas = $("ground");
   const ctx = canvas.getContext("2d");
@@ -38,7 +40,7 @@
 
   function persist() {
     if (running && !saved)
-      storage.save({ game: game.snapshot(), answer, paused });
+      storage.save({ game: game.snapshot(), answer, paused, rewardProgress: rewards?.snapshot() });
   }
 
   function showPause() {
@@ -56,6 +58,7 @@
         !/^\d{0,2}$/.test(state.answer) ||
         !game.restore(state.game)) return false;
     answer = state.answer;
+    rewards?.restore(state.rewardProgress, game.score);
     running = true;
     paused = true; // Never advance the world before the player resumes.
     saved = false;
@@ -93,6 +96,7 @@
 
   function start() {
     game.reset();
+    rewards?.reset();
     for (const map of [creatures, spells, bursts]) {
       for (const node of map.values()) node.remove();
       map.clear();
@@ -408,7 +412,9 @@
 
   function frame(now) {
     if (running && !paused && !viewingScores && !confirming) {
+      rewards?.refresh(game.score);
       if (last) game.step(Math.min((now - last) / 1000, .05));
+      rewards?.record(game.score);
       if (game.score !== Number($("points").textContent)) {
         sync();
         persist();
