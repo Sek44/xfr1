@@ -3,6 +3,8 @@
   const $ = (id) => document.getElementById(id),
     game = new SpaceGame(),
     storedGame = GameState.create("space");
+  // Mission calcul: one daily exercise credit for every 10 solved additions.
+  const rewards = window.DailyExercises?.milestones("space", 10);
   let running = false,
     paused = false,
     answer = "",
@@ -27,7 +29,7 @@
   });
   function persist() {
     if (running && !saved && !game.over)
-      storedGame.save({ game: game.snapshot(), answer, paused });
+      storedGame.save({ game: game.snapshot(), answer, paused, rewardProgress: rewards?.snapshot() });
   }
   function showPause() {
     $("overlay").hidden = false;
@@ -47,6 +49,7 @@
       !game.restore(state.game)
     ) return false;
     answer = state.answer;
+    rewards?.restore(state.rewardProgress, game.score);
     running = true;
     // No enemies should move before the player chooses to resume.
     paused = true;
@@ -150,6 +153,7 @@
     for (const node of sprites.values()) node.remove();
     sprites.clear();
     game.reset();
+    rewards?.reset();
     running = true;
     paused = false;
     saved = false;
@@ -362,7 +366,9 @@
     if (running && !paused && !viewingScores && !confirmingLeave) {
       const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
       const lives = game.lives;
+      rewards?.refresh(game.score);
       game.step(dt);
+      rewards?.record(game.score);
       if (game.lives < lives) {
         answer = "";
       }
