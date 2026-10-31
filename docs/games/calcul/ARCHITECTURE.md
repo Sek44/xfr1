@@ -20,6 +20,6 @@ Si aucune combinaison n'est possible, le contrôleur crée une session sans ques
 
 `GameState.create("calcul")` stocke `range`, `category`, `questions`, `answer` et `progress`. La restauration vérifie la validité de la catégorie, de la difficulté, des additions et de leur résultat, la taille de session et l'entrée numérique.
 
-`ExerciseGame.create` pilote l'avancement et appelle `ExerciseScores.save` une seule fois en fin de session avec `tab: "math"` et une catégorie décrivant le choix. `ScoreView.bind` suspend/reprend la minuterie ; `pagehide` sauvegarde. La session terminée est effacée sans retirer l'historique.
+`ExerciseGame.create` pilote l'avancement et appelle `ExerciseScores.save` et `DailyExercises.award("calcul")` une seule fois en fin de session avec `tab: "math"` et une catégorie décrivant le choix. `ScoreView.bind` suspend/reprend la minuterie ; `pagehide` sauvegarde. La session terminée est effacée sans retirer l'historique.
 
 La politique commune de données est dans [l'architecture transversale](../../ARCHITECTURE.md). Travaux ouverts : [backlog](BACKLOG.md).
