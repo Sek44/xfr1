@@ -56,6 +56,7 @@
         score,
         total,
       });
+      window.DailyExercises?.award("calcul");
     },
   });
   const el = (id) => document.getElementById(id);

@@ -27,6 +27,20 @@
         color: #637188;
         margin-bottom: 30px;
       }
+      .daily-panel {
+        background: #e5efff;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+      }
+      .daily-panel h2 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+      .daily-panel p {
+        margin: 8px 0 0;
+        color: #244779;
+      }
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -73,6 +87,10 @@
       </nav>
       <h1>Entraînement</h1>
       <p class="intro">Choisis une activité pour t’entraîner en t’amusant.</p>
+      <section class="daily-panel" aria-labelledby="daily-heading">
+        <h2 id="daily-heading">Progression du jour</h2>
+        <p id="daily-summary" role="status" aria-live="polite"></p>
+      </section>
       <div class="grid">
         <a class="card" href="./francais.html"
           ><div class="symbol">a b c</div>
@@ -101,5 +119,7 @@
         >
       </div>
     </main>
+    <script src="./daily-exercises.js?v=20261031-1"></script>
+    <script>DailyExercises.mount(document.getElementById("daily-summary"));</script>
   </body>
 </html>

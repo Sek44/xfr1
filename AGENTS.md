@@ -11,6 +11,13 @@ Every site change must remain compatible with all existing user scores in localS
 - If stored JSON is unreadable, do not overwrite it when saving a new score.
 - Verify mixed legacy/current records when changing storage or display.
 
+## Daily exercise credits
+
+- Preserve the shared key `entrainement_daily_exercises_v1` and its versioned contract (`date`, `points`, `minutes`, `progress`, `events`). Other pages/projects on the same origin may depend on it. Do not conflate these credits with the historical score list.
+- Keep each game’s award rule in its controller, using `DailyExercises.award` for completed sessions or `DailyExercises.milestones` for open-ended games. Rewards must not duplicate after reload; partial arcade progress is shared across sessions of the same game for the current browser-local day only.
+- Preserve compatibility with older in-progress sessions that lack `rewardProgress`; never grant retroactive credits from an old score.
+- Treat an out-of-date localStorage record as zero on external readers; the browser cannot run xfr1 at midnight when its pages are closed.
+
 ## Navigation
 
 Opening scores and returning must preserve the exact ongoing game state: typed answers, correction status, timers, enemies, missiles, lives, bombs and level. Scores visits must not advance gameplay timers or save duplicate results.

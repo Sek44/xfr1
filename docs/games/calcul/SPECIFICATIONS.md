@@ -18,6 +18,8 @@ Chaque session comporte au maximum **10 calculs**, sans répéter une même pair
 
 Le joueur saisit, efface et valide la réponse. Une erreur peut être corrigée mais **ne donne plus de point pour ce calcul**. Seule la réussite au premier essai ajoute un point. Après réussite, l'exercice suivant apparaît automatiquement au bout d'environ **3 secondes**, ou dès l'action d'avancement.
 
+La série terminée vaut **1 point d’exercice quotidien**, quel que soit le nombre de réponses correctes au premier essai ; ce crédit ajoute actuellement **10 minutes de jeu autorisées** au compteur commun. Une session sans question ou interrompue ne crédite rien.
+
 Une page de résultat clôt la série et permet de recommencer. Le score est enregistré avec la catégorie et la difficulté dans l'historique commun ; la page de scores Calcul comporte une courbe d'évolution.
 
 ## Reprise

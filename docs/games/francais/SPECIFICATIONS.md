@@ -4,7 +4,7 @@
 
 Compléter une phrase en choisissant les lettres manquantes. Deux familles d'exercices : **g / gu / ge** et **c / ç**. Le groupe de lettres choisi remplace intégralement la zone vide ; une lettre faisant partie de la solution (`u` de `gu`, `e` de `ge`) ne doit pas être révélée à l'avance.
 
-Une session comporte **10 phrases**. Le joueur choisit une réponse et la vérifie ; en cas d'erreur, il peut corriger. **Seule une bonne réponse au premier essai rapporte un point.** Après correction réussie, la progression continue sans point supplémentaire. Une bonne réponse passe à la suivante automatiquement après environ **3 secondes**, ou immédiatement par le bouton d'avancement. Le résultat final est noté sur 10.
+Une session comporte **10 phrases**. Le joueur choisit une réponse et la vérifie ; en cas d'erreur, il peut corriger. **Seule une bonne réponse au premier essai rapporte un point.** Après correction réussie, la progression continue sans point supplémentaire. Une bonne réponse passe à la suivante automatiquement après environ **3 secondes**, ou immédiatement par le bouton d'avancement. Le résultat final est noté sur 10. Une session menée jusqu’à son terme vaut **1 point d’exercice quotidien**, quel que soit le score (y compris avec des corrections), et ajoute actuellement **10 minutes de jeu autorisées** au compteur commun. Une session interrompue ne compte pas.
 
 ## Répartition des questions
 
