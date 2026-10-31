@@ -23,6 +23,6 @@ Clés `localStorage` : `entrainement_francais_word_counts_v1`, `entrainement_fra
 
 ## Cycle d'une session
 
-`GameState.create("francais")` stocke famille active, questions choisies, option sélectionnée, progression `ExerciseGame` et marqueur d'apparition. Une restauration vérifie les données et adapte certains triplets anciens corrigés. `ScoreView.bind` suspend/reprend le décompte ; `pagehide` persiste la session. `ExerciseScores.save` est appelé une seule fois en fin de session.
+`GameState.create("francais")` stocke famille active, questions choisies, option sélectionnée, progression `ExerciseGame` et marqueur d'apparition. Une restauration vérifie les données et adapte certains triplets anciens corrigés. `ScoreView.bind` suspend/reprend le décompte ; `pagehide` persiste la session. `ExerciseScores.save` et `DailyExercises.award("francais")` sont appelés une seule fois en fin de session, quel que soit le score.
 
 Règles partagées et format des scores : [architecture transversale](../../ARCHITECTURE.md). Contrôles à renforcer : [backlog](BACKLOG.md).
