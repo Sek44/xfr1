@@ -71,7 +71,7 @@
         ["Nous chan", "ons de place.", "ge"],
         ["Le ti","re dort dans la jungle.","g"],
         ["Une épon","e flotte dans la baignoire.","g"],
-        ["La monta","ne touche les nuages.","g"],
+
         ["Ce lé", "ume est mûr.", "g"],
         ["Un nua","e cache le soleil.","g"],
         ["Le froma","e sent très bon.","g"],
@@ -99,10 +99,10 @@
         ["Le repassa","e prend du temps.","g"],
         ["Le jardina","e plaît à ma grand-mère.","g"],
         ["Le gara","iste répare notre voiture.","g"],
-        ["Le ga","nant remporte la course.","g"],
+
         ["La fi","e tombe du figuier.","gu"],
         ["Le lo","ement est lumineux.","g"],
-        ["La si","nature est au bas de la page.","g"],
+
         ["La fati","e se fait sentir.","gu"],
         ["Un dialo","e commence entre les amis.","gu"],
         ["La lan","e française est belle.","gu"],
@@ -198,6 +198,12 @@
       ],
     },
   };
+  // Missing g/gu/ge must be immediately followed by a vowel.
+  function isValidQuestion(category, item) {
+    if (category !== "g") return true;
+    return /^[aeiouyàâäéèêëîïôöùûüÿ]/iu.test(item[1]);
+  }
+
   const SESSION_SIZE = 10;
   const WORD_COUNTS_KEY = "entrainement_francais_word_counts_v1";
   const SENTENCE_COUNTS_KEY = "entrainement_francais_sentence_counts_v1";
@@ -367,6 +373,30 @@
         };
       }
     }
+    // Replace obsolete questions in saved sessions without losing progress.
+    if (Array.isArray(state?.questions) && state.tab === "g") {
+      const used = new Set(state.questions.filter((item) => isValidQuestion("g", item))
+        .map((item) => wordKey("g", item)));
+      const available = sets.g.items.filter((item) => !used.has(wordKey("g", item)));
+      state.questions = state.questions.map((item, index) => {
+        if (isValidQuestion("g", item)) return item;
+        const replacement = available.shift();
+        if (!replacement) return item;
+        used.add(wordKey("g", replacement));
+        if (index === state.progress?.index && state.progress) {
+          state.selected = null;
+          state.progress = {
+            ...state.progress,
+            score: Math.max(0, state.progress.score -
+              (state.progress.correct && !state.progress.failed ? 1 : 0)),
+            correct: false,
+            failed: false,
+            remaining: null,
+          };
+        }
+        return replacement;
+      });
+    }
     if (
       !state ||
       !Object.hasOwn(sets, state.tab) ||
@@ -400,6 +430,7 @@
     // must not increase that word's chance of appearing.
     const sentencesByWord = new Map();
     for (const item of sets[t].items) {
+      if (!isValidQuestion(t, item)) continue;
       const key = wordKey(t, item);
       if (!sentencesByWord.has(key)) sentencesByWord.set(key, []);
       sentencesByWord.get(key).push(item);
