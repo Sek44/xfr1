@@ -10,6 +10,7 @@ No build step or runtime dependency is required.
 | `game-ui.js` | Numeric keypad, numeric editing and DOM element helper | Additions, French, Mission calcul |
 | `game-common.js` | Question sessions, scoring on first attempt, correction feedback, auto-next timer, progress and completion UI | Additions, French |
 | `scores.js` | Compatible score storage, history display, time fallbacks, encouragement and confirmed deletion | All games and score pages |
+| `daily-exercises.js` | Shared local daily exercise credits, authorized play minutes, and arcade milestones | Home page and all games |
 | `score-view.js` | Open scores without destroying the game; suspend and resume callbacks | All games |
 | `app-confirm.js` | In-app confirmation dialog | Mission calcul and score deletion |
 | `calcul.js`, `francais.js` | Exercise content, question generation and game-specific presentation | Respective exercise page |
@@ -27,6 +28,12 @@ targeting rules in a pure engine and share `GameState`, `ScoreView`,
 
 Scripts use private scopes to avoid accidental globals; only shared APIs are
 exported on `window`. Load each shared dependency before its game controller.
+
+## Daily exercise credits
+
+Every completed French or addition session earns one daily exercise point, regardless of answers. Mission calcul earns one point per 10 successful calculations; Mission magique earns one per 20. Each point currently grants 10 minutes of authorized play time. The home page shows both totals. Arcade partial progress carries over between sessions on the same day.
+
+The stable shared localStorage key is `entrainement_daily_exercises_v1`, with `date` (browser-local `YYYY-MM-DD`), `points`, `minutes`, `progress`, `events` and `version: 1`. It is readable from other apps on the **same web origin**, for example `sek44.github.io/rblx/` if published there. An external reader must compare the stored date to its own current local date and use zero on a mismatch. Different domains/browsers/devices do not share localStorage. No game-time consumption or cross-device sync is implemented yet. See [architecture](docs/ARCHITECTURE.md) for the contract.
 
 ## Formatting
 
