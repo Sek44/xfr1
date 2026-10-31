@@ -6,6 +6,8 @@ Jeu d'arcade spatial : des ennemis descendent en portant chacun une addition. Le
 
 Le joueur démarre avec **3 vies** et **2 bombes**. Si un ennemi atteint le bas, le joueur perd une vie et la vague est nettoyée, mais son niveau et son score restent acquis. La dernière vie perdue met fin à la mission.
 
+Chaque **série de 10 ennemis détruits par tir** attribue **1 point d’exercice quotidien** (10 minutes de jeu autorisées au ratio actuel), indépendamment du niveau et de la fin de partie. Les séries incomplètes se poursuivent dans la prochaine partie de la même journée ; une bombe ne compte pas. Le cumul partiel est réinitialisé chaque jour.
+
 Une bombe détruit les ennemis présents **sans attribuer de points**. Un ennemi porteur de bombe offre une bombe supplémentaire lorsqu'il est détruit par un tir.
 
 ## Difficulté
