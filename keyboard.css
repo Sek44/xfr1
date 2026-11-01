@@ -18,6 +18,10 @@
   gap: var(--keyboard-gap);
   width: 100%;
 }
+.azerty-keyboard .keyboard-row--accents {
+  /* Keep accents visually separate from the three standard AZERTY rows. */
+  margin-bottom: clamp(5px, 0.9vw, 9px);
+}
 .azerty-keyboard .keyboard-row--lower {
   /* Six letters occupy six of the ten key positions, centered as on AZERTY. */
   width: 60%;
@@ -38,7 +42,8 @@
   cursor: pointer;
 }
 .azerty-keyboard .keyboard-row--accents .keyboard-key {
-  background: #e4edfc;
+  background: #f9fbff;
+  border-color: #dae5f2;
 }
 .azerty-keyboard .keyboard-row--controls .keyboard-key {
   font-size: clamp(0.85rem, 2.5vw, 1.15rem);

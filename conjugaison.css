@@ -1,5 +1,5 @@
 * { box-sizing: border-box; }
-body { margin: 0; padding: 12px 4px; padding-left: max(4px, env(safe-area-inset-left)); padding-right: max(4px, env(safe-area-inset-right)); background: #f3f6fb; color: #233047; font-family: system-ui, Arial, sans-serif; }
+body { margin: 0; padding: 12px clamp(12px, 2vw, 20px); padding-left: max(clamp(12px, 2vw, 20px), env(safe-area-inset-left)); padding-right: max(clamp(12px, 2vw, 20px), env(safe-area-inset-right)); background: #f3f6fb; color: #233047; font-family: system-ui, Arial, sans-serif; }
 main { width: 100%; max-width: none; margin: auto; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
 .tab-current { display: inline-block; padding: 10px 16px; border-radius: 12px; background: #2064c7; color: white; font-weight: 700; }
