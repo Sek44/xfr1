@@ -11,13 +11,6 @@ main { max-width: 760px; margin: auto; }
 .verb-label strong { color: #1757a7; font-size: 1.35rem; }
 .conjugaison-sentence { font-size: clamp(1.2rem, 4vw, 1.9rem); line-height: 1.6; margin: 14px 0 22px; overflow-wrap: anywhere; }
 .typed-answer { display: inline-block; color: #175fc4; border-bottom: 3px solid #2064c7; min-width: 3.3em; max-width: 100%; text-align: center; font-weight: 750; overflow-wrap: anywhere; }
-.azerty-keyboard { display: flex; flex-direction: column; gap: 5px; user-select: none; touch-action: manipulation; margin: 0 auto; }
-.keyboard-row { display: grid; grid-template-columns: repeat(var(--keys), minmax(0, 1fr)); gap: 4px; }
-.azerty-keyboard button { min-width: 0; min-height: 41px; padding: 7px 0; font: 700 clamp(0.95rem, 3.1vw, 1.3rem) system-ui, sans-serif; border: 1px solid #b6c9e6; border-radius: 9px; background: #eef4fe; color: #203954; cursor: pointer; }
-.azerty-keyboard button:active { background: #c8ddff; }
-.azerty-keyboard button:disabled { opacity: 0.5; }
-.keyboard-row.controls { grid-template-columns: repeat(2, 1fr); }
-.keyboard-row.controls button { font-size: 1rem; background: white; }
 .feedback { min-height: 28px; margin: 12px 0 8px; text-align: center; font-weight: 700; }
 .feedback.good { color: #177447; }
 .feedback.bad { color: #bd3535; }

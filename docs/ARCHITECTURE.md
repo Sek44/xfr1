@@ -13,7 +13,7 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 | Fichier | API / responsabilité |
 | --- | --- |
 | `game-common.js` | `ExerciseGame` : déroulement des questions, validation, score de premier essai, délai avant question suivante, snapshot et reprise du délai |
-| `game-ui.js` | `GameUI` : éléments DOM, pavés numérique et AZERTY et édition de réponse |
+| `game-ui.js` | `GameUI` : éléments DOM, pavé numérique, clavier AZERTY partagé, édition de nombres et de mots (dont espaces) |
 | `exercise-weighting.js` | `ExerciseWeighting` : compteurs d'apparition/erreur et tirage pondéré sans remise |
 | `conjugaison-data.js` | `ConjugaisonData` : banque de verbes, sujets et règles du présent du 1er groupe |
 | `game-state.js` | `GameState` : lecture/écriture/suppression prudentes des sessions en `localStorage` |
@@ -21,7 +21,7 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 | `daily-exercises.js` | `DailyExercises` : crédits d’exercices quotidiens, minutes autorisées, progression des jeux continus et lecture inter-sites de même origine |
 | `score-view.js` | `ScoreView` : scores en iframe sans détruire le jeu, suspension/reprise et navigation par l'historique |
 | `app-confirm.js` | `AppConfirm` : dialogue de confirmation interne |
-| `shared.css`, `score-view.css`, `app-confirm.css` | Styles partagés et de navigation |
+| `shared.css`, `keyboard.css`, `score-view.css`, `app-confirm.css` | Styles partagés, clavier AZERTY réutilisable et navigation |
 
 `francais.js`, `calcul.js` et `conjugaison.js` utilisent `ExerciseGame`. Français et Conjugaison partagent également `ExerciseWeighting` ; leurs statistiques et questions restent distinctes. Les jeux d'arcade délèguent leurs règles à des moteurs isolables (`space-engine.js` et `magic-engine.js`) tandis que leurs contrôleurs gèrent interface, événements, rendu et persistance. Voir leurs architectures dédiées.
 

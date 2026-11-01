@@ -1,0 +1,67 @@
+/* Shared AZERTY layout for present and future word-entry exercises. */
+.azerty-keyboard {
+  --keyboard-gap: clamp(3px, 0.65vw, 6px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--keyboard-gap);
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.azerty-keyboard .keyboard-row {
+  display: grid;
+  grid-template-columns: repeat(var(--keys), minmax(0, 1fr));
+  gap: var(--keyboard-gap);
+  width: 100%;
+}
+.azerty-keyboard .keyboard-row--lower {
+  /* Six letters occupy six of the ten key positions, centered as on AZERTY. */
+  width: 60%;
+  margin-inline: auto;
+}
+.azerty-keyboard .keyboard-row--controls {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr) minmax(0, 1.2fr);
+}
+.azerty-keyboard .keyboard-key {
+  min-width: 0;
+  min-height: clamp(40px, 5.4vw, 52px);
+  padding: 6px 1px;
+  font: 700 clamp(0.87rem, 2.9vw, 1.3rem) system-ui, sans-serif;
+  color: #203954;
+  background: #eef4fe;
+  border: 1px solid #b6c9e6;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.azerty-keyboard .keyboard-row--accents .keyboard-key {
+  background: #e4edfc;
+}
+.azerty-keyboard .keyboard-row--controls .keyboard-key {
+  font-size: clamp(0.75rem, 2.4vw, 1rem);
+  background: white;
+}
+.azerty-keyboard .keyboard-key--space {
+  background: #dfeafc;
+}
+.azerty-keyboard .keyboard-key:active {
+  background: #c8ddff;
+}
+.azerty-keyboard .keyboard-key:focus-visible {
+  outline: 3px solid #2064c7;
+  outline-offset: 1px;
+}
+.azerty-keyboard .keyboard-key:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+@media (max-width: 400px) {
+  .azerty-keyboard {
+    --keyboard-gap: 3px;
+  }
+  .azerty-keyboard .keyboard-key {
+    border-radius: 6px;
+  }
+}

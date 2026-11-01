@@ -46,7 +46,7 @@
         !state.questions.every((q) => ConjugaisonData.valid(q)) ||
         new Set(state.questions.map(ConjugaisonData.key)).size !== SESSION_SIZE ||
         typeof state.answer !== "string" ||
-        !/^[a-zàâäéèêëîïôöùûüÿçœæ]{0,24}$/i.test(state.answer) ||
+        !/^[a-zàâäéèêëîïôöùûüÿçœæ ]{0,24}$/i.test(state.answer) ||
         state.progress?.total !== SESSION_SIZE) return false;
     questions = state.questions;
     answer = state.answer;
@@ -129,6 +129,9 @@
     } else if (event.key === "Backspace") {
       event.preventDefault();
       edit("erase");
+    } else if (event.key === " ") {
+      event.preventDefault();
+      edit("space");
     } else if (event.key.length === 1) {
       if (/^[a-zàâäéèêëîïôöùûüÿçœæ]$/i.test(event.key)) {
         event.preventDefault();

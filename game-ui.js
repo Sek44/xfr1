@@ -58,32 +58,50 @@ window.GameUI = (() => {
   function editWord(answer, command, maxLength = 24) {
     if (command === "clear") return "";
     if (command === "erase") return answer.slice(0, -1);
+    if (command === "space") return answer.length < maxLength ? answer + " " : answer;
     return /^[a-zàâäéèêëîïôöùûüÿçœæ]$/i.test(command) &&
       answer.length < maxLength
       ? answer + command.toLocaleLowerCase("fr")
       : answer;
   }
-  function azertyKeyboard(container, onInput, { disabled = false } = {}) {
+  // Reusable mobile-style AZERTY. Rows mirror the physical letter positions.
+  // Accent keys follow the corresponding vowel order: a, e, u, i, o, then ç.
+  function azertyKeyboard(
+    container,
+    onInput,
+    { disabled = false, clearLabel = "Tout effacer" } = {},
+  ) {
     container.replaceChildren();
-    const rows = ["azertyuiop", "qsdfghjklm", "wxcvbn", "éèêàçùûïô"];
-    for (const characters of rows) {
-      const row = element("div", "keyboard-row");
-      row.style.setProperty("--keys", characters.length);
-      for (const character of characters) {
-        const button = element("button", "", character);
+    const rows = [
+      { name: "accents", keys: ["à", "é", "è", "ê", "ù", "û", "î", "ï", "ô", "ç"] },
+      { name: "upper", keys: [..."azertyuiop"] },
+      { name: "middle", keys: [..."qsdfghjklm"] },
+      { name: "lower", keys: [..."wxcvbn"] },
+    ];
+    for (const { name, keys } of rows) {
+      const row = element("div", "keyboard-row keyboard-row--" + name);
+      row.style.setProperty("--keys", keys.length);
+      for (const character of keys) {
+        const button = element("button", "keyboard-key", character);
         button.type = "button";
         button.disabled = disabled;
+        button.setAttribute("aria-label", character);
         button.onclick = () => onInput(character);
         row.append(button);
       }
       container.append(row);
     }
-    const controls = element("div", "keyboard-row controls");
-    for (const [command, label] of [["clear", "Tout effacer"], ["erase", "⌫"]]) {
-      const button = element("button", "", label);
+    const controls = element("div", "keyboard-row keyboard-row--controls");
+    const actions = [
+      ["clear", clearLabel, "keyboard-key--clear", "Tout effacer"],
+      ["space", "Espace", "keyboard-key--space", "Insérer un espace"],
+      ["erase", "⌫", "keyboard-key--erase", "Effacer la dernière lettre"],
+    ];
+    for (const [command, label, className, accessibleName] of actions) {
+      const button = element("button", "keyboard-key " + className, label);
       button.type = "button";
       button.disabled = disabled;
-      button.setAttribute("aria-label", command === "erase" ? "Effacer la dernière lettre" : label);
+      button.setAttribute("aria-label", accessibleName);
       button.onclick = () => onInput(command);
       controls.append(button);
     }

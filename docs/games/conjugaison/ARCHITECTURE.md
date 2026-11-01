@@ -2,10 +2,10 @@
 
 ## Fichiers et modules
 
-- `conjugaison.html` et `conjugaison.css` : interface, premier onglet, phrase à compléter, clavier responsive.
+- `conjugaison.html` et `conjugaison.css` : interface, premier onglet et phrase à compléter. Le style du clavier responsive est mutualisé dans `keyboard.css` (racine).
 - `conjugaison-data.js` (`ConjugaisonData`) : listes de verbes, compléments, personnes et sujets, conjugaison et validation de chaque question.
 - `conjugaison.js` : session, saisie, suivi de première erreur, sauvegarde et récompense de fin de série.
-- `game-ui.js` (`GameUI`) : `editWord` et `azertyKeyboard` ; `game-common.js` (`ExerciseGame`) : vérification, feedback, compteur sur 10 et délai de 3 secondes partagé avec les jeux Français et Calcul.
+- `game-ui.js` (`GameUI`) : `editWord` et `azertyKeyboard` (accents groupés par voyelle, lignes AZERTY et « espace », réutilisables par les futurs exercices) ; `game-common.js` (`ExerciseGame`) : vérification, feedback, compteur sur 10 et délai de 3 secondes partagé avec les jeux Français et Calcul.
 - `exercise-weighting.js` (`ExerciseWeighting`) : suivi des apparitions/erreurs et tirage pondéré sans remise, utilisé aussi par Français.
 - `game-state.js`, `score-view.js`, `scores.js` et `daily-exercises.js` : reprise, suspension pour scores, historique et crédits.
 

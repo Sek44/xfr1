@@ -2,7 +2,7 @@
 
 ## Présent de l’indicatif — 1er groupe
 
-Le joueur voit un verbe à l’infinitif et une phrase avec un trou. Il doit saisir **la forme conjuguée entière** dans le trou, au moyen d’un clavier virtuel AZERTY avec accents et touches d’effacement. Un clavier physique fonctionne également hors des boutons et champs de contrôle. Les accents, cédilles et la conjugaison doivent être exacts ; la casse est indifférente.
+Le joueur voit un verbe à l’infinitif et une phrase avec un trou. Il doit saisir **la forme conjuguée entière** dans le trou, au moyen d’un clavier virtuel AZERTY reproduisant les trois rangées de lettres d’un clavier français, la troisième centrée. Une rangée d’accents classés par voyelle (a, e, u, i, o, puis ç) est placée au-dessus et une barre d’espace au-dessous, avec touches de suppression. Un clavier physique fonctionne également hors des boutons et champs de contrôle. Les accents, cédilles et la conjugaison doivent être exacts ; la casse est indifférente.
 
 Six familles : **-er** régulier, **-ger**, **-cer**, **-guer**, **-yer** (passage de y à i) et **alternance e/è**. Les sujets couvrent je, tu, il, elle, on, nous, vous, ils, elles. Des groupes nominaux remplacent parfois le pronom tout en conservant le bon accord : « Paul », « Paul et Julie », « Paul et moi », « Paul et toi », etc. « Je » devient « J’ » devant une forme commençant par une voyelle. Les infinitifs à variantes orthographiques multiples ne sont pas proposés.
 

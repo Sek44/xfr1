@@ -150,6 +150,36 @@ test("numeric controls use identical commands with game-specific labels, limits 
   assert.equal(ui.editNumber("12", "x", 6), "12");
 });
 
+test("shared AZERTY keyboard follows French key positions and supports spaces", () => {
+  const { context } = setup();
+  const ui = context.GameUI;
+  const keyboard = new Node("div");
+  const commands = [];
+  ui.azertyKeyboard(keyboard, (command) => commands.push(command));
+  assert.equal(keyboard.children.length, 5);
+  const keys = (row) => keyboard.children[row].children.map((button) => button.textContent).join("");
+  assert.equal(keys(0), "àéèêùûîïôç");
+  assert.equal(keys(1), "azertyuiop");
+  assert.equal(keys(2), "qsdfghjklm");
+  assert.equal(keys(3), "wxcvbn");
+  assert.equal(keyboard.children[3].className, "keyboard-row keyboard-row--lower");
+  assert.deepEqual(keyboard.children[4].children.map((button) => button.textContent),
+    ["Tout effacer", "Espace", "⌫"]);
+  assert.equal(keyboard.children[4].children[1].attributes["aria-label"], "Insérer un espace");
+  keyboard.children[0].children[1].onclick();
+  keyboard.children[4].children[1].onclick();
+  keyboard.children[4].children[2].onclick();
+  assert.deepEqual(commands, ["é", "space", "erase"]);
+  assert.equal(ui.editWord("un", "space", 8), "un ");
+  assert.equal(ui.editWord("un ", "é", 8), "un é");
+  assert.equal(ui.editWord("un ", "erase", 8), "un");
+  assert.equal(ui.editWord("un", "space", 2), "un");
+  const disabled = new Node("div");
+  ui.azertyKeyboard(disabled, () => {}, { disabled: true, clearLabel: "Effacer tout" });
+  assert.ok(disabled.children.every((row) => row.children.every((button) => button.disabled)));
+  assert.equal(disabled.children[4].children[0].textContent, "Effacer tout");
+});
+
 test("shared session preserves correction state and remaining delay during score visits; saves once", () => {
   const f = setup();
   let finishes = 0;
