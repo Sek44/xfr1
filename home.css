@@ -1,0 +1,67 @@
+:root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color: #23334d; background: #f4f7fc; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: clamp(14px, 3vw, 32px); }
+main { max-width: 1020px; margin: 0 auto; }
+a { color: inherit; }
+.home-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 28px; }
+.brand { display: flex; align-items: center; gap: 10px; color: #527092; font-size: .78rem; font-weight: 800; letter-spacing: .11em; }
+.brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: #e2edff; color: #2666ba; font-size: 1.5rem; }
+.scores-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 9px 14px; border: 1px solid #cbd9ed; border-radius: 12px; background: #fff; color: #285a9c; text-decoration: none; font-size: .92rem; font-weight: 750; }
+.scores-link svg, .daily-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.welcome { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 208px; padding: clamp(24px, 4vw, 40px); overflow: hidden; background: #e8f1ff; border: 1px solid #d6e5fa; border-radius: 23px; }
+.eyebrow { font-size: .72rem; font-weight: 850; letter-spacing: .13em; color: #4675ae; }
+.welcome h1 { margin: 10px 0; font-size: clamp(2.1rem, 5vw, 3.4rem); letter-spacing: -.055em; color: #163b69; line-height: 1.1; }
+.title-dot { color: #eea94d; }
+.welcome p { max-width: 470px; margin: 0; color: #486383; font-size: clamp(.95rem, 1.9vw, 1.06rem); line-height: 1.65; }
+.welcome-illustration { flex: 0 0 205px; height: 145px; position: relative; transform: rotate(-4deg); }
+.paper { position: absolute; width: 126px; height: 143px; right: 35px; top: 0; border: 2px solid #d3e2f5; border-radius: 8px; background: #fff; box-shadow: 0 7px 22px #244c7521; }
+.paper-back { transform: rotate(12deg) translate(17px, 3px); background: #f7fbff; }
+.paper-front { display: flex; flex-direction: column; gap: 11px; padding: 21px 14px; color: #2a639e; font-size: 1rem; font-weight: 800; }
+.paper-front span:nth-child(2) { font-size: .75rem; color: #55738e; }
+.paper-rule { height: 2px; width: 94%; background: #d5e4f3; }
+.paper-rule.short { width: 65%; }
+.pencil { position: absolute; right: 14px; bottom: 8px; width: 12px; height: 122px; transform: rotate(36deg); border-radius: 4px 4px 1px 1px; background: linear-gradient(90deg, #e9a855 0 35%, #ffd390 35% 75%, #dc9743 75%); box-shadow: 1px 2px 5px #153c6433; }
+.pencil::after { content: ""; position: absolute; bottom: -16px; left: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 17px solid #bf8a60; }
+.daily-panel { display: flex; align-items: center; gap: 15px; padding: 19px 22px; margin: 20px 0 32px; background: #fff; border: 1px solid #dbe6f3; border-radius: 17px; box-shadow: 0 3px 12px #1c42600a; }
+.daily-icon { flex: 0 0 48px; display: grid; place-items: center; width: 48px; height: 48px; color: #2b68b3; background: #e8f1ff; border-radius: 15px; }
+.daily-icon svg { width: 27px; height: 27px; }
+.daily-copy h2 { margin: 0 0 5px; font-size: 1.05rem; }
+.daily-copy p { margin: 0; color: #536d89; line-height: 1.45; }
+.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin: 0 0 16px; }
+.section-heading h2 { font-size: clamp(1.35rem, 3vw, 1.7rem); letter-spacing: -.025em; margin: 5px 0 0; }
+.activity-count { color: #6e819a; font-size: .9rem; white-space: nowrap; }
+.activity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+.activity-card { display: flex; align-items: center; gap: 17px; min-height: 146px; padding: 20px; background: #fff; border: 1px solid #dce5f0; border-radius: 18px; text-decoration: none; box-shadow: 0 4px 14px #1f42600b; transition: border-color .15s, transform .15s, box-shadow .15s; }
+.activity-card:hover { border-color: #9bbbe6; transform: translateY(-2px); box-shadow: 0 8px 20px #1f426018; }
+.activity-card:focus-visible, .scores-link:focus-visible { outline: 3px solid #2672cd; outline-offset: 3px; }
+.activity-icon { flex: 0 0 62px; width: 62px; height: 62px; display: grid; place-items: center; border-radius: 16px; font-size: 1.7rem; font-weight: 850; letter-spacing: -.06em; }
+.activity-french .activity-icon { background: #e6efff; color: #316bb5; }
+.activity-conjugation .activity-icon { background: #eee9fc; color: #7356b6; }
+.activity-math .activity-icon { background: #e4f5ee; color: #24815b; }
+.activity-space .activity-icon { background: #e9edfb; color: #4a63ac; }
+.activity-magic .activity-icon { background: #fff0db; color: #a6712e; }
+.activity-body { display: flex; flex-direction: column; min-width: 0; gap: 5px; }
+.subject { color: #7b899c; font-size: .67rem; font-weight: 850; letter-spacing: .1em; }
+.activity-body strong { font-size: 1.17rem; line-height: 1.2; }
+.description { color: #62738a; font-size: .9rem; line-height: 1.45; }
+.activity-arrow { align-self: center; margin-left: auto; color: #7b94b7; font-size: 1.4rem; font-weight: 650; }
+.footer-note { text-align: center; color: #8a97a9; font-size: .84rem; margin: 30px 0 0; }
+@media (max-width: 650px) {
+  .home-header { margin-bottom: 18px; }
+  .welcome { padding: 23px 20px; min-height: 175px; }
+  .welcome-illustration { flex-basis: 110px; transform: scale(.72) rotate(-4deg); transform-origin: center right; margin-left: -18px; }
+  .daily-panel { margin: 14px 0 27px; }
+  .activity-grid { grid-template-columns: 1fr; gap: 11px; }
+  .activity-card { min-height: 106px; padding: 15px; }
+  .activity-icon { flex-basis: 56px; width: 56px; height: 56px; font-size: 1.5rem; }
+}
+@media (max-width: 400px) {
+  .brand { font-size: .64rem; letter-spacing: .065em; }
+  .brand-mark { width: 31px; height: 31px; }
+  .scores-link { font-size: .83rem; padding: 8px 10px; }
+  .welcome-illustration { display: none; }
+  .daily-panel { padding: 15px; }
+  .activity-card { gap: 12px; }
+  .activity-arrow { font-size: 1.2rem; }
+}
+@media (prefers-reduced-motion: reduce) { .activity-card { transition: none; } }

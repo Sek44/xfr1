@@ -3,127 +3,79 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f4f7fc" />
     <title>Entraînement</title>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        font-family: system-ui, Arial, sans-serif;
-        background: #f3f6fb;
-        color: #233047;
-        margin: 0;
-        padding: 20px;
-      }
-      main {
-        max-width: 760px;
-        margin: 24px auto;
-      }
-      h1 {
-        font-size: clamp(2rem, 6vw, 2.8rem);
-        margin-bottom: 8px;
-      }
-      .intro {
-        color: #637188;
-        margin-bottom: 30px;
-      }
-      .daily-panel {
-        background: #e5efff;
-        border-radius: 14px;
-        padding: 16px 20px;
-        margin-bottom: 24px;
-      }
-      .daily-panel h2 {
-        margin: 0;
-        font-size: 1.1rem;
-      }
-      .daily-panel p {
-        margin: 8px 0 0;
-        color: #244779;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 18px;
-      }
-      .card {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-        background: white;
-        border-radius: 18px;
-        padding: 26px;
-        box-shadow: 0 4px 18px #1e3d6812;
-        border: 2px solid transparent;
-      }
-      .card:hover,
-      .card:focus-visible {
-        border-color: #2064c7;
-      }
-      .symbol {
-        font-size: 2rem;
-        color: #2064c7;
-        font-weight: 750;
-      }
-      .card h2 {
-        margin: 14px 0 8px;
-      }
-      .card p {
-        color: #637188;
-        line-height: 1.5;
-      }
-      .go {
-        color: #2064c7;
-        font-weight: 700;
-      }
-    </style>
-    <link rel="stylesheet" href="./shared.css" />
+    <link rel="stylesheet" href="./home.css?v=20261101-school" />
   </head>
   <body>
     <main>
-      <nav class="page-nav">
-        <span></span
-        ><a class="nav-link" href="./scores.html">▤ Tous mes scores →</a>
-      </nav>
-      <h1>Entraînement</h1>
-      <p class="intro">Choisis une activité pour t’entraîner en t’amusant.</p>
-      <section class="daily-panel" aria-labelledby="daily-heading">
-        <h2 id="daily-heading">Progression du jour</h2>
-        <p id="daily-summary" role="status" aria-live="polite"></p>
+      <header class="home-header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">✎</span>
+          <span>MON CARNET D’EXERCICES</span>
+        </div>
+        <a class="scores-link" href="./scores.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v15H5V5a2 2 0 0 1 2-2Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+          Mes scores
+        </a>
+      </header>
+
+      <section class="welcome" aria-labelledby="welcome-title">
+        <div>
+          <span class="eyebrow">APPRENDRE • S’ENTRAÎNER • PROGRESSER</span>
+          <h1 id="welcome-title">Entraînement<span class="title-dot">.</span></h1>
+          <p>Un peu chaque jour pour devenir encore meilleur ! Choisis une activité pour commencer.</p>
+        </div>
+        <div class="welcome-illustration" aria-hidden="true">
+          <div class="paper paper-back"></div>
+          <div class="paper paper-front"><span>Aa</span><span>7 + 5 = ?</span><span class="paper-rule"></span><span class="paper-rule short"></span></div>
+          <div class="pencil"></div>
+        </div>
       </section>
-      <div class="grid">
-        <a class="card" href="./francais.html"
-          ><div class="symbol">a b c</div>
-          <h2>Français</h2>
-          <p>Complète les mots avec g, gu, ge, c ou ç.</p>
-          <span class="go">Commencer →</span></a
-        >
-        <a class="card" href="./conjugaison.html"
-          ><div class="symbol">je · tu · ils</div>
-          <h2>Conjugaison</h2>
-          <p>Conjugue les verbes du 1er groupe au présent de l’indicatif.</p>
-          <span class="go">Commencer →</span></a
-        >
-        <a class="card" href="./calcul.html"
-          ><div class="symbol">26 + 6</div>
-          <h2>Calcul</h2>
-          <p>Entraîne-toi aux additions, avec cinq niveaux au choix.</p>
-          <span class="go">Commencer →</span></a
-        ><a class="card" href="./space.html"
-          ><div class="symbol">🚀</div>
-          <h2>Mission calcul</h2>
-          <p>
-            Résous les additions pour repousser les aliens. Missiles, bombes et
-            aventures dans l’espace !
-          </p>
-          <span class="go">Décoller →</span></a
-        ><a class="card" href="./magic.html"
-          ><div class="symbol">✦</div>
-          <h2>Mission magique</h2>
-          <p>Pars dans une forêt enchantée et chasse les petits monstres en résolvant leurs additions !</p>
-          <span class="go">Lancer un sort →</span></a
-        >
+
+      <section class="daily-panel" aria-labelledby="daily-heading">
+        <span class="daily-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M8 3h8M9 3v4l-4 4a6 6 0 1 0 14 0l-4-4V3"/><path d="M9 15l2 2 4-4"/></svg>
+        </span>
+        <div class="daily-copy">
+          <h2 id="daily-heading">Mes progrès aujourd’hui</h2>
+          <p id="daily-summary" role="status" aria-live="polite">Chargement de la progression…</p>
+        </div>
+      </section>
+
+      <div class="section-heading">
+        <div><span class="eyebrow">À TOI DE JOUER</span><h2>Choisis ton exercice</h2></div>
+        <span class="activity-count">5 activités</span>
       </div>
+
+      <nav class="activity-grid" aria-label="Activités éducatives">
+        <a class="activity-card activity-french" href="./francais.html">
+          <span class="activity-icon" aria-hidden="true">Aa</span>
+          <span class="activity-body"><span class="subject">FRANÇAIS</span><strong>Orthographe</strong><span class="description">Complète les mots avec g, gu, ge, c ou ç.</span></span>
+          <span class="activity-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="activity-card activity-conjugation" href="./conjugaison.html">
+          <span class="activity-icon" aria-hidden="true">Je</span>
+          <span class="activity-body"><span class="subject">FRANÇAIS</span><strong>Conjugaison</strong><span class="description">Conjugue les verbes du 1er groupe au présent.</span></span>
+          <span class="activity-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="activity-card activity-math" href="./calcul.html">
+          <span class="activity-icon" aria-hidden="true">+</span>
+          <span class="activity-body"><span class="subject">MATHÉMATIQUES</span><strong>Calcul</strong><span class="description">Entraîne-toi aux additions, à ton niveau.</span></span>
+          <span class="activity-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="activity-card activity-space" href="./space.html">
+          <span class="activity-icon" aria-hidden="true">✦</span>
+          <span class="activity-body"><span class="subject">MISSION</span><strong>Mission calcul</strong><span class="description">Résous des additions pour repousser les aliens.</span></span>
+          <span class="activity-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="activity-card activity-magic" href="./magic.html">
+          <span class="activity-icon" aria-hidden="true">✧</span>
+          <span class="activity-body"><span class="subject">MISSION</span><strong>Mission magique</strong><span class="description">Utilise les calculs pour lancer des sorts dans la forêt.</span></span>
+          <span class="activity-arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+      <p class="footer-note">Un exercice à la fois, et de grands progrès au fil des jours.</p>
     </main>
     <script src="./daily-exercises.js?v=20261101-5min"></script>
     <script>DailyExercises.mount(document.getElementById("daily-summary"));</script>
