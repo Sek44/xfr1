@@ -39,7 +39,7 @@ class Node {
   }
   addEventListener() {}
 }
-function setup(files = ["game-state.js", "game-ui.js", "game-common.js"], storage = new Map()) {
+function setup(files = ["game-state.js", "game-ui.js", "game-common.js", "exercise-weighting.js"], storage = new Map()) {
   let now = 0,
     id = 0;
   const timers = new Map(),

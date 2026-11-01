@@ -99,6 +99,7 @@ window.ExerciseScores = (() => {
     if (record.tab === "space") return "Mission calcul";
     if (record.tab === "magic") return "Mission magique";
     if (record.tab === "math") return record.category || "Additions";
+    if (record.tab === "conjugaison") return "Conjugaison · " + (record.category || "Présent · 1er groupe");
     if (record.tab === "g") return "Français · g / gu / ge";
     if (record.tab === "c") return "Français · c / ç";
     return String(record.category || record.tab || "Exercice");
@@ -269,7 +270,9 @@ window.ExerciseScores = (() => {
     const records = read().filter(
       (r) =>
         game === null ||
-        (game === "math"
+        (game === "conjugaison"
+          ? r.tab === "conjugaison"
+          : game === "math"
           ? r.tab === "math"
           : game === "space" || game === "magic"
             ? r.tab === game
@@ -279,7 +282,9 @@ window.ExerciseScores = (() => {
     title.textContent =
       game === null
         ? "Tous mes résultats"
-        : game === "math"
+        : game === "conjugaison"
+          ? "Mes résultats en conjugaison"
+          : game === "math"
           ? "Mes résultats en calcul"
           : game === "space"
             ? "Mes missions spatiales"

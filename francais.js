@@ -267,30 +267,17 @@
   }
   resetCorrectedWordWeights();
 
+  const weighting = ExerciseWeighting.create({
+    appearancesKey: WORD_COUNTS_KEY,
+    errorsKey: WORD_ERRORS_KEY,
+    appearances: wordCounts,
+    errors: wordErrors,
+  });
   function recordError(category, item) {
-    const key = wordKey(category, item);
-    const count = wordErrors[key];
-    wordErrors[key] = Math.min(Number.MAX_SAFE_INTEGER,
-      (Number.isSafeInteger(count) && count >= 0 ? count : 0) + 1);
-    try {
-      localStorage.setItem(WORD_ERRORS_KEY, JSON.stringify(wordErrors));
-    } catch {
-      // Storage may be disabled or full.
-    }
-  }
-
-  function appearanceCount(category, item) {
-    const count = wordCounts[wordKey(category, item)];
-    return Number.isSafeInteger(count) && count >= 0 ? count : 0;
+    weighting.error(wordKey(category, item));
   }
   function recordAppearance(category, item) {
-    const key = wordKey(category, item);
-    wordCounts[key] = Math.min(Number.MAX_SAFE_INTEGER, appearanceCount(category, item) + 1);
-    try {
-      localStorage.setItem(WORD_COUNTS_KEY, JSON.stringify(wordCounts));
-    } catch {
-      // The exercise remains usable when storage is unavailable.
-    }
+    weighting.appearance(wordKey(category, item));
   }
 
   let tab = "g",
@@ -426,8 +413,7 @@
   }
 
   function shuffleSession(t) {
-    // Sample words, not sentences: many example sentences for a word
-    // must not increase that word's chance of appearing.
+    // Select unique word keys, not individual sentence variants.
     const sentencesByWord = new Map();
     for (const item of sets[t].items) {
       if (!isValidQuestion(t, item)) continue;
@@ -435,32 +421,7 @@
       if (!sentencesByWord.has(key)) sentencesByWord.set(key, []);
       sentencesByWord.get(key).push(item);
     }
-    const words = [...sentencesByWord.keys()];
-    const session = [];
-    while (words.length && session.length < SESSION_SIZE) {
-      const weights = words.map((key) => {
-        const count = wordCounts[key];
-        const appearances = Number.isSafeInteger(count) && count >= 0 ? count : 0;
-        const countErrors = wordErrors[key];
-        const errors = Number.isSafeInteger(countErrors) && countErrors >= 0 ? countErrors : 0;
-        // Mistakes offset the appearance penalty and increase future practice.
-        const successfulAppearances = Math.max(0, appearances - errors);
-        return (1 + 3 * errors) / ((successfulAppearances + 1) ** 2);
-      });
-      let draw = Math.random() * weights.reduce((sum, weight) => sum + weight, 0);
-      let index = words.length - 1;
-      for (let i = 0; i < words.length; i++) {
-        draw -= weights[i];
-        if (draw < 0) {
-          index = i;
-          break;
-        }
-      }
-      const key = words.splice(index, 1)[0];
-      const variants = sentencesByWord.get(key);
-      session.push(variants[Math.floor(Math.random() * variants.length)]);
-    }
-    return session;
+    return weighting.choose(sentencesByWord, SESSION_SIZE);
   }
   function switchTab(t) {
     tab = t;

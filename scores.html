@@ -74,6 +74,7 @@
       <div class="filter">
         <a href="./scores.html" data-game="all">Tous</a
         ><a href="./scores.html?game=francais" data-game="francais">Français</a
+        ><a href="./scores.html?game=conjugaison" data-game="conjugaison">Conjugaison</a
         ><a href="./scores.html?game=calcul" data-game="calcul">Calcul</a
         ><a href="./scores.html?game=space" data-game="space">Mission calcul</a
         ><a href="./scores.html?game=magic" data-game="magic">Mission magique</a>
@@ -85,7 +86,7 @@
     <script>
       "use strict";
       const game = new URLSearchParams(location.search).get("game");
-      const selected = ["francais", "calcul", "space", "magic"].includes(game)
+      const selected = ["francais", "conjugaison", "calcul", "space", "magic"].includes(game)
         ? game
         : null;
       for (const link of document.querySelectorAll("[data-game]")) {
@@ -96,6 +97,7 @@
       }
       const routes = {
         francais: "francais.html",
+        conjugaison: "conjugaison.html",
         calcul: "calcul.html",
         space: "space.html",
         magic: "magic.html",

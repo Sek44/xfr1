@@ -54,5 +54,42 @@ window.GameUI = (() => {
     return container;
   }
 
-  return { element, editNumber, keypad };
+  // A shared AZERTY input for spelling exercises, with essential French accents.
+  function editWord(answer, command, maxLength = 24) {
+    if (command === "clear") return "";
+    if (command === "erase") return answer.slice(0, -1);
+    return /^[a-zàâäéèêëîïôöùûüÿçœæ]$/i.test(command) &&
+      answer.length < maxLength
+      ? answer + command.toLocaleLowerCase("fr")
+      : answer;
+  }
+  function azertyKeyboard(container, onInput, { disabled = false } = {}) {
+    container.replaceChildren();
+    const rows = ["azertyuiop", "qsdfghjklm", "wxcvbn", "éèêàçùûïô"];
+    for (const characters of rows) {
+      const row = element("div", "keyboard-row");
+      row.style.setProperty("--keys", characters.length);
+      for (const character of characters) {
+        const button = element("button", "", character);
+        button.type = "button";
+        button.disabled = disabled;
+        button.onclick = () => onInput(character);
+        row.append(button);
+      }
+      container.append(row);
+    }
+    const controls = element("div", "keyboard-row controls");
+    for (const [command, label] of [["clear", "Tout effacer"], ["erase", "⌫"]]) {
+      const button = element("button", "", label);
+      button.type = "button";
+      button.disabled = disabled;
+      button.setAttribute("aria-label", command === "erase" ? "Effacer la dernière lettre" : label);
+      button.onclick = () => onInput(command);
+      controls.append(button);
+    }
+    container.append(controls);
+    return container;
+  }
+
+  return { element, editNumber, keypad, editWord, azertyKeyboard };
 })();
