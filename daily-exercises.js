@@ -3,7 +3,7 @@ window.DailyExercises = (() => {
   // Shared across GitHub Pages projects hosted on the same origin.
   const KEY = "entrainement_daily_exercises_v1";
   const VERSION = 1;
-  const MINUTES_PER_POINT = 10;
+  const MINUTES_PER_POINT = 5;
 
   function today() {
     const date = new Date();
@@ -62,7 +62,16 @@ window.DailyExercises = (() => {
       const state = JSON.parse(raw);
       // Never destroy unreadable or unsupported data.
       if (!valid(state)) return null;
-      if (state.date === today()) return state;
+      if (state.date === today()) {
+        // Existing daily points immediately use the current conversion ratio.
+        const minutes = state.points * MINUTES_PER_POINT;
+        if (!Number.isSafeInteger(minutes)) return null;
+        if (state.minutes !== minutes) {
+          state.minutes = minutes;
+          return write(state) ? state : null;
+        }
+        return state;
+      }
       const fresh = empty();
       return write(fresh) ? fresh : null;
     } catch {
