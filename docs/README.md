@@ -10,6 +10,7 @@ La documentation est versionnée avec le code et décrit **l'état actuel**. L'h
 | Travaux communs encore ouverts | [Backlog transversal](BACKLOG.md) |
 | Décisions techniques communes | [ADR transversaux](adr/README.md) |
 | Français | [Spécifications](games/francais/SPECIFICATIONS.md) · [Architecture](games/francais/ARCHITECTURE.md) · [Backlog](games/francais/BACKLOG.md) |
+| Conjugaison | [Spécifications](games/conjugaison/SPECIFICATIONS.md) · [Architecture](games/conjugaison/ARCHITECTURE.md) · [Backlog](games/conjugaison/BACKLOG.md) |
 | Calcul | [Spécifications](games/calcul/SPECIFICATIONS.md) · [Architecture](games/calcul/ARCHITECTURE.md) · [Backlog](games/calcul/BACKLOG.md) |
 | Mission calcul | [Spécifications](games/space/SPECIFICATIONS.md) · [Architecture](games/space/ARCHITECTURE.md) · [Backlog](games/space/BACKLOG.md) |
 | Mission magique | [Spécifications](games/magic/SPECIFICATIONS.md) · [Architecture](games/magic/ARCHITECTURE.md) · [Backlog](games/magic/BACKLOG.md) |
@@ -24,7 +25,7 @@ Contrairement à GMR, les fichiers HTML/JS/CSS des jeux sont aujourd'hui **à la
 - **ADR** : décision structurante durable avec contexte, options et conséquences ; ne pas réécrire l'histoire d'un ADR accepté. En cas de changement, créer son successeur et indiquer « Remplacé par ».
 - **Git** : historique détaillé. Aucun `CHANGELOG.md` ni `REFACTORING.md` permanent.
 
-Le backlog commun utilise `XFR1`, suivi d'un entier (ex. `XFR11`) ; les backlogs locaux utilisent `FRANCAIS`, `CALCUL`, `SPACE` ou `MAGIC` suivis d'un entier. Chaque tâche commence par `- [ ] **ID — Titre.**`.
+Le backlog commun utilise `XFR1`, suivi d'un entier (ex. `XFR11`) ; les backlogs locaux utilisent `FRANCAIS`, `CONJUGAISON`, `CALCUL`, `SPACE` ou `MAGIC` suivis d'un entier. Chaque tâche commence par `- [ ] **ID — Titre.**`.
 
 Chaque backlog conserve **Dernier identifiant attribué**. Un ID est unique, stable, croissant, et n'est jamais renuméroté ni réutilisé, même si la tâche est déplacée ou supprimée. Si un sujet passe d'un backlog à l'autre, conserver une référence à l'ancien ID ; ne pas dupliquer la tâche.
 

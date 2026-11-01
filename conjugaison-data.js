@@ -56,7 +56,7 @@ window.ConjugaisonData = (() => {
   const subjects = {
     je: ["Je"],
     tu: ["Tu"],
-    il: ["Il", "Paul", "Le garçon", "Le chien"],
+    il: ["Il", "Paul", "Le garçon"],
     elle: ["Elle", "Julie", "La fille"],
     on: ["On"],
     nous: ["Nous", "Paul et moi", "Julie et moi"],
