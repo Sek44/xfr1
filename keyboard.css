@@ -3,7 +3,8 @@
   --keyboard-gap: clamp(2px, 0.45vw, 5px);
   display: flex;
   flex-direction: column;
-  gap: var(--keyboard-gap);
+  /* A little more air between rows than between adjacent keys. */
+  gap: clamp(6px, 1vw, 10px);
   width: 100%;
   /* Use all available horizontal space, including wide landscape tablets. */
   max-width: none;
