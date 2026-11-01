@@ -1,0 +1,88 @@
+/* Shared school-inspired visual language, matching the home page.
+   Only presentation: game logic, keypad sizing and layout remain game-owned. */
+:root { color-scheme: light; --school-ink: #23334d; --school-muted: #62738a; --school-border: #dce5f0; --school-blue: #2768b7; --school-bg: #f4f7fc; }
+body { background: var(--school-bg); color: var(--school-ink); }
+.page-header { margin-bottom: 12px; }
+.page-header .page-title {
+  color: #163b69;
+  font-weight: 800;
+  letter-spacing: -.035em;
+}
+.page-header .nav-icon, .page-header .restart-header {
+  background: #fff;
+  border: 1px solid #cbd9ed;
+  color: #285a9c;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #1e3d6810;
+}
+.page-header .nav-icon:hover, .page-header .nav-icon:focus-visible,
+.page-header .restart-header:hover, .page-header .restart-header:focus-visible {
+  background: #e8f1ff;
+  border-color: #9bbbe6;
+}
+.panel, .score-card, .score, .setting {
+  background: #fff;
+  border: 1px solid var(--school-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 14px #1f42600b;
+}
+.score-card.progress-row, .score.progress-row {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.progress-row .progress-label, .progress-row .progress-score {
+  background: #fff;
+  border: 1px solid var(--school-border);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #1f42600b;
+}
+.progress-row .progress-score strong { color: var(--school-blue); }
+.panel { border-radius: 19px; }
+.tabs button, .tabs .tab-current {
+  border-radius: 12px;
+  font-weight: 750;
+}
+.tabs button:not(.active) {
+  background: #fff;
+  border-color: #d8e3f2;
+  color: #44617f;
+}
+.tabs button.active, .tabs .tab-current {
+  background: #e8f1ff;
+  border-color: #aac8eb;
+  color: #245a99;
+}
+.choices button {
+  background: #f8faff;
+  border-color: #cddbed;
+  color: #285a9c;
+}
+.choices button.selected {
+  color: #fff;
+  background: var(--school-blue);
+  border-color: var(--school-blue);
+}
+.actions .primary, .exercise-actions .primary, .panel > button.primary,
+.panel .primary {
+  background: var(--school-blue);
+  border-color: var(--school-blue);
+  color: #fff;
+  font-weight: 750;
+  border-radius: 12px;
+}
+.keypad button { background: #f4f8fe; border-color: #cddbed; color: #285a9c; }
+.keypad button:active { background: #dceafe; }
+.setting select, .answer-display {
+  border-color: #c5d6ec;
+  background: #f8faff;
+}
+.verb-label strong, .typed-answer { color: var(--school-blue); }
+.typed-answer { border-bottom-color: var(--school-blue); }
+.conjugaison-sentence { color: #23334d; }
+.panel .feedback.good { color: #24734d; }
+.panel .feedback.bad { color: #b44242; }
+@media (max-width: 420px) {
+  .page-header { margin-bottom: 8px; }
+  .panel { border-radius: 15px; }
+}

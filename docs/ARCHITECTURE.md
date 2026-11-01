@@ -5,6 +5,7 @@
 Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépendance d'exécution. Publication GitHub Pages sous `/xfr1/`. Les chemins des pages sont relatifs et les jeux fonctionnent sur téléphone, tablette et ordinateur.
 
 - `index.html` : accueil avec cinq liens vers `francais.html`, `conjugaison.html`, `calcul.html`, `space.html` et `magic.html`.
+- `home.css` : style scolaire de l’accueil ; `exercise-theme.css` : mêmes couleurs, panneaux et contrôles pour Français, Conjugaison et Calcul, chargé après les styles propres aux pages.
 - `scores.html` : historique général et filtres par jeu, avec courbe uniquement sur les pages de scores filtrées par jeu.
 - Chaque page de jeu charge ses modules communs puis son contrôleur propre. Les fichiers des jeux restent dans la racine du dépôt ; leurs documents sont dans `docs/games/<id>/`.
 
