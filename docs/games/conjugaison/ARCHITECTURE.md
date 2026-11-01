@@ -2,7 +2,7 @@
 
 ## Fichiers et modules
 
-- `conjugaison.html` et `conjugaison.css` : interface, premier onglet et phrase à compléter. Le style du clavier responsive est mutualisé dans `keyboard.css` (racine).
+- `conjugaison.html` et `conjugaison.css` : interface, premier onglet et phrase à compléter. Le style du clavier responsive est mutualisé dans `keyboard.css` (racine), tandis que les marges étroites de la page et du panneau sont définies dans `conjugaison.css`.
 - `conjugaison-data.js` (`ConjugaisonData`) : listes de verbes, compléments, personnes et sujets, conjugaison et validation de chaque question.
 - `conjugaison.js` : session, saisie, suivi de première erreur, sauvegarde et récompense de fin de série.
 - `game-ui.js` (`GameUI`) : `editWord` et `azertyKeyboard` (accents groupés par voyelle, lignes AZERTY et « espace », réutilisables par les futurs exercices) ; `game-common.js` (`ExerciseGame`) : vérification, feedback, compteur sur 10 et délai de 3 secondes partagé avec les jeux Français et Calcul.

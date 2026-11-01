@@ -1,12 +1,13 @@
 /* Shared AZERTY layout for present and future word-entry exercises. */
 .azerty-keyboard {
-  --keyboard-gap: clamp(3px, 0.65vw, 6px);
+  --keyboard-gap: clamp(2px, 0.45vw, 5px);
   display: flex;
   flex-direction: column;
   gap: var(--keyboard-gap);
   width: 100%;
-  max-width: 720px;
-  margin-inline: auto;
+  /* Use all available horizontal space, including wide landscape tablets. */
+  max-width: none;
+  margin-inline: 0;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -27,9 +28,9 @@
 }
 .azerty-keyboard .keyboard-key {
   min-width: 0;
-  min-height: clamp(40px, 5.4vw, 52px);
-  padding: 6px 1px;
-  font: 700 clamp(0.87rem, 2.9vw, 1.3rem) system-ui, sans-serif;
+  min-height: clamp(44px, 5.5vw, 62px);
+  padding: 3px 0;
+  font: 750 clamp(1.2rem, 3.8vw, 2rem) system-ui, sans-serif;
   color: #203954;
   background: #eef4fe;
   border: 1px solid #b6c9e6;
@@ -40,7 +41,7 @@
   background: #e4edfc;
 }
 .azerty-keyboard .keyboard-row--controls .keyboard-key {
-  font-size: clamp(0.75rem, 2.4vw, 1rem);
+  font-size: clamp(0.85rem, 2.5vw, 1.15rem);
   background: white;
 }
 .azerty-keyboard .keyboard-key--space {
@@ -59,7 +60,7 @@
 }
 @media (max-width: 400px) {
   .azerty-keyboard {
-    --keyboard-gap: 3px;
+    --keyboard-gap: 2px;
   }
   .azerty-keyboard .keyboard-key {
     border-radius: 6px;

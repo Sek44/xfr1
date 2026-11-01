@@ -1,12 +1,12 @@
 * { box-sizing: border-box; }
-body { margin: 0; padding: 16px; background: #f3f6fb; color: #233047; font-family: system-ui, Arial, sans-serif; }
-main { max-width: 760px; margin: auto; }
+body { margin: 0; padding: 12px 4px; padding-left: max(4px, env(safe-area-inset-left)); padding-right: max(4px, env(safe-area-inset-right)); background: #f3f6fb; color: #233047; font-family: system-ui, Arial, sans-serif; }
+main { width: 100%; max-width: none; margin: auto; }
 .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 8px; }
 .tab-current { display: inline-block; padding: 10px 16px; border-radius: 12px; background: #2064c7; color: white; font-weight: 700; }
 .score-card { display: flex; justify-content: space-between; align-items: center; gap: 16px; border: 2px solid #dae5f6; border-radius: 16px; padding: 12px 16px; background: white; margin: 8px 0; }
 .score-card strong { font-size: 1.8rem; color: #175fc4; }
 .score-card .progress-label { font-weight: 650; color: #637188; }
-.panel { background: white; border-radius: 18px; padding: clamp(12px, 3vw, 22px); box-shadow: 0 4px 18px #1e3d6812; }
+.panel { background: white; border-radius: 18px; padding: clamp(10px, 2vw, 20px) clamp(2px, 0.45vw, 6px); box-shadow: 0 4px 18px #1e3d6812; }
 .verb-label { font-size: 1.12rem; color: #52627c; margin: 0 0 10px; }
 .verb-label strong { color: #1757a7; font-size: 1.35rem; }
 .conjugaison-sentence { font-size: clamp(1.2rem, 4vw, 1.9rem); line-height: 1.6; margin: 14px 0 22px; overflow-wrap: anywhere; }
