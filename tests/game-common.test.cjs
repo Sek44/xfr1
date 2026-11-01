@@ -536,3 +536,54 @@ test("French resumes obsolete active questions with a fresh answer", () => {
     assert.equal(f.saved.length, 0);
   }
 });
+
+
+test("conjugation keeps its checkpoint and scores only first-try successes", () => {
+  const files = [
+    "game-state.js", "game-ui.js", "game-common.js",
+    "exercise-weighting.js", "conjugaison-data.js",
+  ];
+  const first = setup(files);
+  first.run("conjugaison.js");
+  const game = first.sessions[0];
+  assert.equal(game.total, 10);
+  const key = "exercices_in_progress_conjugaison";
+  const checkpoint = JSON.parse(first.storage.get(key)).session;
+  assert.equal(checkpoint.questions.length, 10);
+  assert.equal(new Set(checkpoint.questions.map((q) =>
+    JSON.stringify([q.type, q.verb, q.person]))).size, 10);
+  // A full word can be typed through the virtual keyboard.
+  const keyboard = first.elements.get("panel").children.find(
+    (node) => node.className === "azerty-keyboard");
+  const firstAnswer = checkpoint.questions[0].answer;
+  for (const letter of firstAnswer) {
+    const keyButton = keyboard.children.flatMap((row) => row.children)
+      .find((button) => button.textContent === letter);
+    assert.ok(keyButton, "Missing AZERTY key " + letter);
+    keyButton.onclick();
+  }
+  assert.equal(JSON.parse(first.storage.get(key)).session.answer, firstAnswer);
+  first.elements.get("panel").children.at(-1).children[0].onclick();
+  assert.equal(game.score, 1);
+  first.visit.suspend();
+  const pending = JSON.parse(first.storage.get(key)).session.progress.remaining;
+
+  const restored = setup(files, first.storage);
+  restored.run("conjugaison.js");
+  assert.equal(restored.sessions[0].score, 1);
+  assert.equal(restored.sessions[0].correct, true);
+  assert.equal(JSON.parse(restored.storage.get(key)).session.progress.remaining, pending);
+  restored.visit.resume();
+
+  for (let n = 0; n < 10; n++) {
+    if (!restored.sessions[0].correct) {
+      restored.sessions[0].validate(false);
+      restored.sessions[0].validate(true);
+    }
+    restored.sessions[0].next();
+  }
+  assert.equal(restored.saved.length, 1);
+  assert.equal(restored.saved[0].tab, "conjugaison");
+  assert.equal(restored.saved[0].score, 1);
+  assert.equal(restored.storage.has(key), false);
+});
