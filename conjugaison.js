@@ -115,7 +115,7 @@
     button.id = "verify-button";
     button.disabled = !game.correct && !answer.length;
     button.onclick = game.correct ? () => game.next() : verify;
-    actions.append(button);
+    actions.append(button, game.restartButton(restart));
     panel.append(actions);
   }
   document.addEventListener("keydown", (event) => {

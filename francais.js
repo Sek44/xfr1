@@ -508,7 +508,7 @@
       button = game.actionButton();
     button.disabled = !game.correct && selected === null;
     button.onclick = game.correct ? advance : verify;
-    actions.append(button);
+    actions.append(button, game.restartButton(() => switchTab(tab)));
     panel.append(actions);
   }
   if (!restore()) game.reset(questions.length);

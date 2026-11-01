@@ -156,6 +156,34 @@ window.ExerciseGame = (() => {
       node.setAttribute("role", "status");
       return node;
     }
+    function restartButton(onRestart) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "restart-series";
+      button.textContent = "Recommencer la série";
+      let asking = false;
+      button.onclick = async () => {
+        if (asking) return;
+        asking = true;
+        suspend();
+        try {
+          const confirmed = await AppConfirm.ask({
+            title: "Recommencer la série ?",
+            message: "La progression et le score de cette série seront perdus. Aucun résultat ne sera enregistré.",
+            confirmText: "Recommencer",
+            cancelText: "Annuler",
+          });
+          if (confirmed) onRestart();
+          else resume();
+        } catch (error) {
+          resume();
+          throw error;
+        } finally {
+          asking = false;
+        }
+      };
+      return button;
+    }
     function actionButton() {
       const button = document.createElement("button");
       button.className = "primary";
@@ -179,6 +207,7 @@ window.ExerciseGame = (() => {
       finish,
       feedback,
       actionButton,
+      restartButton,
       get index() {
         return index;
       },

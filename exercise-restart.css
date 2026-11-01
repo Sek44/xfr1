@@ -1,0 +1,22 @@
+/* Shared restart action for question-based exercises. */
+.restart-series {
+  background: #f0f4fa;
+  border: 2px solid #becde0;
+  color: #365271;
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-height: 44px;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+.restart-series:focus-visible {
+  outline: 3px solid #2064c7;
+  outline-offset: 2px;
+}
+.actions, .exercise-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
