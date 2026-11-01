@@ -508,9 +508,10 @@
       button = game.actionButton();
     button.disabled = !game.correct && selected === null;
     button.onclick = game.correct ? advance : verify;
-    actions.append(button, game.restartButton(() => switchTab(tab)));
+    actions.append(button);
     panel.append(actions);
   }
+  document.getElementById("restart-series").onclick = game.restartButton(() => switchTab(tab)).onclick;
   if (!restore()) game.reset(questions.length);
 
   ScoreView.bind({

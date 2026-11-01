@@ -1,22 +1,29 @@
-/* Shared restart action for question-based exercises. */
-.restart-series {
-  background: #f0f4fa;
-  border: 2px solid #becde0;
-  color: #365271;
-  border-radius: 12px;
-  padding: 10px 14px;
-  min-height: 44px;
-  font: inherit;
-  font-weight: 650;
+/* Shared icon-only restart control in the exercise navigation header. */
+.page-header:has(.restart-header) {
+  grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
+  gap: 6px;
+}
+.page-header .restart-header {
+  justify-self: end;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #b8cbe7;
+  color: #1757a7;
   cursor: pointer;
 }
-.restart-series:focus-visible {
-  outline: 3px solid #2064c7;
-  outline-offset: 2px;
+.page-header .restart-header:hover,
+.page-header .restart-header:focus-visible {
+  background: #e8f1ff;
+  border-color: #2064c7;
 }
-.actions, .exercise-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+.page-header .restart-header svg {
+  display: block;
+  width: 29px;
+  height: 29px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }

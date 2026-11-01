@@ -234,6 +234,7 @@
     actions.append(button);
     p.append(actions);
   }
+  document.getElementById("restart-series").onclick = game.restartButton(newSession).onclick;
   if (!restore()) newSession();
 
   ScoreView.bind({

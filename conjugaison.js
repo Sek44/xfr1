@@ -115,7 +115,7 @@
     button.id = "verify-button";
     button.disabled = !game.correct && !answer.length;
     button.onclick = game.correct ? () => game.next() : verify;
-    actions.append(button, game.restartButton(restart));
+    actions.append(button);
     panel.append(actions);
   }
   document.addEventListener("keydown", (event) => {
@@ -141,6 +141,7 @@
   });
   let scoreView = null;
   function ScoreViewOpen() { return scoreView?.open; }
+  document.getElementById("restart-series").onclick = game.restartButton(restart).onclick;
   if (!restore()) restart();
   scoreView = ScoreView.bind({
     suspend: () => { game.suspend(); persist(); },
