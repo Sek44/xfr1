@@ -27,13 +27,13 @@ function setup(initial = {}) {
   return { api: window.DailyExercises, items, listeners };
 }
 
-test("one exercise gives ten minutes, regardless of its score", () => {
+test("one exercise gives five minutes, regardless of its score", () => {
   const { api } = setup();
   assert.equal(api.award("francais"), true);
   assert.equal(api.award("calcul"), true);
   const day = api.read();
   assert.equal(day.points, 2);
-  assert.equal(day.minutes, 20);
+  assert.equal(day.minutes, 10);
   assert.equal(day.date, api.today());
 });
 
@@ -46,7 +46,7 @@ test("partial magical series carry over between sessions and duplicates cannot r
   assert.equal(api.read().progress.magic, 0);
   assert.equal(api.recordProgress("magic", 46, 20, "session2:8-54"), 2);
   assert.equal(api.read().progress.magic, 6);
-  assert.equal(api.read().minutes, 30);
+  assert.equal(api.read().minutes, 15);
 });
 
 test("independent arcade progress and restored score snapshots", () => {
@@ -78,6 +78,19 @@ test("previous days reset points, authorized minutes, progress and deduplication
   assert.equal(fresh.events.length, 0);
   assert.equal(api.award("calcul"), true);
   assert.equal(api.read().points, 1);
+});
+
+test("existing points are converted at the new ratio", () => {
+  const { api, items } = setup();
+  items.set(api.KEY, JSON.stringify({
+    version: 1, date: api.today(), points: 3, minutes: 30,
+    progress: { magic: 12 }, events: ["magic:checkpoint"],
+  }));
+  const state = api.read();
+  assert.equal(state.points, 3);
+  assert.equal(state.minutes, 15);
+  assert.equal(state.progress.magic, 12);
+  assert.equal(state.events[0], "magic:checkpoint");
 });
 
 test("corrupted data is not overwritten", () => {

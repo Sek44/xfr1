@@ -31,7 +31,7 @@ exported on `window`. Load each shared dependency before its game controller.
 
 ## Daily exercise credits
 
-Every completed French or addition session earns one daily exercise point, regardless of answers. Mission calcul earns one point per 10 successful calculations; Mission magique earns one per 20. Each point currently grants 10 minutes of authorized play time. The home page shows both totals. Arcade partial progress carries over between sessions on the same day.
+Every completed French or addition session earns one daily exercise point, regardless of answers. Mission calcul earns one point per 10 successful calculations; Mission magique earns one per 20. Each point currently grants 5 minutes of authorized play time. The home page shows both totals. Arcade partial progress carries over between sessions on the same day.
 
 The stable shared localStorage key is `entrainement_daily_exercises_v1`, with `date` (browser-local `YYYY-MM-DD`), `points`, `minutes`, `progress`, `events` and `version: 1`. It is readable from other apps on the **same web origin**, for example `sek44.github.io/rblx/` if published there. An external reader must compare the stored date to its own current local date and use zero on a mismatch. Different domains/browsers/devices do not share localStorage. No game-time consumption or cross-device sync is implemented yet. See [architecture](docs/ARCHITECTURE.md) for the contract.
 
