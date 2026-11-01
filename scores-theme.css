@@ -1,0 +1,21 @@
+/* School theme for score history, shared palette with the exercises. */
+:root { color-scheme: light; --school-ink: #23334d; --school-muted: #62738a; --school-border: #dce5f0; --school-blue: #2768b7; --school-bg: #f4f7fc; }
+body { background: var(--school-bg); color: var(--school-ink); }
+.page-header { margin-bottom: 16px; }
+.page-header .page-title { color: #163b69; font-weight: 800; letter-spacing: -.035em; }
+.page-header .nav-icon { background: #fff; border: 1px solid #cbd9ed; color: #285a9c; border-radius: 12px; box-shadow: 0 2px 8px #1e3d6810; }
+.page-header .nav-icon:hover, .page-header .nav-icon:focus-visible { background: #e8f1ff; border-color: #9bbbe6; }
+.filter { margin-bottom: 14px; gap: 8px; }
+.filter a { background: #fff; color: #44617f; border: 1px solid #d8e3f2; border-radius: 12px; font-weight: 750; }
+.filter a.active { background: #e8f1ff; border-color: #aac8eb; color: #245a99; }
+.filter a:hover, .filter a:focus-visible { border-color: #9bbbe6; }
+.filter a:focus-visible { outline: 3px solid #2768b7; outline-offset: 2px; }
+.history-panel { background: #fff; border: 1px solid var(--school-border); border-radius: 19px; box-shadow: 0 4px 14px #1f42600b; }
+.history-panel h2, .history-panel h3 { color: #163b69; letter-spacing: -.02em; }
+.history-table th { background: #f1f6fd; color: #395b80; }
+.history-table td, .history-table th { border-bottom-color: #e2eaf4; }
+.history-summary, .history-hint { color: var(--school-muted); }
+.score-evolution { border-top-color: var(--school-border); }
+.score-line { stroke: var(--school-blue); }
+.score-dot { fill: var(--school-blue); }
+@media (max-width: 420px) { .history-panel { padding: 15px; border-radius: 15px; } .filter a { padding: 8px 11px; } }
