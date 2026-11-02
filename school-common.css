@@ -8,8 +8,6 @@
   --school-blue: #185ba7;
   --school-panel: #ffffff;
   --school-shadow: 0 3px 12px #214b8016;
-  --school-accent: #d47a37;
-  --school-accent-soft: #fff0df;
 }
 body { background: var(--school-bg); color: var(--school-ink); }
 .school-panel, .activity-card, .daily-panel, .history-panel,
@@ -21,11 +19,11 @@ body { background: var(--school-bg); color: var(--school-ink); }
 }
 .activity-card { border-color: #afc9e4; }
 .activity-card:hover, .activity-card:focus-visible { border-color: var(--school-blue); }
-.daily-panel { background: #d4e7f6; border: 0; box-shadow: none; border-left: 4px solid var(--school-accent); border-radius: 12px; }
-.daily-icon { background: #f9e5d0; color: #99521d; }
-.title-dot { color: var(--school-accent); }
+.daily-panel { background: #d4e7f6; border: 0; box-shadow: none; border-left: 4px solid var(--school-blue); border-radius: 12px; }
+.daily-icon { background: #e3efff; color: #185ba7; }
+.title-dot { color: #185ba7; }
 .activity-count, .footer-note { color: #536d89; }
-.activity-arrow { color: var(--school-accent); }
+.activity-arrow { color: #185ba7; }
 .school-page .page-header.school-banner {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
@@ -35,7 +33,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
   padding: 7px clamp(10px, 2vw, 16px);
   background: #e9f1f9;
   border: 1px solid #b4cbe2;
-  border-bottom: 3px solid #d3a076;
+  border-bottom: 2px solid #a9c5e5;
   border-radius: 13px;
   box-shadow: none;
 }
@@ -99,3 +97,30 @@ body { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
 .school-page .feedback.good { color: #21754b; }
 .school-page .feedback.bad { color: #b33d35; }
 .school-page .tab-current { background: #dbe9f8; border-color: #c0d5e9; }
+
+/* Same question panel for all three regular exercises. */
+.school-page .panel .sentence,
+.school-page .panel .conjugaison-sentence,
+.school-page .panel .equation-row {
+  box-sizing: border-box;
+  padding: 14px clamp(10px, 2vw, 20px);
+  margin: 10px 0 16px;
+  border: 1px solid #b7d0ea;
+  border-left: 4px solid #6d9dcc;
+  border-radius: 12px;
+  background: #edf5ff;
+  color: #1b3555;
+  font-weight: 400;
+}
+.school-page .panel .sentence { font-weight: 400; }
+.school-page .panel .conjugaison-sentence { font-weight: 400; }
+.school-page .panel .equation-row .question { font-weight: 400; }
+.school-page .panel .typed-answer,
+.school-page .panel .equation-row .answer-display,
+.school-page .panel .sentence .hole { font-weight: 750; }
+.school-page .panel .verb-label strong { font-weight: 800; }
+@media (max-width: 420px) {
+  .school-page .panel .sentence,
+  .school-page .panel .conjugaison-sentence,
+  .school-page .panel .equation-row { padding: 10px 8px; }
+}

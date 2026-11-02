@@ -11,7 +11,7 @@ a { color: inherit; }
 .welcome { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 208px; padding: clamp(24px, 4vw, 40px); overflow: hidden; background: #bcd8f7; border: 2px solid #88b4e1; border-radius: 23px; }
 .eyebrow { font-size: .72rem; font-weight: 850; letter-spacing: .13em; color: #4675ae; }
 .welcome h1 { margin: 10px 0; font-size: clamp(2.1rem, 5vw, 3.4rem); letter-spacing: -.055em; color: #163b69; line-height: 1.1; }
-.title-dot { color: #eea94d; }
+.title-dot { color: #185ba7; }
 .welcome p { max-width: 470px; margin: 0; color: #486383; font-size: clamp(.95rem, 1.9vw, 1.06rem); line-height: 1.65; }
 .welcome-illustration { flex: 0 0 205px; height: 145px; position: relative; transform: rotate(-4deg); }
 .paper { position: absolute; width: 126px; height: 143px; right: 35px; top: 0; border: 2px solid #d3e2f5; border-radius: 8px; background: #fff; box-shadow: 0 7px 22px #244c7521; }

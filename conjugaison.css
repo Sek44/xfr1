@@ -23,22 +23,18 @@ main { width: 100%; max-width: none; margin: auto; }
 .verb-label {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
   margin: 0 0 16px; padding: 11px 14px;
-  background: #eaf2fd; border-left: 4px solid #d47a37;
+  background: #eaf2fd; border-left: 4px solid #185ba7;
   border-radius: 10px;
 }
 .verb-caption { font-size: .92rem; font-weight: 600; color: #4a6686; }
 .verb-label strong { font-size: clamp(1.45rem, 4.3vw, 2rem); color: #174e88; letter-spacing: -.02em; }
 .conjugaison-sentence {
-  padding: 14px clamp(9px, 2vw, 20px);
-  margin: 0 0 16px;
-  background: #fffaf3; border: 1px solid #f0d7bb;
-  border-radius: 12px;
   font-size: clamp(1.5rem, 4.5vw, 2.15rem);
-  font-weight: 650;
+  font-weight: 400;
   line-height: 1.65;
 }
 .typed-answer {
-  color: #145ba6; border-bottom: 4px solid #d47a37;
-  background: #fff0dc; border-radius: 4px 4px 0 0;
+  color: #145ba6; border-bottom: 4px solid #185ba7;
+  background: #e7f1ff; border-radius: 4px 4px 0 0;
   padding: 0 .1em; min-width: 2.4em;
 }
