@@ -99,3 +99,37 @@ test("corrupted data is not overwritten", () => {
   assert.equal(api.read(), null);
   assert.equal(items.get(api.KEY), "{broken");
 });
+
+test("structured progress counters show independent values and keep the daily ratio", () => {
+  const { api, listeners } = setup();
+  const points = { textContent: "" };
+  const minutes = { textContent: "" };
+  const error = { textContent: "", hidden: true };
+  api.mountStats(points, minutes, error);
+  assert.equal(points.textContent, "0 exercices");
+  assert.equal(minutes.textContent, "0 min de jeu");
+  assert.equal(error.hidden, true);
+
+  assert.equal(api.award("francais"), true);
+  listeners.focus();
+  assert.equal(points.textContent, "1 exercice");
+  assert.equal(minutes.textContent, "5 min de jeu");
+
+  assert.equal(api.award("calcul"), true);
+  listeners.focus();
+  assert.equal(points.textContent, "2 exercices");
+  assert.equal(minutes.textContent, "10 min de jeu");
+});
+
+test("structured progress counters handle inaccessible stored data without overwriting it", () => {
+  const { api, items } = setup({ entrainement_daily_exercises_v1: "{broken" });
+  const points = { textContent: "" };
+  const minutes = { textContent: "" };
+  const error = { textContent: "", hidden: true };
+  api.mountStats(points, minutes, error);
+  assert.equal(points.textContent, "— exercices");
+  assert.equal(minutes.textContent, "— min de jeu");
+  assert.equal(error.hidden, false);
+  assert.match(error.textContent, /indisponible/);
+  assert.equal(items.get(api.KEY), "{broken");
+});
