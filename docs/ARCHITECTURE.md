@@ -56,3 +56,7 @@ Les sessions temporaires sont distinctes des scores. Une navigation vers les sco
 Les tests Node intégrés au dépôt (`node --test tests/*.test.cjs`) couvrent des moteurs, contrôleurs et API partagées. Prettier 3.6.2 sert au formatage HTML/JS/CSS. Le site n'a pas de build obligatoire.
 
 La validation visuelle/tactile sur mobile et tablette, le comportement selon l'orientation et l'intégration réelle du navigateur nécessitent des vérifications supplémentaires : voir [backlog transversal](BACKLOG.md). L'architecture propre à chaque jeu est documentée dans `docs/games/<id>/ARCHITECTURE.md`.
+
+## Identité graphique commune
+
+`school-common.css` définit la palette bleu scolaire renforcée, les panneaux communs et le bandeau supérieur des exercices Français, Conjugaison, Calcul et de la page Scores. `home.css`, `exercise-theme.css` et `scores-theme.css` conservent les détails propres à chaque écran ; les deux missions n'importent pas cette feuille et gardent leur identité visuelle. Le bandeau conserve les actions de navigation (retour, recommencer lorsqu'il existe, scores) et ne change pas leur comportement.
