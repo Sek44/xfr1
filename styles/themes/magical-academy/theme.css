@@ -151,3 +151,32 @@ html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-
 html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-actions .confirm-accept {
  background:linear-gradient(#1479bd,#07366f);border-color:#e4ac43;color:white;
 }
+
+
+/* Decorative artwork stays behind semantic HTML and interactive controls. */
+html[data-theme="magical-academy"] body {
+ background-image:url("./assets/castle.svg"),linear-gradient(180deg,#07163c,#102a5f 70%,#081b3e);
+ background-position:center top,center; background-repeat:no-repeat,no-repeat;
+ background-size:max(900px,100vw) auto,cover;
+}
+html[data-theme="magical-academy"] body::before {display:none}
+html[data-theme="magical-academy"] .welcome {
+ padding-left:clamp(95px,16vw,175px);
+ background-image:url("./assets/book.svg"),linear-gradient(125deg,#fff8e4,#ffe6ac);
+ background-position:26px center,center;
+ background-repeat:no-repeat,no-repeat;background-size:clamp(70px,11vw,128px) auto,cover;
+}
+html[data-theme="magical-academy"] .brand-mark {
+ background-image:url("./assets/book.svg");background-position:center;background-repeat:no-repeat;
+ background-size:contain;color:transparent;font-size:0;
+}
+html[data-theme="magical-academy"] .home-header::after {
+ content:"";display:block;flex:0 0 38px;width:38px;height:50px;
+ background:url("./assets/lantern.svg") center/contain no-repeat;
+}
+html[data-theme="magical-academy"] .home-header .scores-link {margin-left:auto}
+html[data-theme="magical-academy"] .activity-magic .activity-icon {background-image:url("./assets/book.svg");background-size:90%;background-repeat:no-repeat;background-position:center;font-size:0}
+@media(max-width:500px){
+ html[data-theme="magical-academy"] .welcome {padding-left:82px;background-position:7px center,center;background-size:70px auto,cover}
+ html[data-theme="magical-academy"] .home-header::after {display:none}
+}
