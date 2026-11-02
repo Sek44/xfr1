@@ -22,7 +22,7 @@ a { color: inherit; }
 .paper-rule.short { width: 65%; }
 .pencil { position: absolute; right: 14px; bottom: 8px; width: 12px; height: 122px; transform: rotate(36deg); border-radius: 4px 4px 1px 1px; background: linear-gradient(90deg, #e9a855 0 35%, #ffd390 35% 75%, #dc9743 75%); box-shadow: 1px 2px 5px #153c6433; }
 .pencil::after { content: ""; position: absolute; bottom: -16px; left: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 17px solid #bf8a60; }
-.daily-panel { display: flex; align-items: center; gap: 15px; padding: 19px 22px; margin: 20px 0 32px; background: #fff; border: 1px solid #dbe6f3; border-radius: 17px; box-shadow: 0 3px 12px #1c42600a; }
+.daily-panel { display: flex; align-items: center; gap: 15px; padding: 16px 20px; margin: 20px 0 32px; background: #d4e7f6; border: 0; border-radius: 13px; box-shadow: none; }
 .daily-icon { flex: 0 0 48px; display: grid; place-items: center; width: 48px; height: 48px; color: #2b68b3; background: #e8f1ff; border-radius: 15px; }
 .daily-icon svg { width: 27px; height: 27px; }
 .daily-copy h2 { margin: 0 0 5px; font-size: 1.05rem; }

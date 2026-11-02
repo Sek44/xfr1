@@ -7,7 +7,9 @@
   --school-border: #a8c3e0;
   --school-blue: #185ba7;
   --school-panel: #ffffff;
-  --school-shadow: 0 6px 0 #9bb9d52e, 0 11px 24px #214b8021;
+  --school-shadow: 0 3px 12px #214b8016;
+  --school-accent: #d47a37;
+  --school-accent-soft: #fff0df;
 }
 body { background: var(--school-bg); color: var(--school-ink); }
 .school-panel, .activity-card, .daily-panel, .history-panel,
@@ -19,31 +21,36 @@ body { background: var(--school-bg); color: var(--school-ink); }
 }
 .activity-card { border-color: #afc9e4; }
 .activity-card:hover, .activity-card:focus-visible { border-color: var(--school-blue); }
-.daily-panel { border-left: 6px solid var(--school-blue); }
+.daily-panel { background: #d4e7f6; border: 0; box-shadow: none; border-left: 4px solid var(--school-accent); border-radius: 12px; }
+.daily-icon { background: #f9e5d0; color: #99521d; }
+.title-dot { color: var(--school-accent); }
+.activity-count, .footer-note { color: #536d89; }
+.activity-arrow { color: var(--school-accent); }
 .school-page .page-header.school-banner {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
   align-items: center;
   gap: 8px;
-  margin: 0 0 14px;
-  padding: 12px clamp(12px, 2.5vw, 22px);
-  background: #1b579b;
-  border: 2px solid #13457f;
-  border-radius: 18px;
-  box-shadow: 0 5px 0 #123e7540;
+  margin: 0 0 12px;
+  padding: 7px clamp(10px, 2vw, 16px);
+  background: #e9f1f9;
+  border: 1px solid #b4cbe2;
+  border-bottom: 3px solid #d3a076;
+  border-radius: 13px;
+  box-shadow: none;
 }
 .school-page .page-header.school-banner .page-title {
-  color: white;
-  letter-spacing: -.025em;
-  font-size: clamp(1.24rem, 4vw, 1.9rem);
+  color: #1b4b7e;
+  letter-spacing: -.02em;
+  font-size: clamp(1.2rem, 3.8vw, 1.6rem);
   text-align: center;
-  font-weight: 850;
+  font-weight: 750;
 }
 .school-page .page-header.school-banner .nav-icon {
   display: flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; padding: 0;
-  border: 1px solid #b9d2f4; border-radius: 11px;
-  background: #eaf3ff; color: #174f90;
+  border: 1px solid #c3d5e8; border-radius: 10px;
+  background: #fff; color: #285b91;
   box-shadow: none;
 }
 .school-page .page-header.school-banner .nav-icon svg { stroke: currentColor; }
@@ -72,3 +79,23 @@ body { background: var(--school-bg); color: var(--school-ink); }
   .school-page .page-header.school-banner { grid-template-columns: 40px minmax(0, 1fr) 40px 40px; gap: 5px; padding: 9px 10px; }
   .school-page .page-header.school-banner .nav-icon { width: 40px; height: 40px; }
 }
+
+/* Consistent typography and calmer panel treatment. */
+body { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+.school-page .panel, .school-page .history-panel, .school-page .setting {
+  border-width: 1px;
+  box-shadow: var(--school-shadow);
+}
+.school-page .progress-row .progress-label, .school-page .progress-row .progress-score {
+  border-width: 1px;
+  box-shadow: 0 2px 8px #214b8010;
+}
+.school-page .actions .primary, .school-page .exercise-actions .primary,
+.school-page .panel .primary {
+  background: #155ea8; border-color: #155ea8;
+  box-shadow: 0 3px 0 #124a7b;
+}
+.school-page .filter a, .school-page .tabs button { border-width: 1px; }
+.school-page .feedback.good { color: #21754b; }
+.school-page .feedback.bad { color: #b33d35; }
+.school-page .tab-current { background: #dbe9f8; border-color: #c0d5e9; }

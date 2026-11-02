@@ -92,7 +92,8 @@
       return;
     }
     const q = questions[game.index];
-    const heading = GameUI.element("p", "verb-label", "Verbe à conjuguer : ");
+    const heading = GameUI.element("p", "verb-label");
+    heading.append(GameUI.element("span", "verb-caption", "Verbe à conjuguer"));
     heading.append(GameUI.element("strong", "", q.verb));
     panel.append(heading);
     const sentence = GameUI.element("div", "conjugaison-sentence");
