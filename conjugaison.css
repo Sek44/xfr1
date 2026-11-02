@@ -38,3 +38,9 @@ main { width: 100%; max-width: none; margin: auto; }
   background: #e7f1ff; border-radius: 4px 4px 0 0;
   padding: 0 .1em; min-width: 2.4em;
 }
+
+/* Give the question a comfortable inset without narrowing the keyboard. */
+.school-page .panel .conjugaison-sentence {
+  margin-left: clamp(10px, 2vw, 20px);
+  margin-right: clamp(10px, 2vw, 20px);
+}
