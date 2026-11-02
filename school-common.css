@@ -19,7 +19,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
 }
 .activity-card { border-color: #afc9e4; }
 .activity-card:hover, .activity-card:focus-visible { border-color: var(--school-blue); }
-.daily-panel { background: #d4e7f6; border: 0; box-shadow: none; border-left: 4px solid var(--school-blue); border-radius: 12px; }
+.daily-panel { background: #d4e7f6; border: 0; box-shadow: none; border-left: 0; border-radius: 12px; }
 .daily-icon { background: #e3efff; color: #185ba7; }
 .title-dot { color: #185ba7; }
 .activity-count, .footer-note { color: #536d89; }
@@ -106,7 +106,7 @@ body { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
   padding: 14px clamp(10px, 2vw, 20px);
   margin: 10px 0 16px;
   border: 1px solid #b7d0ea;
-  border-left: 4px solid #6d9dcc;
+  border-left: 1px solid #b7d0ea;
   border-radius: 12px;
   background: #edf5ff;
   color: #1b3555;

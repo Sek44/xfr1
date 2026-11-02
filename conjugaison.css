@@ -23,7 +23,7 @@ main { width: 100%; max-width: none; margin: auto; }
 .verb-label {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px;
   margin: 0 0 16px; padding: 11px 14px;
-  background: #eaf2fd; border-left: 4px solid #185ba7;
+  background: #eaf2fd; border: 1px solid #c8dbef;
   border-radius: 10px;
 }
 .verb-caption { font-size: .92rem; font-weight: 600; color: #4a6686; }
