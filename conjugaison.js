@@ -92,10 +92,12 @@
       return;
     }
     const q = questions[game.index];
+    // A decorative frame groups the verb and the sentence without narrowing the shared keyboard.
+    const questionFrame = GameUI.element("div", "question-frame");
     const heading = GameUI.element("p", "verb-label");
     heading.append(GameUI.element("span", "verb-caption", "Verbe à conjuguer"));
     heading.append(GameUI.element("strong", "", q.verb));
-    panel.append(heading);
+    questionFrame.append(heading);
     const sentence = GameUI.element("div", "conjugaison-sentence");
     sentence.append(document.createTextNode(ConjugaisonData.prefix(q.subject, q.answer)));
     const field = GameUI.element("span", "typed-answer", answer || "\u00a0\u00a0\u00a0");
@@ -103,7 +105,8 @@
     field.setAttribute("role", "status");
     field.setAttribute("aria-label", "Réponse : " + (answer || "vide"));
     sentence.append(field, document.createTextNode(" " + q.complement));
-    panel.append(sentence);
+    questionFrame.append(sentence);
+    panel.append(questionFrame);
     const keyboard = GameUI.element("div", "azerty-keyboard");
     GameUI.azertyKeyboard(keyboard, edit, { disabled: game.correct });
     panel.append(keyboard);
