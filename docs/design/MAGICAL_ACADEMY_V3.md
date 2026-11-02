@@ -156,3 +156,11 @@ La feuille `styles/themes/magical-academy/theme.css` a été restructurée pour 
 - « Mes progrès aujourd'hui » est désormais un **panneau parchemin en deux colonnes** : trophée et titre, puis cible et nombre d'exercices, horloge et minutes autorisées. Les deux compteurs sont mis à jour par `DailyExercises.mountStats` à partir du même stockage `entrainement_daily_exercises_v1` (1 point = 5 min). L'ancien `DailyExercises.mount` reste disponible pour les consommateurs existants.
 - L'organisation propre à l'accueil est dans `index.html` et `styles/themes/magical-academy/home-v3.css` ; la feuille `theme.css` reste commune aux exercices.
 - À valider encore : rendu exact et lisibilité sur mobiles/tablettes réels, fonctionnement du menu de préférences au tactile et conformité fine aux proportions de `design_v3.png`.
+
+## Conjugaison V3 — bandeau et cadre de question (2 novembre 2026)
+
+- Le bandeau `.conjugaison-banner` affiche la plume `--art-quill` auprès du titre, avec trois contrôles circulaires (accueil, recommencer, scores). Les **identifiants, liens et gestionnaires existants restent inchangés** ; le lien Scores garde le filtre `?game=conjugaison`.
+- Le temps courant est présenté sur un cartouche parchemin indépendant et les blocs Question/Score sont deux plaques arrondies.
+- L'élément `.question-frame` regroupe **uniquement** le verbe et la phrase. Il utilise `--art-parchment` (fichier `docs/design/parchment-ornament.webp`) comme illustration de cadre, avec une bordure et un fond CSS de secours ; les textes et la réponse restent de vrais éléments DOM.
+- Le clavier AZERTY commun et la validation restent **à l'extérieur** du sous-cadre afin de préserver la largeur des dix touches, notamment sur téléphone. Un fichier dédié `styles/themes/magical-academy/conjugaison-v3.css` isole ces règles visuelles.
+- Vérifications statiques effectuées : structure HTML, syntaxe JavaScript, liens des contrôles, ressources du thème et règles responsive. **Vérification visuelle réelle et exécution complète des tests Node encore nécessaires.**
