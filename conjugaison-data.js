@@ -82,6 +82,14 @@ window.ConjugaisonData = (() => {
     }
     return stem + personEndings[person];
   }
+  // Ignore accidental whitespace around an answer while keeping French
+  // spelling, accents and the grammatical person strict.
+  function matchesAnswer(question, submitted) {
+    if (!question || typeof submitted !== "string") return false;
+    const expected = conjugate(question.type, question.verb, question.person);
+    return expected !== null &&
+      submitted.trim().normalize("NFC").toLocaleLowerCase("fr") === expected;
+  }
   function key(question) {
     return JSON.stringify([question.type, question.verb, question.person]);
   }
@@ -112,5 +120,5 @@ window.ConjugaisonData = (() => {
     return Boolean(entry && entry[1] === question.complement &&
       conjugate(question.type, question.verb, question.person) === question.answer);
   }
-  return { groups, subjects, conjugate, key, prefix, possibleQuestions, valid };
+  return { groups, subjects, conjugate, matchesAnswer, key, prefix, possibleQuestions, valid };
 })();

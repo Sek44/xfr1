@@ -54,6 +54,21 @@ test("present first-group conjugations cover endings, cedilla, i and accents", (
     "Paul et Julie ");
 });
 
+test("on voyage en train accepts voyage with accidental outer spaces", () => {
+  const { context } = load(["conjugaison-data.js"]);
+  const data = context.ConjugaisonData;
+  const question = {
+    type: "ger", verb: "voyager", person: "on", subject: "On",
+    complement: "en train.", answer: "voyage",
+  };
+  assert.equal(data.conjugate("ger", "voyager", "on"), "voyage");
+  assert.equal(data.valid(question), true);
+  for (const answer of ["voyage", "Voyage", " voyage ", "voyage "])
+    assert.equal(data.matchesAnswer(question, answer), true, answer);
+  for (const answer of ["voyages", "voyageons", "voyagé", "voyag"])
+    assert.equal(data.matchesAnswer(question, answer), false, answer);
+});
+
 test("every bank variant has a valid answer and 10 unique weighted combinations", () => {
   const { context } = load(["conjugaison-data.js", "exercise-weighting.js"]);
   const pool = context.ConjugaisonData.possibleQuestions();

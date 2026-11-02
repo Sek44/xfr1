@@ -78,7 +78,7 @@
   function verify() {
     if (!answer || game.correct) return;
     const current = questions[game.index];
-    const success = answer.normalize("NFC").toLocaleLowerCase("fr") === current.answer;
+    const success = ConjugaisonData.matchesAnswer(current, answer);
     if (!success && !game.failed) tracker.error(ConjugaisonData.key(current));
     game.validate(success);
   }
