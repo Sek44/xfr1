@@ -1,6 +1,6 @@
-# V3 — Académie magique : proposition de design (non implémentée)
+# V3 — Académie magique : design et intégration
 
-> **Statut : concept validé pour implémentation future.** La version actuelle **V1** doit rester accessible : commit `dc834368265255a943ba45d76b6937f05c55a14c`. Cette documentation ne modifie ni les exercices ni leur logique.
+> **Statut : première intégration visuelle réalisée (2 novembre 2026), à compléter.** La version actuelle **V1** doit rester accessible : commit `dc834368265255a943ba45d76b6937f05c55a14c`. L'intégration visuelle n'a pas modifié les générateurs d'exercices ni la logique de progression.
 
 ## Intention et périmètre
 
@@ -122,3 +122,11 @@ Définir aussi les tailles minimales tactiles, espacements, états `hover/focus/
 
 - Version de départ **V1** : [commit conservé](https://github.com/Sek44/xfr1/commit/dc834368265255a943ba45d76b6937f05c55a14c).
 - Concept visuel : « Académie magique — système de design Entraînement » élaboré dans la conversation du 2 novembre 2026. Les images sources sont jointes à cette conversation ; elles ne sont pas embarquées dans ce fichier Markdown.
+
+## Suivi de l'intégration V3 (2 novembre 2026)
+
+- Thème `magical-academy` activé dans le code sur accueil, Français, Conjugaison, Calcul et Scores, via `data-theme` sur `html`.
+- Feuille de thème centralisée : `styles/themes/magical-academy/theme.css`. Palette et tokens sémantiques, parchemins, boutons bleus et or, en-têtes nocturnes, choix radio, listes déroulantes, messages inline et confirmations natives.
+- Mise en page verticale des activités sur l'accueil, sans toucher aux liens ni aux données de progression.
+- Intégration actuelle en CSS uniquement : **les illustrations originales du concept (château, forêt et icônes) ne sont pas encore découpées en assets réutilisables**. L'image de la maquette ne doit pas être utilisée en fond car elle contient des contrôles et des textes.
+- À vérifier avant clôture : tests automatisés et captures réelles mobile/tablette, ajustements visuels, éventuels changements de DOM pour les composants totalement génériques.
