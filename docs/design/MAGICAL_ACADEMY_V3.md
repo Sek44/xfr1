@@ -142,3 +142,9 @@ Ces illustrations sont des recréations SVG, et non des extractions pixel à pix
 ## Intégration des assets WebP (2 novembre 2026)
 
 Les images de `docs/design/` sont désormais utilisées par le thème via les variables `--art-*` de `styles/themes/magical-academy/theme.css` : scène panoramique, cinq pictogrammes de jeux, livres et lanterne. Les autres illustrations (potion, plume, parchemin) sont déclarées et disponibles pour des décorations ciblées. Les contrôles, textes et messages demeurent de vrais éléments HTML/CSS ; aucune interface n'est pré-rendue depuis `design_v3.png`. V1 reste accessible par son commit historique.
+
+## Raffinement visuel du 2 novembre 2026
+
+La feuille `styles/themes/magical-academy/theme.css` a été restructurée pour se rapprocher de la référence V3 : décor panoramique concentré en haut de page, bandeaux bleu nuit affinés, surfaces parchemin à **bordure dorée simple**, meilleure hiérarchie typographique et cartes d'activités plus compactes en vue téléphone. Les fichiers WebP existants servent au château, aux pictogrammes des cinq activités, aux livres, à la lanterne et à la potion de progression. Les en-têtes, réponses, sélecteurs, boutons, messages et confirmations des pages scolaires utilisent une palette partagée.
+
+**Validation restante :** vérifier le rendu et les zones tactiles sur de vrais téléphones/tablettes (portrait et paysage), les tailles de textes et la concordance fine avec `design_v3.png`. Aucun changement n'a été apporté à la génération des questions, au score ou aux clés de persistance.
