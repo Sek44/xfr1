@@ -1,0 +1,138 @@
+/* Magical Academy V3 — theme-only layer. Gameplay and storage are untouched. */
+:root[data-theme="magical-academy"] {
+ --color-background:#081c42; --color-surface:#fff0cf; --color-surface-muted:#edf3fb;
+ --color-text:#19264b; --color-primary:#07539d; --color-on-primary:#fff;
+ --color-accent:#f4bf4d; --color-border:#b77a28; --color-success:#236c36; --color-danger:#ad2937;
+ --font-ui:system-ui,-apple-system,"Segoe UI",Arial,sans-serif; --font-display:Georgia,"Times New Roman",serif;
+ --radius-panel:18px; --radius-control:12px; --border-panel:2px solid var(--color-border);
+ --shadow-panel:0 6px 20px #06112b80;
+ --school-bg:var(--color-background); --school-ink:var(--color-text);
+ --school-muted:#445475; --school-border:var(--color-border); --school-blue:var(--color-primary);
+ --school-panel:var(--color-surface); --school-shadow:var(--shadow-panel);
+ color-scheme:light;
+}
+html[data-theme="magical-academy"] { min-height:100%; background:#081c42; }
+html[data-theme="magical-academy"] body {
+ color:var(--color-text);
+ background:radial-gradient(circle at 88% 9%,#fff4c6 0 3px,transparent 4px),
+ radial-gradient(circle at 16% 10%,#fff3bd 0 2px,transparent 3px),
+ radial-gradient(circle at 61% 4%,#dbeaff 0 2px,transparent 3px),
+ radial-gradient(ellipse at 78% 0%,#21549c 0%,transparent 48%),
+ linear-gradient(180deg,#081b45 0%,#132c62 58%,#0a224b 100%);
+ background-attachment:fixed;
+ min-height:100vh;
+}
+html[data-theme="magical-academy"] body::before {
+ content:""; position:fixed; z-index:0; pointer-events:none; top:0; right:0; width:min(38vw,350px); height:130px;
+ background:radial-gradient(circle at 75% 27%,#faf1be 0 22px,#e1dcaa 23px 24px,transparent 25px);
+ opacity:.85;
+}
+html[data-theme="magical-academy"] main {position:relative; z-index:1;}
+html[data-theme="magical-academy"] .home-header,
+html[data-theme="magical-academy"] .school-page .page-header.school-banner {
+ background:linear-gradient(180deg,#253368,#121b47); border:2px solid #e1ac48;
+ border-radius:20px; box-shadow:inset 0 0 0 2px #071334,0 5px 0 #06112b,0 8px 18px #0007;
+ color:#fff4db;
+}
+html[data-theme="magical-academy"] .home-header {padding:10px 18px;}
+html[data-theme="magical-academy"] .brand {color:#f6d48a;font-family:var(--font-display);font-size:1.1rem;letter-spacing:.03em}
+html[data-theme="magical-academy"] .brand-mark {background:#ffedbb;color:#8f5013;border:2px solid #d89b35}
+html[data-theme="magical-academy"] .welcome {
+ background:linear-gradient(125deg,#fff8e4,#ffe6ac); border:3px double #b37a2b;
+ box-shadow:var(--shadow-panel),inset 0 0 0 3px #fffbec;
+}
+html[data-theme="magical-academy"] .welcome h1 {font-family:var(--font-display);color:#202858;letter-spacing:0;}
+html[data-theme="magical-academy"] .welcome p {color:#49516e}
+html[data-theme="magical-academy"] .eyebrow {color:#9d5f19}
+html[data-theme="magical-academy"] .title-dot {color:#b47d28}
+html[data-theme="magical-academy"] .daily-panel,
+html[data-theme="magical-academy"] .activity-card,
+html[data-theme="magical-academy"] .school-page .panel,
+html[data-theme="magical-academy"] .school-page .setting,
+html[data-theme="magical-academy"] .school-page .history-panel,
+html[data-theme="magical-academy"] .school-page .score,
+html[data-theme="magical-academy"] .school-page .score-card {
+ background:linear-gradient(145deg,#fff8e8,#ffeac5); border:2px solid #c58d3b;
+ border-radius:var(--radius-panel); box-shadow:var(--shadow-panel),inset 0 0 0 2px #fff8e9;
+ color:var(--color-text);
+}
+html[data-theme="magical-academy"] .daily-icon,
+html[data-theme="magical-academy"] .activity-icon {
+ background:linear-gradient(#fff3c8,#f8d68e);color:#243368;border:1px solid #d8a14e;
+}
+html[data-theme="magical-academy"] .section-heading h2,
+html[data-theme="magical-academy"] .activity-count,
+html[data-theme="magical-academy"] .footer-note {color:#fff0cb;text-shadow:0 2px 3px #06112b;}
+html[data-theme="magical-academy"] .activity-grid {grid-template-columns:1fr;gap:11px}
+html[data-theme="magical-academy"] .activity-card {min-height:86px;padding:13px 18px}
+html[data-theme="magical-academy"] .activity-card:hover {border-color:#f7c568;transform:translateY(-1px)}
+html[data-theme="magical-academy"] .activity-icon {width:54px;height:54px;flex-basis:54px}
+html[data-theme="magical-academy"] .activity-body strong {font-family:var(--font-display);font-size:1.22rem;}
+html[data-theme="magical-academy"] .activity-arrow {color:#865318}
+html[data-theme="magical-academy"] .scores-link,
+html[data-theme="magical-academy"] .school-page .page-header.school-banner .nav-icon {
+ background:linear-gradient(#fff8e6,#f9d99c);color:#213366;
+ border:2px solid #b88230;border-radius:12px;
+}
+html[data-theme="magical-academy"] .school-page .page-header.school-banner .page-title {
+ color:#fff0c5;font-family:var(--font-display);font-size:clamp(1.3rem,4vw,1.9rem);text-shadow:0 2px 3px #060e30;
+}
+html[data-theme="magical-academy"] .school-page .panel .sentence,
+html[data-theme="magical-academy"] .school-page .panel .conjugaison-sentence,
+html[data-theme="magical-academy"] .school-page .panel .equation-row {
+ background:linear-gradient(#f9fbff,#e9f1fb);border:1px solid #b0c2d9;
+ border-radius:13px;color:#1c2a50;
+}
+html[data-theme="magical-academy"] .school-page .tabs {display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 14px;}
+html[data-theme="magical-academy"] .school-page .tabs button,
+html[data-theme="magical-academy"] .school-page .tabs .tab-current,
+html[data-theme="magical-academy"] .school-page .filter a {
+ background:linear-gradient(#fff7e7,#f8dfb9);border:2px solid #b78647;border-radius:999px;
+ color:#242a52;padding:9px 15px;min-height:42px;
+}
+html[data-theme="magical-academy"] .school-page .tabs button.active,
+html[data-theme="magical-academy"] .school-page .tabs .tab-current,
+html[data-theme="magical-academy"] .school-page .filter a.active {
+ background:linear-gradient(#1878c2,#07377b);color:white;border-color:#f1bb51;box-shadow:inset 0 0 0 1px #ffffff66;
+}
+html[data-theme="magical-academy"] .school-page .panel button,
+html[data-theme="magical-academy"] .school-page .keypad button,
+html[data-theme="magical-academy"] .school-page .choices button {
+ border:2px solid #c19454;background:linear-gradient(#fff8ea,#f6ddba);
+ border-radius:12px;color:#1c2c57;min-height:44px;
+}
+html[data-theme="magical-academy"] .school-page .choices button.selected,
+html[data-theme="magical-academy"] .school-page .choices button.active {
+ background:#cde3fa;border-color:#065bc2;color:#123f87;
+}
+html[data-theme="magical-academy"] .school-page .actions .primary,
+html[data-theme="magical-academy"] .school-page .exercise-actions .primary,
+html[data-theme="magical-academy"] .school-page .panel .primary {
+ background:linear-gradient(#137dca,#07336f);color:white;border:2px solid #edb94d;
+ border-radius:999px;box-shadow:inset 0 2px 2px #ffffff50,0 3px 0 #543819;
+ font-weight:750;
+}
+html[data-theme="magical-academy"] .school-page .setting select,
+html[data-theme="magical-academy"] .school-page input {
+ background:#fff8e9;color:#17274b;border:2px solid #ba8843;border-radius:10px;
+}
+html[data-theme="magical-academy"] .school-page .feedback.good {
+ display:block;background:#e3f7bc;color:#205e25;border:1px solid #98c77d;border-radius:999px;
+ padding:7px 12px;text-align:center;
+}
+html[data-theme="magical-academy"] .school-page .feedback.bad {
+ background:#ffe3df;color:#922b2b;border:1px solid #e7aca7;border-radius:999px;padding:7px 12px;text-align:center;
+}
+html[data-theme="magical-academy"] .school-page .score-line {stroke:#0069db}
+html[data-theme="magical-academy"] .school-page .score-dot {fill:#0069db}
+html[data-theme="magical-academy"] .school-page .history-table th {background:#f4dcaa}
+html[data-theme="magical-academy"] :is(button,a,select,input):focus-visible {outline:3px solid #ffcd62;outline-offset:3px}
+@media(max-width:500px) {
+ html[data-theme="magical-academy"] .activity-card {min-height:72px;padding:10px 12px}
+ html[data-theme="magical-academy"] .activity-body .description {font-size:.8rem}
+ html[data-theme="magical-academy"] .home-header {padding:7px 9px}
+ html[data-theme="magical-academy"] .welcome {padding:18px}
+}
+@media(prefers-reduced-motion:reduce) {
+ html[data-theme="magical-academy"] *,html[data-theme="magical-academy"] *::before {animation:none!important;transition:none!important}
+}
