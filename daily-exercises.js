@@ -178,16 +178,9 @@ window.DailyExercises = (() => {
     };
   }
 
-  function mount(element) {
-    if (!element) return;
-    const update = () => {
-      const state = read();
-      element.textContent = state
-        ? state.points + " exercice" + (state.points === 1 ? "" : "s") +
-          " terminé" + (state.points === 1 ? "" : "s") +
-          " aujourd’hui · " + state.minutes + " min de jeu autorisées"
-        : "Compteur quotidien indisponible (stockage local inaccessible).";
-    };
+  // A shared subscription mechanism keeps both the legacy text summary and
+  // the structured homepage metrics updated on focus, storage events and midnight.
+  function watch(update) {
     window.addEventListener("storage", (event) => {
       if (event.key === KEY || event.key === null) update();
     });
@@ -199,5 +192,35 @@ window.DailyExercises = (() => {
     update();
   }
 
-  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, recordProgress, milestones, mount };
+  function mount(element) {
+    if (!element) return;
+    watch(() => {
+      const state = read();
+      element.textContent = state
+        ? state.points + " exercice" + (state.points === 1 ? "" : "s") +
+          " terminé" + (state.points === 1 ? "" : "s") +
+          " aujourd’hui · " + state.minutes + " min de jeu autorisées"
+        : "Compteur quotidien indisponible (stockage local inaccessible).";
+    });
+  }
+
+  // Presentation only: two distinct counters, same underlying daily-credit state.
+  function mountStats(pointsElement, minutesElement, errorElement = null) {
+    if (!pointsElement || !minutesElement) return;
+    watch(() => {
+      const state = read();
+      pointsElement.textContent = state
+        ? state.points + " exercice" + (state.points === 1 ? "" : "s")
+        : "— exercices";
+      minutesElement.textContent = state ? state.minutes + " min de jeu" : "— min de jeu";
+      if (errorElement) {
+        errorElement.hidden = Boolean(state);
+        errorElement.textContent = state
+          ? ""
+          : "Compteur quotidien indisponible (stockage local inaccessible).";
+      }
+    });
+  }
+
+  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, recordProgress, milestones, mount, mountStats };
 })();
