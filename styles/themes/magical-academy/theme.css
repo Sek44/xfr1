@@ -153,30 +153,75 @@ html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-
 }
 
 
-/* Decorative artwork stays behind semantic HTML and interactive controls. */
+/* All artwork is sourced from docs/design. Re-skin by replacing these variables. */
+:root[data-theme="magical-academy"] {
+ --art-scene: url("../../../docs/design/background-scene.webp");
+ --art-french: url("../../../docs/design/icon-french.webp");
+ --art-conjugation: url("../../../docs/design/icon-conjugation.webp");
+ --art-calculation: url("../../../docs/design/icon-calculation.webp");
+ --art-magic: url("../../../docs/design/icon-magic.webp");
+ --art-space: url("../../../docs/design/icon-space.webp");
+ --art-books: url("../../../docs/design/books-decoration.webp");
+ --art-lantern: url("../../../docs/design/lantern-decoration.webp");
+ --art-potion: url("../../../docs/design/potion-decoration.webp");
+ --art-quill: url("../../../docs/design/quill-decoration.webp");
+ --art-parchment: url("../../../docs/design/parchment-ornament.webp");
+}
+/* Illustrations are decorative; the data, text, buttons, and form controls stay HTML. */
 html[data-theme="magical-academy"] body {
- background-image:url("./assets/castle.svg"),linear-gradient(180deg,#07163c,#102a5f 70%,#081b3e);
- background-position:center top,center; background-repeat:no-repeat,no-repeat;
- background-size:max(900px,100vw) auto,cover;
+ background-image:linear-gradient(180deg,#06193d82,#112658b0), var(--art-scene),
+  linear-gradient(180deg,#07163c,#102a5f 70%,#081b3e);
+ background-position:center top, center top, center;
+ background-repeat:no-repeat,no-repeat,no-repeat;
+ background-size:cover, max(920px,100vw) auto, cover;
+ background-attachment:fixed,fixed,fixed;
 }
 html[data-theme="magical-academy"] body::before {display:none}
-html[data-theme="magical-academy"] .welcome {
- padding-left:clamp(95px,16vw,175px);
- background-image:url("./assets/book.svg"),linear-gradient(125deg,#fff8e4,#ffe6ac);
- background-position:26px center,center;
- background-repeat:no-repeat,no-repeat;background-size:clamp(70px,11vw,128px) auto,cover;
-}
 html[data-theme="magical-academy"] .brand-mark {
- background-image:url("./assets/book.svg");background-position:center;background-repeat:no-repeat;
- background-size:contain;color:transparent;font-size:0;
+ background-image:var(--art-books);background-position:center;background-repeat:no-repeat;
+ background-size:contain;color:transparent;font-size:0;border:none;background-color:transparent;
 }
+html[data-theme="magical-academy"] .welcome {
+ background-image:linear-gradient(125deg,#fff8e4ed,#ffe6acf0);
+ padding-left:clamp(22px,4vw,40px);
+}
+html[data-theme="magical-academy"] .welcome-illustration {
+ background:var(--art-books) center/contain no-repeat;
+}
+html[data-theme="magical-academy"] .welcome-illustration > * {display:none}
+html[data-theme="magical-academy"] .activity-icon {
+ background-position:center;
+ background-repeat:no-repeat;
+ background-size:contain;
+ background-color:transparent;
+ border:0;
+ font-size:0;
+ box-shadow:none;
+}
+html[data-theme="magical-academy"] .activity-french .activity-icon {background-image:var(--art-french)}
+html[data-theme="magical-academy"] .activity-conjugation .activity-icon {background-image:var(--art-conjugation)}
+html[data-theme="magical-academy"] .activity-math .activity-icon {background-image:var(--art-calculation)}
+html[data-theme="magical-academy"] .activity-magic .activity-icon {background-image:var(--art-magic)}
+html[data-theme="magical-academy"] .activity-space .activity-icon {background-image:var(--art-space)}
 html[data-theme="magical-academy"] .home-header::after {
- content:"";display:block;flex:0 0 38px;width:38px;height:50px;
- background:url("./assets/lantern.svg") center/contain no-repeat;
+ content:"";display:block;flex:0 0 42px;width:42px;height:52px;
+ background:var(--art-lantern) center/contain no-repeat;
 }
 html[data-theme="magical-academy"] .home-header .scores-link {margin-left:auto}
-html[data-theme="magical-academy"] .activity-magic .activity-icon {background-image:url("./assets/book.svg");background-size:90%;background-repeat:no-repeat;background-position:center;font-size:0}
+html[data-theme="magical-academy"] .footer-note {padding-bottom:70px;position:relative}
+html[data-theme="magical-academy"] .footer-note::after {
+ content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+ width:145px;height:65px;background:var(--art-books) center/contain no-repeat;
+}
+html[data-theme="magical-academy"] .daily-panel {position:relative}
+html[data-theme="magical-academy"] .school-page .panel {position:relative}
+html[data-theme="magical-academy"] .school-page .page-header.school-banner::before {display:none}
 @media(max-width:500px){
- html[data-theme="magical-academy"] .welcome {padding-left:82px;background-position:7px center,center;background-size:70px auto,cover}
+ html[data-theme="magical-academy"] .welcome {padding-left:18px}
  html[data-theme="magical-academy"] .home-header::after {display:none}
+ html[data-theme="magical-academy"] .activity-icon {flex:0 0 56px;width:56px;height:56px}
+ html[data-theme="magical-academy"] .welcome-illustration {display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme="magical-academy"] *, html[data-theme="magical-academy"] *::before {animation:none!important;transition:none!important}
 }

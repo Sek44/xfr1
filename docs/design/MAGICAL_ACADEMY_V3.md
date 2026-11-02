@@ -138,3 +138,7 @@ Définir aussi les tailles minimales tactiles, espacements, états `hover/focus/
 - `styles/themes/magical-academy/assets/lantern.svg` : lanterne décorative.
 
 Ces illustrations sont des recréations SVG, et non des extractions pixel à pixel de la maquette. Les éléments interactifs restent du HTML et du CSS.
+
+## Intégration des assets WebP (2 novembre 2026)
+
+Les images de `docs/design/` sont désormais utilisées par le thème via les variables `--art-*` de `styles/themes/magical-academy/theme.css` : scène panoramique, cinq pictogrammes de jeux, livres et lanterne. Les autres illustrations (potion, plume, parchemin) sont déclarées et disponibles pour des décorations ciblées. Les contrôles, textes et messages demeurent de vrais éléments HTML/CSS ; aucune interface n'est pré-rendue depuis `design_v3.png`. V1 reste accessible par son commit historique.
