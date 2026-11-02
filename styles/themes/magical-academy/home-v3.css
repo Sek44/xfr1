@@ -155,7 +155,7 @@ html[data-theme="magical-academy"] .hero-plaque h1 {
 }
 html[data-theme="magical-academy"] .academy-hero .hero-caption {
   position: absolute;
-  bottom: -13px;
+  bottom: 6px;
   width: 21px;
   height: 21px;
   transform: rotate(45deg);
