@@ -500,8 +500,8 @@ html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-
     height: 51px;
   }
   html[data-theme="magical-academy"] .activity-body strong { font-size: 1.19rem; }
-  html[data-theme="magical-academy"] .activity-body .description { font-size: .77rem; }
-  html[data-theme="magical-academy"] .activity-body .subject { font-size: .61rem; }
+  html[data-theme="magical-academy"] .activity-body .description { font-size: .82rem; }
+  html[data-theme="magical-academy"] .activity-body .subject { font-size: .66rem; }
   html[data-theme="magical-academy"] .activity-arrow { font-size: 1.2rem; }
   html[data-theme="magical-academy"] .school-page .panel,
   html[data-theme="magical-academy"] .school-page .history-panel {
