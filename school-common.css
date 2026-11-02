@@ -125,9 +125,11 @@ body { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
   .school-page .panel .equation-row { padding: 10px 8px; }
 }
 /* Conjugation needs inset question framing; do not narrow the AZERTY keyboard. */
-.school-page .panel .conjugaison-sentence {
+.school-page .panel .conjugaison-sentence,
+.school-page .panel .verb-label {
   margin-inline: clamp(16px, 3vw, 26px);
 }
 @media (max-width: 420px) {
-  .school-page .panel .conjugaison-sentence { margin-inline: 16px; }
+  .school-page .panel .conjugaison-sentence,
+  .school-page .panel .verb-label { margin-inline: 16px; }
 }
