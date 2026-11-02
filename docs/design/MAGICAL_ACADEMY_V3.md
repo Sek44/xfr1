@@ -128,5 +128,13 @@ Définir aussi les tailles minimales tactiles, espacements, états `hover/focus/
 - Thème `magical-academy` activé dans le code sur accueil, Français, Conjugaison, Calcul et Scores, via `data-theme` sur `html`.
 - Feuille de thème centralisée : `styles/themes/magical-academy/theme.css`. Palette et tokens sémantiques, parchemins, boutons bleus et or, en-têtes nocturnes, choix radio, listes déroulantes, messages inline et confirmations natives.
 - Mise en page verticale des activités sur l'accueil, sans toucher aux liens ni aux données de progression.
-- Intégration actuelle en CSS uniquement : **les illustrations originales du concept (château, forêt et icônes) ne sont pas encore découpées en assets réutilisables**. L'image de la maquette ne doit pas être utilisée en fond car elle contient des contrôles et des textes.
+- Intégration actuelle en CSS uniquement : **des illustrations SVG de remplacement (château, livre, lanterne) sont désormais intégrées ; les images originales de la maquette ne sont pas encore importées en fichiers binaires**. L'image de la maquette ne doit pas être utilisée en fond car elle contient des contrôles et des textes.
 - À vérifier avant clôture : tests automatisés et captures réelles mobile/tablette, ajustements visuels, éventuels changements de DOM pour les composants totalement génériques.
+
+### Assets illustrés ajoutés
+
+- `styles/themes/magical-academy/assets/castle.svg` : fond panoramique nocturne.
+- `styles/themes/magical-academy/assets/book.svg` : livre décoratif.
+- `styles/themes/magical-academy/assets/lantern.svg` : lanterne décorative.
+
+Ces illustrations sont des recréations SVG, et non des extractions pixel à pixel de la maquette. Les éléments interactifs restent du HTML et du CSS.
