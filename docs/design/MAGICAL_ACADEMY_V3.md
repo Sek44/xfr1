@@ -175,3 +175,8 @@ Les assets `title-frame-filled-9slice.webp` et `question-frame-filled-9slice.web
 
 Le panneau en cours de jeu est un conteneur transparent avec deux composants distincts : `question-frame` (verbe et phrase) et `keyboard-panel` (AZERTY, retour de réponse et bouton Vérifier/Suivant). Le panneau final reste inchangé ; scores, contrôles, sauvegardes et API des exercices ne sont pas modifiés. Tests visuels réels téléphone/tablette encore à effectuer.
 
+## Conjugaison — bordure globale de la page (3 novembre 2026)
+
+La maquette présente un **cadre extérieur unique**, qui englobe le titre, ses boutons de navigation, le cartouche du temps, les scores, la question et le clavier. Le cadre local du bandeau `Conjugaison` a donc été supprimé (aucun fond ni bordure autour du titre et de ses boutons). La bordure extérieure est appliquée à `main` en CSS avec un liseré ivoire/or, des angles arrondis et de discrets ornements centraux ; elle s'adapte automatiquement à la hauteur du contenu et au défilement.
+
+La décoration et les zones tactiles sont indépendantes. Les quatre nouveaux WebP du bandeau, les cadres parchemin 9-slice, le clavier, les scores, la navigation et les sauvegardes restent inchangés. Sur téléphone, les marges du cadre sont réduites pour préserver la largeur des dix colonnes du clavier AZERTY. Aucun nouvel asset n'est nécessaire pour la bordure extérieure.
