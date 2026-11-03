@@ -1,7 +1,7 @@
 /* Magical Academy V3 — Conjugation only.
    The question, keyboard and state remain real HTML; art is decorative. */
 html[data-theme="magical-academy"] body.conjugaison-page {
-  padding: 9px max(6px, env(safe-area-inset-right)) 17px max(6px, env(safe-area-inset-left));
+  padding: 5px max(6px, env(safe-area-inset-right)) 10px max(6px, env(safe-area-inset-left));
 }
 
 /* The single ornamental outline belongs to the WHOLE exercise, including
@@ -11,13 +11,14 @@ html[data-theme="magical-academy"] body.conjugaison-page main {
   isolation: isolate;
   width: 100%;
   max-width: 960px;
-  min-height: calc(100vh - 26px);
-  min-height: calc(100dvh - 26px);
+  min-height: calc(100vh - 15px);
+  min-height: calc(100dvh - 15px);
   margin: 0 auto;
-  padding: 13px 7px 35px;
+  padding: 6px 7px 17px;
   border: 3px solid #f2e4c5;
   border-radius: 34px;
-  background: linear-gradient(180deg, #0927550a, #061a3a1c);
+  /* The scenery can show through the deep blue interior of the outer frame. */
+  background: rgba(6, 23, 58, .58);
   box-shadow:
     inset 0 0 0 1px #98723d,
     inset 0 0 0 4px #1231609c,
@@ -52,9 +53,9 @@ html[data-theme="magical-academy"] body.conjugaison-page .page-header.school-ban
   grid-template-columns: 52px minmax(0, 1fr) 52px 52px;
   align-items: center;
   gap: 9px;
-  min-height: 80px;
-  margin: 4px 0 12px;
-  padding: 10px 5px;
+  min-height: 58px;
+  margin: 0 0 3px;
+  padding: 2px 5px;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -120,7 +121,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner .na
 html[data-theme="magical-academy"] body.conjugaison-page .tabs {
   display: flex;
   justify-content: center;
-  margin: 12px 0 17px;
+  margin: 2px 0 9px;
   padding: 0 10px;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current {
@@ -130,8 +131,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current {
   display: grid;
   place-items: center;
   width: min(100%, 480px);
-  min-height: 64px;
-  padding: 13px 28px;
+  min-height: 51px;
+  padding: 9px 28px;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -176,7 +177,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: stretch;
   gap: clamp(9px, 2.2vw, 18px);
-  margin: 0 0 15px;
+  margin: 0 0 8px;
   padding: 0 3px;
   border: 0;
   background: transparent;
@@ -187,8 +188,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 55px;
-  padding: 7px 9px;
+  min-height: 46px;
+  padding: 5px 9px;
   border: 1.5px solid #cda168;
   border-radius: 999px;
   background: linear-gradient(160deg, #fffaf0, #f7dfb2);
@@ -234,9 +235,9 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame {
   position: relative;
   isolation: isolate;
   z-index: 0;
-  min-height: 195px;
-  margin: 0 2px 17px;
-  padding: clamp(29px, 4vw, 38px) clamp(16px, 3vw, 26px) 22px;
+  min-height: 148px;
+  margin: 0 2px 10px;
+  padding: clamp(20px, 3vw, 26px) clamp(16px, 3vw, 26px) 10px;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -271,16 +272,18 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame::after 
 }
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  min-height: 78px;
+  gap: clamp(5px, 1.5vw, 10px);
+  min-height: 52px;
   width: fit-content;
-  min-width: min(65%, 270px);
+  min-width: min(72%, 320px);
   max-width: 100%;
-  margin: 0 auto 15px;
-  padding: 10px 18px;
+  margin: 0 auto 6px;
+  padding: 7px clamp(9px, 2vw, 17px);
+  white-space: nowrap;
   border: 1.5px solid #aebfcd;
   border-radius: 18px;
   background: linear-gradient(180deg, #e8f4f8, #d5e7ed);
@@ -289,26 +292,28 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-l
 }
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-caption {
   color: #213556;
-  font-size: clamp(.91rem, 2.9vw, 1.09rem);
+  font-size: clamp(.78rem, 2.35vw, 1.03rem);
   font-weight: 650;
+  flex: 0 0 auto;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
   color: #182f56;
-  font-size: clamp(1.48rem, 5vw, 2.2rem);
-  line-height: 1.16;
-  overflow-wrap: anywhere;
+  font-size: clamp(1.1rem, 3.75vw, 1.62rem);
+  line-height: 1.13;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
-  margin: 9px auto 0;
-  padding: 3px 4px;
+  margin: 1px auto 0;
+  padding: 0 4px;
   max-width: 100%;
-  min-height: 65px;
+  min-height: 42px;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   color: #172a4d;
-  font: 400 clamp(1.55rem, 4.7vw, 2.15rem)/1.5 var(--font-display);
+  font: 400 clamp(1.55rem, 4.7vw, 2.15rem)/1.28 var(--font-display);
   text-align: center;
   overflow-wrap: normal;
 }
@@ -341,11 +346,11 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
   transform: none;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .feedback {
-  min-height: 28px;
-  margin: 10px 6px 8px;
+  min-height: 24px;
+  margin: 7px 6px 5px;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions {
-  margin: 14px 0 4px;
+  margin: 8px 0 1px;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
   min-width: min(255px, 82%);
@@ -370,21 +375,21 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
 /* Keep the compact phone layout readable and all controls fully tappable. */
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.conjugaison-page {
-    padding: 5px max(4px, env(safe-area-inset-right)) 14px max(4px, env(safe-area-inset-left));
+    padding: 3px max(4px, env(safe-area-inset-right)) 9px max(4px, env(safe-area-inset-left));
   }
   html[data-theme="magical-academy"] body.conjugaison-page main {
-    min-height: calc(100vh - 19px);
-    min-height: calc(100dvh - 19px);
-    padding: 9px 4px 29px;
+    min-height: calc(100vh - 12px);
+    min-height: calc(100dvh - 12px);
+    padding: 4px 4px 12px;
     border-width: 3px;
     border-radius: 27px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .page-header.school-banner.conjugaison-banner {
     grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
-    min-height: 67px;
+    min-height: 52px;
     gap: 5px;
-    padding: 7px 4px;
-    margin: 2px 0 11px;
+    padding: 2px 4px;
+    margin: 0 0 3px;
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -409,23 +414,23 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     height: 39px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .tabs {
-    margin: 10px 0 14px;
+    margin: 1px 0 7px;
     padding-inline: 10px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current {
-    padding: 11px 9px;
-    min-height: 48px;
+    padding: 8px 9px;
+    min-height: 46px;
     font-size: clamp(.83rem, 3.3vw, 1rem);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row {
-    margin-bottom: 12px;
+    margin-bottom: 7px;
     gap: 8px;
     padding: 0 1px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-label,
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score {
-    min-height: 50px;
-    padding: 5px 5px;
+    min-height: 45px;
+    padding: 4px 5px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score::before {
     font-size: 1.22rem;
@@ -434,18 +439,18 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     padding-inline: 4px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame {
-    min-height: 175px;
-    padding: 22px 10px 19px;
-    margin: 5px 6px 17px;
+    min-height: 149px;
+    padding: 18px 10px 8px;
+    margin: 0 4px 10px;
     border-width: 2px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
-    min-height: 70px;
-    margin-bottom: 11px;
+    min-height: 48px;
+    margin-bottom: 5px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
-    font-size: clamp(1.45rem, 5.3vw, 1.88rem);
-    line-height: 1.45;
+    font-size: clamp(1.4rem, 5.1vw, 1.88rem);
+    line-height: 1.22;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key {
     border-radius: 7px;
@@ -499,7 +504,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame > * {
 }
 html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel {
   margin: 0 2px;
-  padding: 14px clamp(7px, 1.35vw, 17px) 17px;
+  padding: 10px clamp(7px, 1.35vw, 17px) 12px;
   border: 1.5px solid #d4ac77;
   border-radius: 23px;
   background: linear-gradient(160deg, #fff7e5, #f4dcb2);
@@ -507,8 +512,40 @@ html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel {
 }
 html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel .feedback { max-width: 100%; }
 @media (max-width: 520px) {
-  html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current { min-height: 58px; padding: 12px 26px; }
+  html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current { min-height: 49px; padding: 8px 26px; }
   html[data-theme="magical-academy"] body.conjugaison-page .panel.conjugaison-playing { padding: 0; border: 0; background: transparent; box-shadow: none; }
-  html[data-theme="magical-academy"] body.conjugaison-page .question-frame { min-height: 188px; margin: 0 1px 15px; padding: 29px 14px 20px; border: 0; }
-  html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel { margin: 0 1px; padding: 12px 6px 16px; border-radius: 19px; }
+  html[data-theme="magical-academy"] body.conjugaison-page .question-frame { min-height: 150px; margin: 0 1px 9px; padding: 19px 14px 9px; border: 0; }
+  html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel { margin: 0 1px; padding: 9px 6px 11px; border-radius: 19px; }
+}
+
+/* No reserved feedback space before the child has entered an answer. The
+   real feedback message keeps its usual height when present. */
+html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel .feedback:empty {
+  min-height: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Keep the one-line verb header inside its blue label on narrow devices. */
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
+    gap: 6px;
+    min-width: 0;
+    min-height: 48px;
+    max-width: 100%;
+    padding: 5px 9px;
+    margin-bottom: 4px;
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-caption {
+    font-size: clamp(.75rem, 2.7vw, .91rem);
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
+    font-size: clamp(1rem, 3.7vw, 1.32rem);
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
+    min-height: 38px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
 }
