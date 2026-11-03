@@ -167,4 +167,11 @@ La feuille `styles/themes/magical-academy/theme.css` a été restructurée pour 
 
 ## Correctif cadres 9-slice transparents (3 novembre 2026)
 
-Les deux cadres générés pour Conjugaison remplacent l’ancien `parchment-ornament.webp` étiré : fichiers WebP RGBA optimisés `styles/themes/magical-academy/assets/title-frame-9slice.webp` et `question-frame-9slice.webp`. Le cartouche du temps et le cadre de la question sont dessinés en **9-slice CSS (`border-image-slice`)**, avec conservation des quatre coins, étirement limité aux segments rectilignes et centre transparent. Les fonds parchemin sont désormais des dégradés CSS indépendants des images. Les textes et contrôles restent dans le DOM, le clavier garde sa largeur. Sources, dimensions et valeurs de découpe : voir `docs/design/README.md`. 
+Les deux cadres générés pour Conjugaison remplacent l’ancien `parchment-ornament.webp` étiré : fichiers WebP RGBA optimisés `styles/themes/magical-academy/assets/title-frame-9slice.webp` et `question-frame-9slice.webp`. Le cartouche du temps et le cadre de la question sont dessinés en **9-slice CSS (`border-image-slice`)**, avec conservation des quatre coins, étirement limité aux segments rectilignes et centre transparent. Les fonds parchemin sont désormais des dégradés CSS indépendants des images. Les textes et contrôles restent dans le DOM, le clavier garde sa largeur. Sources, dimensions et valeurs de découpe : voir `docs/design/README.md`.
+
+## Conjugaison — cadres avec fond intégré et clavier séparé (3 novembre 2026)
+
+Les assets `title-frame-filled-9slice.webp` et `question-frame-filled-9slice.webp` remplacent les cadres sans remplissage. Leur **centre parchemin est intégré** à l'image et rendu par `border-image-slice: ... fill` ; les surfaces CSS arrondies qui débordaient derrière les contours sont supprimées. Les bords droits s'étirent sans déformer les coins. Pour les dimensions exactes et la découpe, voir `docs/design/README.md`.
+
+Le panneau en cours de jeu est un conteneur transparent avec deux composants distincts : `question-frame` (verbe et phrase) et `keyboard-panel` (AZERTY, retour de réponse et bouton Vérifier/Suivant). Le panneau final reste inchangé ; scores, contrôles, sauvegardes et API des exercices ne sont pas modifiés. Tests visuels réels téléphone/tablette encore à effectuer.
+
