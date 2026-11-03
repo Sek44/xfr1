@@ -194,3 +194,11 @@ Le cartouche « Présent de l’indicatif · 1er groupe » a désormais une larg
 Dans le cadre de la question, les libellés et l'infinitif sont plus lisibles sur une même ligne, avec une réduction contrôlée sur les écrans étroits. La phrase en police d'affichage est agrandie. Le cadre n'impose plus de hauteur minimale : l'espace sous la phrase est déterminé par la marge intérieure nécessaire au contour doré, et augmente naturellement si la phrase revient à la ligne.
 
 Les caractères des touches AZERTY deviennent plus grands et plus gras, sans changer les dimensions tactiles des touches ni la disposition commune. Les touches d'actions (« Tout effacer », « Espace », suppression) conservent une taille de texte spécifique pour ne pas déborder. Tous ces réglages sont limités à Conjugaison, dans `styles/themes/magical-academy/conjugaison-v3.css`. Aucun changement de score, logique de jeu ou stockage.
+
+## Conjugaison — stabilité de la réponse et touches d'édition (3 novembre 2026)
+
+- Le cartouche bleu « Verbe à conjuguer … » possède davantage de marge intérieure à gauche et à droite, sans changer sa position ni le cadre doré extérieur.
+- La réponse est composée d'un emplacement `inline-grid` contenant une **réserve invisible de la largeur réelle de la bonne conjugaison** (`.answer-reserve`) et une valeur saisie visible (`.answer-visible`) superposée. La largeur initiale est donc suffisante pour la bonne réponse, même lorsqu'aucune lettre n'a été saisie. Une saisie incorrecte plus large peut agrandir l'emplacement normalement. Le texte de la réponse attendue n'est pas affiché et la réserve est ignorée par les lecteurs d'écran.
+- `updateAnswer()` ne remplace plus le conteneur : elle met à jour seulement la valeur visible et son libellé accessible. Cela conserve la réserve pendant toute la saisie ainsi qu'après rechargement de la partie.
+- La touche « Tout effacer » affiche désormais **Tout / effacer** sur deux lignes avec des marges latérales, tout en conservant `aria-label="Tout effacer"` et son action. La touche « Espace » possède une police plus grande et le symbole de retour arrière est agrandi.
+- Les proportions particulières des touches d'édition sont limitées au jeu Conjugaison ; le clavier AZERTY générique, ses commandes et les données persistantes restent inchangés.
