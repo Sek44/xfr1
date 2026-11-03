@@ -90,34 +90,36 @@ html[data-theme="magical-academy"] body.conjugaison-page .tabs {
   padding: 0 10px;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current {
-  display: block;
   position: relative;
+  isolation: isolate;
+  z-index: 0;
+  display: grid;
+  place-items: center;
   width: min(100%, 480px);
-  min-height: 54px;
-  padding: 14px 18px;
-  border: 2px solid #d2a053;
-  border-radius: 16px 16px 13px 13px;
-  /* The WebP is border-only; this parchment fill stays independent of size. */
-  background: linear-gradient(180deg, #fff9e8, #f8e2b5);
+  min-height: 64px;
+  padding: 13px 28px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   color: #233051;
-  box-shadow: inset 0 0 0 2px #fffbeb96, 0 4px 10px #08163167;
   font-size: clamp(.91rem, 2.45vw, 1.17rem);
   font-weight: 800;
   text-align: center;
-  line-height: 1.35;
+  line-height: 1.3;
   white-space: normal;
 }
 /* Transparent nine-slice plaque: corners stay intact, edges stretch independently. */
 html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::before {
   content: "";
   position: absolute;
-  inset: -2px;
+  inset: 0;
   z-index: 1;
   box-sizing: border-box;
-  border: 14px solid transparent;
-  border-image-source: url("./assets/title-frame-9slice.webp");
-  border-image-slice: 48 112 48 112;
-  border-image-width: 14px 23px 14px 23px;
+  border: 1px solid transparent;
+  border-image-source: url("./assets/title-frame-filled-9slice.webp");
+  border-image-slice: 55 110 55 110 fill;
+  border-image-width: 15px 24px 15px 24px;
   border-image-repeat: stretch;
   pointer-events: none;
 }
@@ -197,26 +199,27 @@ html[data-theme="magical-academy"] body.conjugaison-page .panel {
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame {
   position: relative;
   isolation: isolate;
+  z-index: 0;
   min-height: 195px;
-  margin: 5px 7px 20px;
-  padding: clamp(20px, 3.2vw, 29px) clamp(11px, 3vw, 24px);
-  border: 3px solid #c99543;
-  border-radius: 24px 20px 22px 20px;
-  background: linear-gradient(#fffaf0, #f7e5c2);
-  box-shadow: inset 0 0 0 3px #ffeed0, inset 0 0 14px #d1a35454, 0 4px 9px #70461c65;
+  margin: 0 2px 17px;
+  padding: clamp(29px, 4vw, 38px) clamp(16px, 3vw, 26px) 22px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 /* Larger frame uses a separate nine-slice image and transparent center.
    The original illustration is never stretched with background-size: 100% 100%. */
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame::before {
   content: "";
   position: absolute;
+  inset: 0;
   z-index: 1;
-  inset: -3px;
   box-sizing: border-box;
-  border: 24px solid transparent;
-  border-image-source: url("./assets/question-frame-9slice.webp");
-  border-image-slice: 128 140 128 140;
-  border-image-width: 24px 27px 24px 27px;
+  border: 1px solid transparent;
+  border-image-source: url("./assets/question-frame-filled-9slice.webp");
+  border-image-slice: 100 110 100 110 fill;
+  border-image-width: 23px 24px 23px 24px;
   border-image-repeat: stretch;
   pointer-events: none;
 }
@@ -430,4 +433,37 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key {
     transition: none;
   }
+}
+
+/* Both pictures contain their parchment centre. 9-slice preserves ornate corners;
+   there must be no independent rounded CSS background behind the image. */
+html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current .tab-label {
+  position: relative;
+  z-index: 2;
+}
+html[data-theme="magical-academy"] body.conjugaison-page .panel.conjugaison-playing {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+html[data-theme="magical-academy"] body.conjugaison-page .question-frame > * {
+  position: relative;
+  z-index: 2;
+}
+html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel {
+  margin: 0 2px;
+  padding: 14px clamp(7px, 1.35vw, 17px) 17px;
+  border: 1.5px solid #d4ac77;
+  border-radius: 23px;
+  background: linear-gradient(160deg, #fff7e5, #f4dcb2);
+  box-shadow: inset 0 0 0 3px #fff9e9bd, 0 7px 15px #06162d66;
+}
+html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel .feedback { max-width: 100%; }
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current { min-height: 58px; padding: 12px 26px; }
+  html[data-theme="magical-academy"] body.conjugaison-page .panel.conjugaison-playing { padding: 0; border: 0; background: transparent; box-shadow: none; }
+  html[data-theme="magical-academy"] body.conjugaison-page .question-frame { min-height: 188px; margin: 0 1px 15px; padding: 29px 14px 20px; border: 0; }
+  html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel { margin: 0 1px; padding: 12px 6px 16px; border-radius: 19px; }
 }
