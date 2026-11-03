@@ -164,3 +164,7 @@ La feuille `styles/themes/magical-academy/theme.css` a été restructurée pour 
 - L'élément `.question-frame` regroupe **uniquement** le verbe et la phrase. Il utilise `--art-parchment` (fichier `docs/design/parchment-ornament.webp`) comme illustration de cadre, avec une bordure et un fond CSS de secours ; les textes et la réponse restent de vrais éléments DOM.
 - Le clavier AZERTY commun et la validation restent **à l'extérieur** du sous-cadre afin de préserver la largeur des dix touches, notamment sur téléphone. Un fichier dédié `styles/themes/magical-academy/conjugaison-v3.css` isole ces règles visuelles.
 - Vérifications statiques effectuées : structure HTML, syntaxe JavaScript, liens des contrôles, ressources du thème et règles responsive. **Vérification visuelle réelle et exécution complète des tests Node encore nécessaires.**
+
+## Correctif cadres 9-slice transparents (3 novembre 2026)
+
+Les deux cadres générés pour Conjugaison remplacent l’ancien `parchment-ornament.webp` étiré : fichiers WebP RGBA optimisés `styles/themes/magical-academy/assets/title-frame-9slice.webp` et `question-frame-9slice.webp`. Le cartouche du temps et le cadre de la question sont dessinés en **9-slice CSS (`border-image-slice`)**, avec conservation des quatre coins, étirement limité aux segments rectilignes et centre transparent. Les fonds parchemin sont désormais des dégradés CSS indépendants des images. Les textes et contrôles restent dans le DOM, le clavier garde sa largeur. Sources, dimensions et valeurs de découpe : voir `docs/design/README.md`. 

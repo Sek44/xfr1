@@ -116,7 +116,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::bef
   box-sizing: border-box;
   border: 14px solid transparent;
   border-image-source: url("./assets/title-frame-9slice.webp");
-  border-image-slice: 24 56 24 56;
+  border-image-slice: 48 112 48 112;
   border-image-width: 14px 23px 14px 23px;
   border-image-repeat: stretch;
   pointer-events: none;
@@ -215,7 +215,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame::before
   box-sizing: border-box;
   border: 24px solid transparent;
   border-image-source: url("./assets/question-frame-9slice.webp");
-  border-image-slice: 64 70 64 70;
+  border-image-slice: 128 140 128 140;
   border-image-width: 24px 27px 24px 27px;
   border-image-repeat: stretch;
   pointer-events: none;
