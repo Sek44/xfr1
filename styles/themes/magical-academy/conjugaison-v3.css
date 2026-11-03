@@ -160,22 +160,13 @@ html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::bef
   border-image-repeat: stretch;
   pointer-events: none;
 }
-html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::after {
-  content: "◆";
-  position: absolute;
-  z-index: 3;
-  bottom: -13px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 15px;
-  line-height: 1;
-  color: #efc776;
-  text-shadow: 0 1px 2px #7d5523;
-}
+/* No decorative diamond between the tense and progress plaques. */
 
 /* Two independent rounded score plaques, as in the reference. */
 html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row {
   display: grid;
+  /* One shared label size for Question and Score; only the number is larger. */
+  --academy-progress-label-size: clamp(1.09rem, 5.15vw, 1.42rem);
   /* Equal columns at their intrinsic width: the wider text sets both sizes. */
   grid-template-columns: repeat(2, minmax(0, 1fr));
   width: max-content;
@@ -207,31 +198,32 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   /* Add breathing room without changing the pill height; grid keeps both pills equal. */
   padding-inline: clamp(18px, 3.5vw, 28px);
   font-family: var(--font-ui);
-  font-size: clamp(1.09rem, 5.15vw, 1.42rem);
+  font-size: var(--academy-progress-label-size);
   line-height: 1.17;
   font-weight: 800;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score {
   gap: clamp(3px, 1.4vw, 9px);
 }
+/* The score star is a centered vector shape, not a font glyph whose
+   baseline varies by device/font. Its box aligns with the number's flex row. */
 html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score::before {
-  content: "★";
-  color: #f3ab33;
-  font-size: clamp(2.05rem, 8vw, 2.65rem);
-  line-height: 1;
+  content: "";
+  display: block;
+  flex: 0 0 auto;
   align-self: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  /* Font glyphs sit above their line box: align the visible star optically. */
-  transform: translateY(.14em);
-  -webkit-text-stroke: 1px #99602d;
-  text-shadow: 0 2px 1px #f4d58b;
+  width: clamp(2.05rem, 8vw, 2.65rem);
+  height: clamp(2.05rem, 8vw, 2.65rem);
+  margin: 0;
+  padding: 0;
+  transform: none;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20d%3D%22M24%202%2030.8%2016.8%2046%2018.6%2034.4%2029%2037.8%2044%2024%2036.1%2010.2%2044%2013.6%2029%202%2018.6%2017.2%2016.8Z%22%20fill%3D%22%23e7a12f%22%20stroke%3D%22%23965521%22%20stroke-width%3D%222.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M24%207%2029.3%2019.3%2041%2020.5%2032%2029%2034.5%2039.4%2024%2033.1%2013.5%2039.4%2016%2029%207%2020.5%2018.7%2019.3Z%22%20fill%3D%22%23ffdd76%22%20opacity%3D%22.92%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px #70481e5e);
 }
 html[data-theme="magical-academy"] body.conjugaison-page .progress-score-label {
   color: #283654;
   font-family: var(--font-ui);
-  font-size: clamp(1.04rem, 4.8vw, 1.36rem);
+  font-size: var(--academy-progress-label-size);
   line-height: 1.17;
   font-weight: 800;
 }
@@ -278,19 +270,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame::before
   border-image-repeat: stretch;
   pointer-events: none;
 }
-html[data-theme="magical-academy"] body.conjugaison-page .question-frame::after {
-  content: "✦";
-  position: absolute;
-  z-index: 3;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #e8b65f;
-  font-size: 22px;
-  line-height: 1;
-  text-shadow: 0 1px #794d22, 0 2px 2px #3d275754;
-  pointer-events: none;
-}
+/* No decorative star between the progress plaques and the question. */
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
   display: flex;
   flex-direction: row;
@@ -495,7 +475,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     padding-inline: clamp(14px, 3.8vw, 20px);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score::before {
-    font-size: clamp(1.75rem, 7.5vw, 2.3rem);
+    width: clamp(1.85rem, 7.5vw, 2.3rem);
+    height: clamp(1.85rem, 7.5vw, 2.3rem);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .panel {
     padding-inline: 4px;
@@ -539,7 +520,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     height: 32px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score::before {
-    font-size: 1.55rem;
+    width: 1.65rem;
+    height: 1.65rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -622,17 +604,15 @@ html[data-theme="magical-academy"] body.conjugaison-page .keyboard-panel .feedba
     padding-inline: 16px;
     font-size: clamp(.81rem, 3.8vw, .96rem);
   }
-  html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-label {
-    font-size: 1.06rem;
-  }
-  html[data-theme="magical-academy"] body.conjugaison-page .progress-score-label {
-    font-size: 1.03rem;
+  html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row {
+    --academy-progress-label-size: 1.06rem;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row strong {
     font-size: 1.35rem;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score::before {
-    font-size: 1.55rem;
+    width: 1.65rem;
+    height: 1.65rem;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
     gap: 4px;
