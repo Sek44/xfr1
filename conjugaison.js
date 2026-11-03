@@ -70,8 +70,10 @@
     persist();
   }
   function updateAnswer() {
+    const visible = document.getElementById("typed-answer-visible");
+    if (visible) visible.textContent = answer || "\u00a0";
     const field = document.getElementById("typed-answer");
-    if (field) field.textContent = answer || "\u00a0\u00a0\u00a0";
+    if (field) field.setAttribute("aria-label", "Réponse : " + (answer || "vide"));
     const verifyButton = document.getElementById("verify-button");
     if (verifyButton && !game.correct) verifyButton.disabled = !answer.length;
   }
@@ -101,10 +103,19 @@
     questionFrame.append(heading);
     const sentence = GameUI.element("div", "conjugaison-sentence");
     sentence.append(document.createTextNode(ConjugaisonData.prefix(q.subject, q.answer)));
-    const field = GameUI.element("span", "typed-answer", answer || "\u00a0\u00a0\u00a0");
+    // Reserve the exact rendered width of the expected conjugation from the
+    // beginning. Typing changes only the visible overlay; an incorrect answer
+    // expands the slot only when its own rendered text is wider.
+    const field = GameUI.element("span", "typed-answer");
     field.id = "typed-answer";
     field.setAttribute("role", "status");
     field.setAttribute("aria-label", "Réponse : " + (answer || "vide"));
+    const reserve = GameUI.element("span", "answer-reserve", q.answer);
+    reserve.setAttribute("aria-hidden", "true");
+    const visible = GameUI.element("span", "answer-visible", answer || "\u00a0");
+    visible.id = "typed-answer-visible";
+    visible.setAttribute("aria-hidden", "true");
+    field.append(reserve, visible);
     sentence.append(field, document.createTextNode(" " + q.complement));
     questionFrame.append(sentence);
     panel.append(questionFrame);
@@ -113,6 +124,15 @@
     const keyboardPanel = GameUI.element("div", "keyboard-panel");
     const keyboard = GameUI.element("div", "azerty-keyboard");
     GameUI.azertyKeyboard(keyboard, edit, { disabled: game.correct });
+    // A deliberately two-line caption allows comfortable side padding while
+    // retaining the original accessible label and clear-button action.
+    const clearButton = keyboard.querySelector(".keyboard-key--clear");
+    if (clearButton) {
+      clearButton.replaceChildren(
+        GameUI.element("span", "", "Tout"),
+        GameUI.element("span", "", "effacer"),
+      );
+    }
     keyboardPanel.append(keyboard);
     keyboardPanel.append(game.feedback({
       correction: "Bonne correction ! Pas de point pour cette phrase.",
