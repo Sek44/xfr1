@@ -298,3 +298,46 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
   html[data-theme="magical-academy"] .academy-hero *::before,
   html[data-theme="magical-academy"] .academy-hero *::after { transition: none; animation: none; }
 }
+
+/* Homepage illustrations imported from docs/design/import as original WebP blobs.
+   Keep the original semantic HTML; CSS supplies visual artwork only. */
+html[data-theme="magical-academy"] .hero-book {
+  background-image: url("./assets/home-book.webp");
+}
+html[data-theme="magical-academy"] .daily-trophy,
+html[data-theme="magical-academy"] .daily-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+html[data-theme="magical-academy"] .daily-trophy {
+  background-image: url("./assets/home-cup.webp");
+}
+html[data-theme="magical-academy"] .daily-stat-target {
+  background-image: url("./assets/home-archery-target.webp");
+}
+html[data-theme="magical-academy"] .daily-stat-hourglass {
+  background-image: url("./assets/home-hourglass.webp");
+}
+html[data-theme="magical-academy"] .daily-trophy svg,
+html[data-theme="magical-academy"] .daily-stat-icon svg {
+  display: none;
+}
+html[data-theme="magical-academy"] .activity-french .activity-icon {
+  background-image: url("./assets/home-book.webp");
+}
+html[data-theme="magical-academy"] .activity-conjugation .activity-icon {
+  background-image: url("./assets/home-parchment.webp");
+}
+html[data-theme="magical-academy"] .activity-math .activity-icon {
+  background-image: url("./assets/home-calcul.webp");
+}
+html[data-theme="magical-academy"] .activity-space .activity-icon {
+  background-image: url("./assets/home-rocket.webp");
+}
+html[data-theme="magical-academy"] .activity-magic .activity-icon {
+  background-image: url("./assets/home-magical-hat.webp");
+}
