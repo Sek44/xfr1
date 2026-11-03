@@ -19,3 +19,15 @@ Two newly generated frames, cropped to remove unused transparent margins and exp
 - `question-frame-9slice.webp` (840 × 410): the framed verb-and-sentence block. CSS `border-image-slice: 128 140 128 140`.
 
 The source images were generated without text, backgrounds, or icons. The center remains **transparent**, so each actual parchment fill, verb, sentence, and button is implemented separately in HTML/CSS. Use `border-image` on decorative pseudo-elements rather than `background-size: 100% 100%`, which distorts corners. Border widths are controlled separately through `border-image-width` to work at different screen sizes. The existing `parchment-ornament.webp` is not used in these two frames.
+
+## Frames with integrated parchment (November 3, 2026)
+
+The conjugation page now uses two **new** alpha-preserving WebP images in `styles/themes/magical-academy/assets/`:
+
+- `title-frame-filled-9slice.webp` — 1200 × 230 px; CSS `border-image-slice: 55 110 55 110 fill`.
+- `question-frame-filled-9slice.webp` — 1000 × 495 px; CSS `border-image-slice: 100 110 100 110 fill`.
+
+Each image contains the gold border **and** parchment interior; only the pixels *outside* the irregular contour are transparent. Nine-slice `fill` renders the centre from the same picture, so no independently rounded CSS background can protrude behind the ornate corners. The frames are applied to pseudo-elements; real text and inputs render above them.
+
+The conjugation question and AZERTY keyboard/validation are now **separate sibling panels** (`.question-frame` and `.keyboard-panel`) inside the transparent playing layout host. The older border-only frames are retained for history but are no longer referenced by the conjugation page.
+
