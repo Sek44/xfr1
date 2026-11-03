@@ -31,3 +31,14 @@ Each image contains the gold border **and** parchment interior; only the pixels 
 
 The conjugation question and AZERTY keyboard/validation are now **separate sibling panels** (`.question-frame` and `.keyboard-panel`) inside the transparent playing layout host. The older border-only frames are retained for history but are no longer referenced by the conjugation page.
 
+## Illustrations du bandeau Conjugaison — 3 novembre 2026
+
+La plume et les trois boutons illustrés sont des images WebP RGBA recadrées, sans fond opaque extérieur, dans `styles/themes/magical-academy/assets/` :
+
+- `quill-academy.webp` (256 × 328), plume dorée indépendante du fond de la page.
+- `nav-back-academy.webp` (320 × 320), flèche retour sur bouton bleu nuit et or.
+- `nav-restart-academy.webp` (320 × 320), relancer la série.
+- `nav-scores-academy.webp` (320 × 320), accès aux scores.
+
+`conjugaison-nav-art.css` applique les images sans fond CSS additionnel. Les vrais éléments `a` et `button` ainsi que leurs libellés accessibles, liens, gestionnaires d'événements et styles de focus restent actifs. Les glyphes SVG redondants sont seulement masqués dans la page Conjugaison. Ces assets pourront être réutilisés par les autres jeux avec les classes correspondantes, après validation de leur bandeau.
+
