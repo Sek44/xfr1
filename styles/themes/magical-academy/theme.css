@@ -40,6 +40,14 @@
   --art-parchment: url("../../../docs/design/parchment-ornament.webp");
 }
 
+/* Select by viewport orientation, not device type: portrait works on phones,
+   tablets and desktop windows. Landscape retains the original scene. */
+@media (orientation: portrait) {
+  :root[data-theme="magical-academy"] {
+    --art-scene: url("./assets/background-scene-vertical.webp");
+  }
+}
+
 html[data-theme="magical-academy"] {
   min-height: 100%;
   background: #0b2049;
