@@ -1,34 +1,68 @@
 /* Magical Academy V3 — Conjugation only.
    The question, keyboard and state remain real HTML; art is decorative. */
 html[data-theme="magical-academy"] body.conjugaison-page {
-  padding-top: clamp(14px, 2.5vw, 24px);
+  padding: 9px max(6px, env(safe-area-inset-right)) 17px max(6px, env(safe-area-inset-left));
 }
 
-/* Illustrated heading: one horizontal band, centered quill + title and round controls. */
+/* The single ornamental outline belongs to the WHOLE exercise, including
+   the header, score, question and keyboard. Its height grows with the content. */
+html[data-theme="magical-academy"] body.conjugaison-page main {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 960px;
+  min-height: calc(100vh - 26px);
+  min-height: calc(100dvh - 26px);
+  margin: 0 auto;
+  padding: 13px 7px 35px;
+  border: 3px solid #f2e4c5;
+  border-radius: 34px;
+  background: linear-gradient(180deg, #0927550a, #061a3a1c);
+  box-shadow:
+    inset 0 0 0 1px #98723d,
+    inset 0 0 0 4px #1231609c,
+    0 8px 26px #03122b69;
+}
+html[data-theme="magical-academy"] body.conjugaison-page main::before,
+html[data-theme="magical-academy"] body.conjugaison-page main::after {
+  position: absolute;
+  left: 50%;
+  z-index: 2;
+  color: #f5d486;
+  font-size: 20px;
+  line-height: 1;
+  transform: translateX(-50%);
+  text-shadow: 0 1px 2px #553717, 0 0 4px #061e48;
+  pointer-events: none;
+}
+html[data-theme="magical-academy"] body.conjugaison-page main::before {
+  content: "✦";
+  top: -12px;
+}
+html[data-theme="magical-academy"] body.conjugaison-page main::after {
+  content: "◆";
+  bottom: -9px;
+  font-size: 14px;
+}
+
+/* The title and its round illustrated controls float inside the page outline:
+   no nested header plaque, border, or painted background. */
 html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner {
   position: relative;
   grid-template-columns: 52px minmax(0, 1fr) 52px 52px;
   align-items: center;
   gap: 9px;
   min-height: 80px;
-  margin: 0 0 12px;
-  padding: 11px clamp(9px, 2.2vw, 18px);
-  border: 1.5px solid #dcb469;
-  border-radius: 25px 25px 12px 12px;
-  background: linear-gradient(180deg, #102c5be6, #0b204bd9);
-  box-shadow: inset 0 1px #fff5c259, 0 5px 15px #03132977;
+  margin: 4px 0 12px;
+  padding: 10px 5px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
+/* The decorative star is attached to main, not to the title row. */
 html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner::before {
-  content: "✦";
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #f4d489;
-  font-size: 16px;
-  line-height: 1;
-  text-shadow: 0 1px 3px #0b1a44;
-  pointer-events: none;
+  content: none;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner .page-title {
   display: flex;
@@ -336,14 +370,25 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
 /* Keep the compact phone layout readable and all controls fully tappable. */
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.conjugaison-page {
-    padding: 10px max(9px, env(safe-area-inset-right)) 18px max(9px, env(safe-area-inset-left));
+    padding: 5px max(4px, env(safe-area-inset-right)) 14px max(4px, env(safe-area-inset-left));
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page main {
+    min-height: calc(100vh - 19px);
+    min-height: calc(100dvh - 19px);
+    padding: 9px 4px 29px;
+    border-width: 3px;
+    border-radius: 27px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner {
     grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
     min-height: 67px;
     gap: 5px;
-    padding: 7px 6px;
-    margin-bottom: 11px;
+    padding: 7px 4px;
+    margin: 2px 0 11px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner .nav-icon {
     width: 44px;
