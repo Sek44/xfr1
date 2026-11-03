@@ -47,7 +47,7 @@ html[data-theme="magical-academy"] body.conjugaison-page main::after {
 
 /* The title and its round illustrated controls float inside the page outline:
    no nested header plaque, border, or painted background. */
-html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner {
+html[data-theme="magical-academy"] body.conjugaison-page .page-header.school-banner.conjugaison-banner {
   position: relative;
   grid-template-columns: 52px minmax(0, 1fr) 52px 52px;
   align-items: center;
@@ -379,7 +379,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     border-width: 3px;
     border-radius: 27px;
   }
-  html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner {
+  html[data-theme="magical-academy"] body.conjugaison-page .page-header.school-banner.conjugaison-banner {
     grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
     min-height: 67px;
     gap: 5px;
@@ -453,7 +453,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
   }
 }
 @media (max-width: 360px) {
-  html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner {
+  html[data-theme="magical-academy"] body.conjugaison-page .page-header.school-banner.conjugaison-banner {
     grid-template-columns: 42px minmax(0, 1fr) 42px 42px;
     gap: 3px;
   }
