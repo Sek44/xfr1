@@ -352,6 +352,13 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
   color: #253557;
   box-shadow: 0 2px 0 #b99a6b, inset 0 1px #ffffff;
 }
+/* Action-key labels have longer text; keep them distinct from letter glyphs. */
+html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key {
+  font-family: var(--font-ui);
+  font-size: clamp(.88rem, 2.85vw, 1.13rem);
+  font-weight: 800;
+  line-height: 1.12;
+}
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key:active {
   background: #ead19c;
   transform: translateY(1px);
