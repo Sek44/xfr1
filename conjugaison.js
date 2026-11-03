@@ -8,11 +8,19 @@
   const stored = GameState.create("conjugaison");
   const possible = ConjugaisonData.possibleQuestions();
   let questions = [], answer = "", lastIndex = 0, countedThrough = -1;
+  // A persistent live region announces feedback without occupying any layout space.
+  const feedbackStatus = GameUI.element("div", "conjugaison-feedback-live");
+  feedbackStatus.setAttribute("role", "status");
+  feedbackStatus.setAttribute("aria-live", "polite");
+  feedbackStatus.setAttribute("aria-atomic", "true");
+  document.querySelector("main").append(feedbackStatus);
+  let showRetry = false;
   const game = ExerciseGame.create({
     onChange() {
       if (lastIndex !== game.index) {
         answer = "";
         lastIndex = game.index;
+        showRetry = false;
       }
       if (game.index < questions.length && game.index > countedThrough) {
         tracker.appearance(ConjugaisonData.key(questions[game.index]));
@@ -65,7 +73,10 @@
   }
   function edit(command) {
     if (game.correct) return;
-    answer = GameUI.editWord(answer, command, 24);
+    const updated = GameUI.editWord(answer, command, 24);
+    // Once the child starts correcting, restore the normal blue action button.
+    if (updated !== answer) showRetry = false;
+    answer = updated;
     updateAnswer();
     persist();
   }
@@ -75,13 +86,21 @@
     const field = document.getElementById("typed-answer");
     if (field) field.setAttribute("aria-label", "Réponse : " + (answer || "vide"));
     const verifyButton = document.getElementById("verify-button");
-    if (verifyButton && !game.correct) verifyButton.disabled = !answer.length;
+    if (verifyButton && !game.correct) {
+      verifyButton.disabled = !answer.length;
+      if (!showRetry) {
+        verifyButton.classList.remove("feedback-retry");
+        verifyButton.textContent = "Vérifier";
+        feedbackStatus.textContent = "";
+      }
+    }
   }
   function verify() {
     if (!answer || game.correct) return;
     const current = questions[game.index];
     const success = ConjugaisonData.matchesAnswer(current, answer);
     if (!success && !game.failed) tracker.error(ConjugaisonData.key(current));
+    showRetry = !success;
     game.validate(success);
   }
   function render() {
@@ -102,7 +121,7 @@
     // A decorative frame groups the verb and the sentence without narrowing the shared keyboard.
     const questionFrame = GameUI.element("div", "question-frame");
     const heading = GameUI.element("p", "verb-label");
-    heading.append(GameUI.element("span", "verb-caption", "Verbe à conjuguer"));
+    heading.append(GameUI.element("span", "verb-caption", "Verbe à conjuguer :"));
     heading.append(GameUI.element("strong", "", q.verb));
     questionFrame.append(heading);
     const sentence = GameUI.element("div", "conjugaison-sentence");
@@ -138,14 +157,27 @@
       );
     }
     keyboardPanel.append(keyboard);
-    keyboardPanel.append(game.feedback({
-      correction: "Bonne correction ! Pas de point pour cette phrase.",
-      retry: "Ce n’est pas la bonne conjugaison. Corrige et réessaie.",
-    }));
+    // Feedback goes through the button and the existing live region, not a
+    // visible panel that would push the action off-screen.
     const actions = GameUI.element("div", "exercise-actions");
     const button = game.actionButton();
     button.id = "verify-button";
     button.disabled = !game.correct && !answer.length;
+    if (game.correct) {
+      button.classList.add("feedback-success");
+      button.textContent = game.index === game.total - 1
+        ? "Bravo ! Voir mon score"
+        : game.failed ? "Bien corrigé ! Suivant" : "Bravo ! Suivant";
+      feedbackStatus.textContent = game.failed
+        ? "Bonne correction ! Pas de point pour cette phrase."
+        : "Bravo ! +1 point";
+    } else if (game.failed && showRetry) {
+      button.classList.add("feedback-retry");
+      button.textContent = "Incorrect · Réessaie";
+      feedbackStatus.textContent = "Ce n’est pas la bonne conjugaison. Corrige et réessaie.";
+    } else {
+      feedbackStatus.textContent = "";
+    }
     button.onclick = game.correct ? () => game.next() : verify;
     actions.append(button);
     keyboardPanel.append(actions);
