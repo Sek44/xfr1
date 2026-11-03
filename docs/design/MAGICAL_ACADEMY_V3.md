@@ -180,3 +180,9 @@ Le panneau en cours de jeu est un conteneur transparent avec deux composants dis
 La maquette présente un **cadre extérieur unique**, qui englobe le titre, ses boutons de navigation, le cartouche du temps, les scores, la question et le clavier. Le cadre local du bandeau `Conjugaison` a donc été supprimé (aucun fond ni bordure autour du titre et de ses boutons). La bordure extérieure est appliquée à `main` en CSS avec un liseré ivoire/or, des angles arrondis et de discrets ornements centraux ; elle s'adapte automatiquement à la hauteur du contenu et au défilement.
 
 La décoration et les zones tactiles sont indépendantes. Les quatre nouveaux WebP du bandeau, les cadres parchemin 9-slice, le clavier, les scores, la navigation et les sauvegardes restent inchangés. Sur téléphone, les marges du cadre sont réduites pour préserver la largeur des dix colonnes du clavier AZERTY. Aucun nouvel asset n'est nécessaire pour la bordure extérieure.
+
+## Conjugaison — compacité sur téléphone (3 novembre 2026)
+
+Le panneau extérieur est désormais rempli d'un bleu nuit **translucide** `rgba(6, 23, 58, .58)` pour laisser transparaître le décor sans perdre le contraste des éléments clairs. Les marges verticales ont été réduites dans l'en-tête, autour du cartouche du temps, des panneaux Question/Score, du cadre du verbe et sous la phrase. Le cadre du verbe place maintenant **« Verbe à conjuguer » et l'infinitif sur une même ligne**, avec typographie adaptative pour les petits écrans.
+
+La zone de feedback vide ne réserve plus inutilement de hauteur : elle reprend son espace lorsque des messages sont affichés. Les hauteurs minimales des touches AZERTY et le fonctionnement des boutons Vérifier/Suivant, Reset, Scores et de la persistance n'ont pas été changés. Le travail est contenu dans `styles/themes/magical-academy/conjugaison-v3.css` ; aucun changement de données ni de logique métier.
