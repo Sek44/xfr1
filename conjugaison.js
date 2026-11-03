@@ -86,6 +86,7 @@
     const score = document.getElementById("score-card");
     const panel = document.getElementById("panel");
     game.progress(score);
+    panel.classList.toggle("conjugaison-playing", game.index !== game.total);
     panel.replaceChildren();
     if (game.index === game.total) {
       game.finish(panel, restart);
@@ -107,10 +108,13 @@
     sentence.append(field, document.createTextNode(" " + q.complement));
     questionFrame.append(sentence);
     panel.append(questionFrame);
+    // The keyboard and action area form their own parchment card, separate
+    // from the image-backed question frame.
+    const keyboardPanel = GameUI.element("div", "keyboard-panel");
     const keyboard = GameUI.element("div", "azerty-keyboard");
     GameUI.azertyKeyboard(keyboard, edit, { disabled: game.correct });
-    panel.append(keyboard);
-    panel.append(game.feedback({
+    keyboardPanel.append(keyboard);
+    keyboardPanel.append(game.feedback({
       correction: "Bonne correction ! Pas de point pour cette phrase.",
       retry: "Ce n’est pas la bonne conjugaison. Corrige et réessaie.",
     }));
@@ -120,7 +124,8 @@
     button.disabled = !game.correct && !answer.length;
     button.onclick = game.correct ? () => game.next() : verify;
     actions.append(button);
-    panel.append(actions);
+    keyboardPanel.append(actions);
+    panel.append(keyboardPanel);
   }
   document.addEventListener("keydown", (event) => {
     if (event.ctrlKey || event.metaKey || event.altKey || ScoreViewOpen()) return;
