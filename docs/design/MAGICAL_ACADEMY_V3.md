@@ -202,3 +202,12 @@ Les caractères des touches AZERTY deviennent plus grands et plus gras, sans cha
 - `updateAnswer()` ne remplace plus le conteneur : elle met à jour seulement la valeur visible et son libellé accessible. Cela conserve la réserve pendant toute la saisie ainsi qu'après rechargement de la partie.
 - La touche « Tout effacer » affiche désormais **Tout / effacer** sur deux lignes avec des marges latérales, tout en conservant `aria-label="Tout effacer"` et son action. La touche « Espace » possède une police plus grande et le symbole de retour arrière est agrandi.
 - Les proportions particulières des touches d'édition sont limitées au jeu Conjugaison ; le clavier AZERTY générique, ses commandes et les données persistantes restent inchangés.
+
+## Conjugaison — score et espacement du 3 novembre 2026
+
+- Le bloc **Score** affiche uniquement les points gagnés (ex. `Score 3`) ; le compteur **Question** conserve son total `4/10`. Cette différence est propre à Conjugaison et n'affecte pas le composant `ExerciseGame.progress` partagé.
+- L'étoile du score est agrandie, avec une adaptation sur petit écran.
+- Le cartouche **Verbe à conjuguer** est légèrement moins haut (padding vertical et hauteur minimale réduits), mais dispose d'une marge extérieure inférieure plus grande pour mieux séparer le cartouche de la phrase.
+- Le pictogramme de suppression du clavier est légèrement réduit. Les fonctions et les autres touches restent inchangées.
+
+**Proposition non implémentée — feedback sans décalage de page :** utiliser le bouton principal comme indicateur d'état temporaire. Au départ : « Vérifier ». Après erreur : « Incorrect · Réessaie » (style d'erreur) puis retour à « Vérifier » à la prochaine frappe ; après réussite : « Bravo ! · Suivant » (style de succès), sans insérer de bloc visible dans le flux. Garder un message accessible dans une zone `aria-live` masquée visuellement. Cette alternative éviterait toute variation de hauteur et ne masquerait ni la question ni le clavier. À valider avant de modifier le comportement actuel.
