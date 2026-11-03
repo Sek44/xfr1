@@ -186,3 +186,11 @@ La décoration et les zones tactiles sont indépendantes. Les quatre nouveaux We
 Le panneau extérieur est désormais rempli d'un bleu nuit **translucide** `rgba(6, 23, 58, .58)` pour laisser transparaître le décor sans perdre le contraste des éléments clairs. Les marges verticales ont été réduites dans l'en-tête, autour du cartouche du temps, des panneaux Question/Score, du cadre du verbe et sous la phrase. Le cadre du verbe place maintenant **« Verbe à conjuguer » et l'infinitif sur une même ligne**, avec typographie adaptative pour les petits écrans.
 
 La zone de feedback vide ne réserve plus inutilement de hauteur : elle reprend son espace lorsque des messages sont affichés. Les hauteurs minimales des touches AZERTY et le fonctionnement des boutons Vérifier/Suivant, Reset, Scores et de la persistance n'ont pas été changés. Le travail est contenu dans `styles/themes/magical-academy/conjugaison-v3.css` ; aucun changement de données ni de logique métier.
+
+## Conjugaison — typographie et dimensions du 3 novembre 2026
+
+Le cartouche « Présent de l’indicatif · 1er groupe » a désormais une largeur adaptée à son texte (`width: max-content` limité à `100%`) et garde les bordures 9-slice sans étirement excessif. Les étiquettes **Question** et **Score** utilisent une typographie commune, plus grande et plus épaisse ; le chiffre du score et l'étoile sont renforcés.
+
+Dans le cadre de la question, les libellés et l'infinitif sont plus lisibles sur une même ligne, avec une réduction contrôlée sur les écrans étroits. La phrase en police d'affichage est agrandie. Le cadre n'impose plus de hauteur minimale : l'espace sous la phrase est déterminé par la marge intérieure nécessaire au contour doré, et augmente naturellement si la phrase revient à la ligne.
+
+Les caractères des touches AZERTY deviennent plus grands et plus gras, sans changer les dimensions tactiles des touches ni la disposition commune. Les touches d'actions (« Tout effacer », « Espace », suppression) conservent une taille de texte spécifique pour ne pas déborder. Tous ces réglages sont limités à Conjugaison, dans `styles/themes/magical-academy/conjugaison-v3.css`. Aucun changement de score, logique de jeu ou stockage.
