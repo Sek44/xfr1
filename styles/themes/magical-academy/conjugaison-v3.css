@@ -204,6 +204,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   white-space: nowrap;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-label {
+  /* Add breathing room without changing the pill height; grid keeps both pills equal. */
+  padding-inline: clamp(18px, 3.5vw, 28px);
   font-family: var(--font-ui);
   font-size: clamp(1.09rem, 5.15vw, 1.42rem);
   line-height: 1.17;
@@ -221,7 +223,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(-.02em);
+  /* Font glyphs sit above their line box: align the visible star optically. */
+  transform: translateY(.14em);
   -webkit-text-stroke: 1px #99602d;
   text-shadow: 0 2px 1px #f4d58b;
 }
@@ -487,6 +490,10 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     min-height: 45px;
     padding: 7px clamp(6px, 1.8vw, 10px);
   }
+  /* The label stays inset even when the shared mobile padding is compact. */
+  html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-label {
+    padding-inline: clamp(14px, 3.8vw, 20px);
+  }
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score::before {
     font-size: clamp(1.75rem, 7.5vw, 2.3rem);
   }
@@ -744,6 +751,9 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-label,
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-score {
     padding: 6px;
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row > .progress-label {
+    padding-inline: clamp(10px, 3.6vw, 14px);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
     width: min(270px, 90%);
