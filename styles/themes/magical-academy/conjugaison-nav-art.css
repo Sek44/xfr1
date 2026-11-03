@@ -5,7 +5,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .title-quill {
   flex: 0 0 clamp(26px, 5vw, 43px);
   width: clamp(26px, 5vw, 43px);
   height: clamp(44px, 7.5vw, 65px);
-  background: url("./assets/quill-academy.webp") center / contain no-repeat;
+  background: url("./assets/parchment.webp") center / contain no-repeat;
   filter: drop-shadow(0 2px 2px #06152b55);
 }
 html[data-theme="magical-academy"] body.conjugaison-page .conjugaison-banner .nav-icon.academy-nav-button {
