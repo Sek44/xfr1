@@ -767,3 +767,53 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
     height: 23px;
   }
 }
+
+/* The source icons were cropped to their visible alpha bounds, and are
+   rendered larger to match the illustrated blue-and-gold button design.
+   Text, icon and gap remain centered in every feedback state. */
+html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
+  width: min(320px, 90%);
+  max-width: 100%;
+  height: 68px;
+  min-height: 68px;
+  padding: 8px 14px;
+  gap: 12px;
+  font-family: var(--font-ui);
+  font-size: clamp(1.15rem, 4.5vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.12;
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary::before {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+}
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
+    width: min(310px, 90%);
+    height: 66px;
+    min-height: 66px;
+    padding: 7px 11px;
+    gap: 10px;
+    font-size: clamp(1.13rem, 4.45vw, 1.4rem);
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary::before {
+    flex-basis: 46px;
+    width: 46px;
+    height: 46px;
+  }
+}
+@media (max-width: 360px) {
+  html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
+    width: min(280px, 92%);
+    padding: 7px 8px;
+    gap: 7px;
+    font-size: 1.1rem;
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary::before {
+    flex-basis: 41px;
+    width: 41px;
+    height: 41px;
+  }
+}
