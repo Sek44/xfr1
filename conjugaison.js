@@ -88,6 +88,10 @@
     const score = document.getElementById("score-card");
     const panel = document.getElementById("panel");
     game.progress(score);
+    // The conjugation score pill displays only earned points; the question
+    // counter on the left continues to show its session denominator.
+    const scoreValue = score.querySelector(".progress-score strong");
+    if (scoreValue) scoreValue.textContent = String(game.snapshot().score);
     panel.classList.toggle("conjugaison-playing", game.index !== game.total);
     panel.replaceChildren();
     if (game.index === game.total) {
