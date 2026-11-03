@@ -548,3 +548,9 @@ html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-
     transition: none !important;
   }
 }
+
+@media (orientation: portrait) {
+  html[data-theme="magical-academy"] body {
+    background-size: cover, auto 100%, cover;
+  }
+}
