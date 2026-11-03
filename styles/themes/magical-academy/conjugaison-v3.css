@@ -109,7 +109,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current {
   line-height: 1.3;
   white-space: normal;
 }
-/* Transparent nine-slice plaque: corners stay intact, edges stretch independently. */
+/* Integrated parchment plaque: the source image also fills its centre. */
 html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::before {
   content: "";
   position: absolute;
@@ -126,6 +126,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::bef
 html[data-theme="magical-academy"] body.conjugaison-page .tabs .tab-current::after {
   content: "◆";
   position: absolute;
+  z-index: 3;
   bottom: -13px;
   left: 50%;
   transform: translateX(-50%);
@@ -187,8 +188,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   font-weight: 850;
 }
 
-/* A question-specific frame uses the existing blank parchment artwork.
-   A real border and background remain if WebP does not load. */
+/* The finished-exercise panel retains its ordinary parchment finish. */
 html[data-theme="magical-academy"] body.conjugaison-page .panel {
   padding: 9px clamp(4px, .9vw, 10px) 17px;
   border: 1.5px solid #d5aa71;
@@ -208,8 +208,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame {
   background: transparent;
   box-shadow: none;
 }
-/* Larger frame uses a separate nine-slice image and transparent center.
-   The original illustration is never stretched with background-size: 100% 100%. */
+/* The question uses nine-slice with an integrated opaque parchment centre. */
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame::before {
   content: "";
   position: absolute;
@@ -226,6 +225,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame::before
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame::after {
   content: "✦";
   position: absolute;
+  z-index: 3;
   top: -16px;
   left: 50%;
   transform: translateX(-50%);
