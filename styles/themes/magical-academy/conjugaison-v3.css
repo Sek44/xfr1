@@ -401,11 +401,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
   font-size: clamp(1.15rem, 3.7vw, 1.45rem);
   box-shadow: inset 0 2px 2px #ffffff7d, 0 4px 0 #6d4b2d, 0 7px 10px #14203a66;
 }
-html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary:not(:disabled)::before {
-  content: "✦";
-  margin-right: 9px;
-  color: #ffda8b;
-}
+/* Icons for each state are defined with the shared pseudo-element below. */
 html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary:disabled {
   opacity: .58;
 }
@@ -715,14 +711,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
   background: linear-gradient(180deg, #389568, #1c6549);
   color: #fffaf1;
 }
-html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary.feedback-retry::before {
-  content: "✕";
-  color: #ffe3de;
-}
-html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary.feedback-success::before {
-  content: "✓";
-  color: #f0ffe9;
-}
+
+
 @media (max-width: 360px) {
   html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-row {
     gap: 7px;
@@ -738,5 +728,42 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
   html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
     width: min(270px, 90%);
     font-size: .96rem;
+  }
+}
+
+/* Transparent fantasy icons in the fixed-size Vérifier action.
+   Use CSS rather than injecting extra DOM nodes: no layout shift on state
+   changes, while the actual button text stays readable to assistive tech. */
+html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(5px, 1.4vw, 10px);
+}
+html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary::before {
+  content: "";
+  display: inline-block;
+  flex: 0 0 clamp(24px, 5vw, 32px);
+  width: clamp(24px, 5vw, 32px);
+  height: clamp(24px, 5vw, 32px);
+  margin: 0;
+  background: url("./assets/verifier-wand.webp") center / contain no-repeat;
+  pointer-events: none;
+}
+html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary.feedback-retry::before {
+  background-image: url("./assets/verifier-retry.webp");
+}
+html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary.feedback-success::before {
+  background-image: url("./assets/verifier-success.webp");
+}
+@media (max-width: 360px) {
+  html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary {
+    gap: 5px;
+    font-size: clamp(.82rem, 3.6vw, .95rem);
+  }
+  html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary::before {
+    flex-basis: 23px;
+    width: 23px;
+    height: 23px;
   }
 }

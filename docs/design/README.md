@@ -42,3 +42,7 @@ La plume et les trois boutons illustrés sont des images WebP RGBA recadrées, s
 
 `conjugaison-nav-art.css` applique les images sans fond CSS additionnel. Les vrais éléments `a` et `button` ainsi que leurs libellés accessibles, liens, gestionnaires d'événements et styles de focus restent actifs. Les glyphes SVG redondants sont seulement masqués dans la page Conjugaison. Ces assets pourront être réutilisés par les autres jeux avec les classes correspondantes, après validation de leur bandeau.
 
+## Icônes d'action Conjugaison — Vérifier, Réessaie, Réussite
+
+Trois WebP transparents optimisés (320 × 320, alpha préservé), issus des images générées le 3 novembre 2026, sont stockés dans `styles/themes/magical-academy/assets/` :
+`verifier-wand.webp` (bleu « Vérifier »), `verifier-retry.webp` (rouge « Incorrect · Réessaie ») et `verifier-success.webp` (vert « Bravo ! Suivant » ou « Bien corrigé ! Suivant »). Les icônes sont intégrées par `::before` CSS, sans changer les libellés HTML, le clavier, la logique de correction, le score ni la hauteur fixe du bouton. Les glyphes décoratifs précédents ont été retirés. L'image reste visible lorsque le bouton initial est désactivé.
