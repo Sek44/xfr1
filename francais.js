@@ -454,6 +454,11 @@
     showRetry = false;
     game.next();
   }
+  // The active sentence changes on every question; keep only one resize
+  // handler and remeasure after a font or viewport change.
+  let updateWordReserve = () => {};
+  window.addEventListener("resize", () => updateWordReserve());
+  document.fonts?.ready?.then(() => updateWordReserve());
   function render() {
     const tabs = document.getElementById("tabs"),
       panel = document.getElementById("panel"),
@@ -468,6 +473,7 @@
       total = questions.length;
     game.progress(scoreCard, "Phrase");
     if (game.index === total) {
+      updateWordReserve = () => {};
       game.finish(panel, () => switchTab(tab));
       return;
     }
@@ -480,9 +486,9 @@
     const word = make("span", "word");
     const suffix = after.match(/^[^\s]*/)[0];
     const capitalize = prefix === "" && fragment === "";
-    // Reserve the widest *complete word*, not the missing letters alone.
-    // Hidden variants determine the grid width; the visible word starts at
-    // its left edge, keeping letters together and line breaks stable.
+    // Measure the widest complete spelling. Its unused width is reserved
+    // at the line's right edge, not as a gap after the displayed word.
+    // The word itself stays naturally sized with its letters joined.
     function wordVariant(answer, hidden) {
       const variant = make("span", hidden ? "word-reserve" : "word-visible");
       if (hidden) variant.setAttribute("aria-hidden", "true");
@@ -498,8 +504,10 @@
       variant.append(letters, document.createTextNode(suffix));
       return variant;
     }
-    for (const option of data.options) word.append(wordVariant(option, true));
-    word.append(wordVariant(selected, false));
+    const reserves = data.options.map((option) => wordVariant(option, true));
+    for (const variant of reserves) word.append(variant);
+    const visible = wordVariant(selected, false);
+    word.append(visible);
     sentence.append(word, document.createTextNode(after.slice(suffix.length)));
     const questionFrame = make("div", "question-frame");
     questionFrame.append(sentence);
@@ -528,6 +536,18 @@
     actions.append(button);
     controls.append(actions);
     panel.append(controls);
+    // Padding compensates for the shorter answer without inserting a gap
+    // between the word and the following text. With centered text, the
+    // whole current line keeps the same starting position for every choice.
+    updateWordReserve = () => {
+      if (typeof visible.getBoundingClientRect !== "function") return;
+      const widths = reserves.map((item) => item.getBoundingClientRect().width);
+      const currentWidth = visible.getBoundingClientRect().width;
+      if (!Number.isFinite(currentWidth) || widths.some((width) => !Number.isFinite(width))) return;
+      const difference = Math.max(0, Math.max(...widths) - currentWidth);
+      sentence.style.paddingInlineEnd = difference.toFixed(2) + "px";
+    };
+    updateWordReserve();
   }
   document.getElementById("restart-series").onclick = game.restartButton(() => switchTab(tab)).onclick;
   if (!restore()) game.reset(questions.length);
