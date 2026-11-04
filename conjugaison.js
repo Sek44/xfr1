@@ -174,7 +174,7 @@
     } else {
       feedbackStatus.textContent = "";
     }
-    button.onclick = game.correct ? () => game.next() : verify;
+    button.onclick = () => game.correct ? game.next() : verify();
     actions.append(button);
     keyboardPanel.append(actions);
     panel.append(keyboardPanel);
