@@ -646,12 +646,6 @@ html[data-theme="magical-academy"] body.academy-page .academy-result-score-value
   font-weight: 900;
   line-height: 1;
 }
-html[data-theme="magical-academy"] body.academy-page .academy-result-score-maximum {
-  color: #30435f;
-  font-family: var(--font-ui);
-  font-size: clamp(1.35rem, 5vw, 1.7rem);
-  font-weight: 750;
-}
 html[data-theme="magical-academy"] body.academy-page .academy-result-message.encouragement {
   max-width: 34rem;
   margin: 1px auto 5px;
