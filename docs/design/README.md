@@ -35,3 +35,7 @@ Le bandeau et ces assets sont désormais partagés par **Conjugaison, Français,
 
 Trois WebP transparents optimisés (320 × 320, alpha préservé), issus des images générées le 3 novembre 2026, sont stockés dans `styles/themes/magical-academy/assets/` :
 `verifier-wand.webp` (bleu « Vérifier »), `verifier-retry.webp` (rouge « Incorrect · Réessaie ») et `verifier-success.webp` (vert « Bravo ! Suivant » ou « Bien corrigé ! Suivant »). Les icônes sont intégrées par `::before` CSS, sans changer les libellés HTML, le clavier, la logique de correction, le score ni la hauteur fixe du bouton. Les glyphes décoratifs précédents ont été retirés. L'image reste visible lorsque le bouton initial est désactivé.
+
+## Onglets communs (CSS uniquement)
+
+Les onglets de Français, Conjugaison et les filtres de Scores utilisent maintenant les classes `academy-tabs` et `academy-tab`, définies dans `styles/themes/magical-academy/classic.css`. Leur style bleu saphir avec gravure dorée et sélection bleue lumineuse est entièrement réalisé en CSS. **Aucun cadre WebP n’est utilisé pour les onglets** : les images 9-slice restent réservées aux cadres de questions et aux autres éléments illustrés qui les nécessitent.
