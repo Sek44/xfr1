@@ -37,12 +37,14 @@
     category = "1",
     questions = [],
     answer = "",
-    lastQuestionIndex = 0;
+    lastQuestionIndex = 0,
+    showRetry = false;
   const storedGame = GameState.create("calcul");
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
         answer = "";
+        showRetry = false;
         lastQuestionIndex = game.index;
       }
       render();
@@ -107,6 +109,7 @@
   }
   function newSession() {
     answer = "";
+    showRetry = false;
     questions = [];
     const seen = new Set(),
       values = levels[category].values,
@@ -133,11 +136,11 @@
     game.reset(questions.length);
   }
   function verify() {
-    if (answer.trim() && !game.correct)
-      game.validate(
-        /^\d+$/.test(answer.trim()) &&
-          Number(answer.trim()) === questions[game.index].result,
-      );
+    if (!answer.trim() || game.correct) return;
+    const isCorrect = /^\d+$/.test(answer.trim()) &&
+      Number(answer.trim()) === questions[game.index].result;
+    showRetry = !isCorrect;
+    game.validate(isCorrect);
   }
   function next() {
     game.next();
@@ -220,22 +223,28 @@
     keypad.className = "keypad";
     function edit(value) {
       if (game.correct) return;
-      answer = GameUI.editNumber(answer, value, 6);
+      const nextAnswer = GameUI.editNumber(answer, value, 6);
+      if (nextAnswer !== answer) {
+        answer = nextAnswer;
+        showRetry = false;
+        button.classList.remove("feedback-retry");
+        button.textContent = "Vérifier";
+      }
       display.textContent = answer || " ";
       button.disabled = !answer.length;
       persist();
     }
     GameUI.keypad(keypad, edit, { disabled: game.correct });
     controls.append(keypad);
-    const feedback = game.feedback({
-      correction: "Bonne correction ! Aucun point pour ce calcul.",
-      retry: "Essaie encore ! Corrige ton résultat puis vérifie à nouveau.",
-    });
-    controls.append(feedback);
     const button = game.actionButton();
     button.disabled = !game.correct && !answer.trim();
     button.classList.toggle("feedback-success", game.correct);
-    button.classList.toggle("feedback-retry", game.failed && !game.correct);
+    button.classList.toggle("feedback-retry", !game.correct && showRetry);
+    button.textContent = game.correct
+      ? game.index === game.total - 1
+        ? "Bravo ! Voir mon score"
+        : game.failed ? "Bien corrigé ! Suivant" : "Bravo ! Suivant"
+      : showRetry ? "Incorrect · Réessaie" : "Vérifier";
     button.onclick = game.correct ? next : verify;
     const actions = document.createElement("div");
     actions.className = "exercise-actions";
