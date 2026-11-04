@@ -657,8 +657,10 @@ html[data-theme="magical-academy"] body.academy-page .academy-result-actions .pr
 html[data-theme="magical-academy"] body.academy-page .academy-result-actions .primary::before {
   content: "↻";
   display: inline-block;
-  flex: 0 0 auto;
+  flex: 0 0 33px;
   width: 33px;
+  height: auto;
+  background: none;
   color: #ffdc7c;
   font-family: var(--font-ui);
   font-size: 2.35rem;
