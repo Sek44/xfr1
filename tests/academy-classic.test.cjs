@@ -87,3 +87,42 @@ test("game-specific pages use standard question and keyboard panels", () => {
     assert.match(js, /keyboard-panel/);
   }
 });
+
+test("navigation illustrations cannot be erased by the old theme background", () => {
+  const css = read("styles/themes/magical-academy/classic.css");
+  for (const action of ["back", "restart", "scores"]) {
+    const selector = new RegExp(
+      String.raw`\\.page-header\\.school-banner\\.academy-banner \\.nav-icon\\.academy-nav-button\\.academy-nav-${action}`,
+    );
+    assert.match(css, selector);
+    assert.match(css, new RegExp(String.raw`nav-${action}-academy\\.webp`));
+  }
+});
+
+test("French and Calcul show correctness only in the action button", () => {
+  for (const page of ["francais", "calcul"]) {
+    const js = read(page + ".js");
+    assert.doesNotMatch(js, /game\\.feedback\\(/);
+    assert.match(js, /"Incorrect · Réessaie"/);
+    assert.match(js, /"Bien corrigé ! Suivant"/);
+    assert.match(js, /"Bravo ! Suivant"/);
+    assert.match(js, /button\\.classList\\.toggle\\("feedback-retry"/);
+  }
+});
+
+test("Conjugaison loads one specifically named stylesheet and retired files are absent", () => {
+  const html = read("conjugaison.html");
+  assert.match(html, /magical-academy\\/conjugaison\\.css/);
+  assert.doesNotMatch(html, /conjugaison-v3\\.css/);
+  for (const file of [
+    "conjugaison.css",
+    "styles/themes/magical-academy/conjugaison-v3.css",
+    "styles/themes/magical-academy/assets/castle.svg",
+    "styles/themes/magical-academy/assets/lantern.svg",
+    "styles/themes/magical-academy/assets/title-frame-9slice.webp",
+    "styles/themes/magical-academy/assets/question-frame-9slice.webp",
+    "styles/themes/magical-academy/assets/quill-academy.webp",
+  ]) {
+    assert.equal(fs.existsSync(path.join(root, file)), false, file);
+  }
+});
