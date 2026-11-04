@@ -6,6 +6,7 @@
 - `francais.js` : banque interne de phrases, découpage en préfixe / choix / suffixe, clés par mot et migration des anciennes statistiques.
 - `exercise-weighting.js` : pondération, tirage et suivi des apparitions/erreurs du français, avec ses clés historiques inchangées.
 - `game-common.js` (`ExerciseGame`) : machine de session (index, premier échec, réussite, score), temporisateur de 3 secondes, instantané et reprise.
+- `GameUI.tabs()` génère les deux cartouches de famille accessibles, et les choix portent la classe partagée `.academy-key` ; `ExerciseGame.progress()` affiche `Question x/10` et `Score x` comme Conjugaison. `classic.css` conserve seul le design commun.
 - `game-ui.js`, `scores.js`, `game-state.js`, `score-view.js` : interface, historique, session et suspension/réouverture des scores.
 
 Tous les chemins source ci-dessus sont relatifs à la **racine** du dépôt, pas à ce dossier documentaire.
