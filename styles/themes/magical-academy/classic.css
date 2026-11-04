@@ -519,6 +519,12 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
   html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .actions) .primary.feedback-retry,
   html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .actions) .primary.feedback-success { width: min(305px, 82%); font-size: clamp(1rem, 4.9vw, 1.25rem); }
 }
+/* Preserve the tighter radii on the dedicated Conjugaison AZERTY layout. */
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.academy-page.conjugaison-page .azerty-keyboard .keyboard-key {
+    border-radius: 7px;
+  }
+}
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.academy-page .academy-tabs {
     margin: 1px 0 7px;
