@@ -175,7 +175,7 @@ html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab:
   content: "";
   position: absolute;
   inset: 4px;
-  z-index: -1;
+  z-index: 0;
   border: 1px solid #e4c98d48;
   border-radius: 6px 6px 3px 3px;
   pointer-events: none;
