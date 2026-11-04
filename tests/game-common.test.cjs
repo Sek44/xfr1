@@ -371,18 +371,22 @@ test("French controller uses shared tabs, choice keys and resumable session", ()
   const options = findByClass(panel, "choices");
   assert.ok(options.children.every((button) => button.className.includes("academy-key")));
   options.children[0].onclick();
-  const slot = findByClass(panel, "hole");
-  const reserves = slot.children.filter((node) => node.className === "hole-reserve");
-  assert.deepEqual(reserves.map((node) => node.textContent), ["g", "gu", "ge"]);
-  assert.ok(reserves.every((node) => node.attributes["aria-hidden"] === "true"));
-  const selected = findByClass(panel, "hole-answer").textContent;
+  const word = findByClass(panel, "word");
+  const reserves = word.children.filter((node) => node.className === "word-reserve");
+  assert.deepEqual(reserves.map((node) => node.children[1].textContent), ["g", "gu", "ge"]);
+  assert.ok(reserves.every((node) =>
+    node.attributes["aria-hidden"] === "true" && node.children.length === 3));
+  const visible = findByClass(word, "word-visible");
+  const selected = findByClass(visible, "hole").textContent;
+  assert.equal(visible.children.length, 3);
+  assert.equal(visible.children[1].className, "hole");
   f.context.visit.suspend();
   f.advance(10000);
   f.context.visit.resume();
-  assert.equal(findByClass(panel, "hole-answer").textContent, selected);
-  assert.deepEqual(findByClass(panel, "hole").children
-    .filter((node) => node.className === "hole-reserve")
-    .map((node) => node.textContent), ["g", "gu", "ge"]);
+  assert.equal(findByClass(findByClass(panel, "word-visible"), "hole").textContent, selected);
+  assert.deepEqual(findByClass(panel, "word").children
+    .filter((node) => node.className === "word-reserve")
+    .map((node) => node.children[1].textContent), ["g", "gu", "ge"]);
   assert.equal(f.saved.length, 0);
 });
 
@@ -391,15 +395,16 @@ test("French answer slot reserves every choice on the c / ç tab as well", () =>
   f.run("francais.js");
   f.elements.get("tabs").children[1].onclick();
   const panel = f.elements.get("panel");
-  const slot = findByClass(panel, "hole");
-  const candidates = slot.children.filter((node) => node.className === "hole-reserve");
-  assert.deepEqual(candidates.map((node) => node.textContent), ["c", "ç"]);
-  assert.equal(slot.children.at(-1).className, "hole-answer");
+  const word = findByClass(panel, "word");
+  const candidates = word.children.filter((node) => node.className === "word-reserve");
+  assert.deepEqual(candidates.map((node) => node.children[1].textContent), ["c", "ç"]);
+  assert.equal(word.children.at(-1).className, "word-visible");
   findByClass(panel, "choices").children[1].onclick();
-  const after = findByClass(panel, "hole");
-  assert.deepEqual(after.children.filter((node) => node.className === "hole-reserve")
-    .map((node) => node.textContent), ["c", "ç"]);
-  assert.equal(after.children.at(-1).textContent, "ç");
+  const after = findByClass(panel, "word");
+  assert.deepEqual(after.children.filter((node) => node.className === "word-reserve")
+    .map((node) => node.children[1].textContent), ["c", "ç"]);
+  assert.equal(findByClass(after, "hole").textContent, "ç");
+  assert.equal(findByClass(after, "word-visible").children.length, 3);
 });
 
 test("Mission calcul uses shared input and removes old sprites on restart", () => {
