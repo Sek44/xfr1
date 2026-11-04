@@ -478,32 +478,28 @@
       fragment = match[2];
     sentence.append(document.createTextNode(prefix));
     const word = make("span", "word");
-    word.append(document.createTextNode(fragment));
-    // Reserve the actual rendered width of every possible answer.
-    // Overlay the selected choice in the same grid cell so changing from
-    // g to gu/ge (or c to ç) never moves the rest of the sentence.
-    const hole = make("span", "hole");
-    const capitalize = prefix === "" && fragment === "";
-    for (const option of data.options) {
-      const reserve = make(
-        "span",
-        "hole-reserve",
-        capitalize ? option.toUpperCase() : option,
-      );
-      reserve.setAttribute("aria-hidden", "true");
-      hole.append(reserve);
-    }
-    const visible = make(
-      "span",
-      "hole-answer",
-      selected === null
-        ? "\u00a0"
-        : capitalize ? selected.toUpperCase() : selected,
-    );
-    hole.append(visible);
-    word.append(hole);
     const suffix = after.match(/^[^\s]*/)[0];
-    word.append(document.createTextNode(suffix));
+    const capitalize = prefix === "" && fragment === "";
+    // Reserve the widest *complete word*, not the missing letters alone.
+    // Hidden variants determine the grid width; the visible word starts at
+    // its left edge, keeping letters together and line breaks stable.
+    function wordVariant(answer, hidden) {
+      const variant = make("span", hidden ? "word-reserve" : "word-visible");
+      if (hidden) variant.setAttribute("aria-hidden", "true");
+      variant.append(document.createTextNode(fragment));
+      const value = answer === null
+        ? "\u00a0"
+        : capitalize ? answer.toUpperCase() : answer;
+      const letters = make(
+        "span",
+        hidden ? "hole-measure" : answer === null ? "hole hole-empty" : "hole",
+        value,
+      );
+      variant.append(letters, document.createTextNode(suffix));
+      return variant;
+    }
+    for (const option of data.options) word.append(wordVariant(option, true));
+    word.append(wordVariant(selected, false));
     sentence.append(word, document.createTextNode(after.slice(suffix.length)));
     const questionFrame = make("div", "question-frame");
     questionFrame.append(sentence);
