@@ -22,6 +22,8 @@ La série terminée vaut **1 point d’exercice quotidien**, quel que soit le no
 
 Une page de résultat clôt la série et permet de recommencer. Le score est enregistré avec la catégorie et la difficulté dans l'historique commun ; la page de scores Calcul comporte une courbe d'évolution.
 
+Après validation, le retour est affiché uniquement sur le bouton d'action : bleu « Vérifier », rouge « Incorrect · Réessaie », vert « Bravo ! Suivant » ou « Bien corrigé ! Suivant ». Modifier la saisie après un échec remet le bouton au bleu ; aucune notification visible distincte n'est affichée. Le message explicatif lorsque la combinaison de paramètres est impossible reste présent.
+
 ## Reprise
 
 La catégorie, la difficulté, les opérations générées, la réponse en cours et l'état de correction sont sauvegardés localement. Recharger la page ou consulter les scores doit permettre de reprendre la session sans laisser courir le délai automatique en arrière-plan.
