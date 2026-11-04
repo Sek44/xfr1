@@ -170,6 +170,8 @@ test("final results reuse the shared parchment and standard button styling", () 
   assert.ok(css.includes("question-frame-filled-9slice.webp"));
   assert.ok(css.includes("home-cup.webp"));
   assert.ok(css.includes(".academy-result-score-value"));
+  assert.ok(css.includes("body.academy-page:has(.academy-result) .academy-progress"));
+  assert.ok(css.includes("body.francais-page:has(.academy-result) .exercise-intro"));
   assert.ok(css.includes(".academy-result-actions .primary"));
   assert.ok(js.includes('card.className = "academy-result"'));
   assert.ok(js.includes('heading.textContent = "Exercice terminé !"'));
