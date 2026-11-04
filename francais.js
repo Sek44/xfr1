@@ -283,13 +283,15 @@
   let tab = "g",
     selected = null,
     lastQuestionIndex = 0,
-    countedThrough = -1;
+    countedThrough = -1,
+    showRetry = false;
   let questions = shuffleSession(tab);
   const storedGame = GameState.create("francais");
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
         selected = null;
+        showRetry = false;
         lastQuestionIndex = game.index;
       }
       if (game.index < questions.length && game.index > countedThrough) {
@@ -426,12 +428,14 @@
   function switchTab(t) {
     tab = t;
     selected = null;
+    showRetry = false;
     countedThrough = -1;
     questions = shuffleSession(t);
     game.reset(questions.length);
   }
   function select(v) {
     if (!game.correct) {
+      if (selected !== v) showRetry = false;
       selected = v;
       render();
       persist();
@@ -440,12 +444,14 @@
   function verify() {
     if (selected !== null && !game.correct) {
       const isCorrect = selected === questions[game.index][2];
+      showRetry = !isCorrect;
       if (!isCorrect && !game.failed) recordError(tab, questions[game.index]);
       game.validate(isCorrect);
     }
   }
   function advance() {
     selected = null;
+    showRetry = false;
     game.next();
   }
   function render() {
@@ -503,16 +509,16 @@
       options.append(b);
     }
     controls.append(options);
-    const message = game.feedback({
-      correction: "Bonne correction ! Pas de point pour cette phrase.",
-      retry: "Essaie encore ! Tu peux changer ta réponse.",
-    });
-    controls.append(message);
     const actions = make("div", "actions"),
       button = game.actionButton();
     button.disabled = !game.correct && selected === null;
     button.classList.toggle("feedback-success", game.correct);
-    button.classList.toggle("feedback-retry", game.failed && !game.correct);
+    button.classList.toggle("feedback-retry", !game.correct && showRetry);
+    button.textContent = game.correct
+      ? game.index === game.total - 1
+        ? "Bravo ! Voir mon score"
+        : game.failed ? "Bien corrigé ! Suivant" : "Bravo ! Suivant"
+      : showRetry ? "Incorrect · Réessaie" : "Vérifier";
     button.onclick = game.correct ? advance : verify;
     actions.append(button);
     controls.append(actions);
