@@ -216,7 +216,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .score-card.progress-ro
   height: clamp(2.05rem, 8vw, 2.65rem);
   margin: 0;
   padding: 0;
-  transform: none;
+  /* Lift the star slightly so its visual centre matches the score numeral. */
+  transform: translateY(-2px);
   background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20d%3D%22M24%202%2030.8%2016.8%2046%2018.6%2034.4%2029%2037.8%2044%2024%2036.1%2010.2%2044%2013.6%2029%202%2018.6%2017.2%2016.8Z%22%20fill%3D%22%23e7a12f%22%20stroke%3D%22%23965521%22%20stroke-width%3D%222.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M24%207%2029.3%2019.3%2041%2020.5%2032%2029%2034.5%2039.4%2024%2033.1%2013.5%2039.4%2016%2029%207%2020.5%2018.7%2019.3Z%22%20fill%3D%22%23ffdd76%22%20opacity%3D%22.92%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat;
   filter: drop-shadow(0 1px 1px #70481e5e);
 }
