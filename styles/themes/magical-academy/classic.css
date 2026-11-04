@@ -571,13 +571,17 @@ html[data-theme="magical-academy"] body.academy-page .academy-result::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   border: 1px solid transparent;
   border-image-source: url("./assets/question-frame-filled-9slice.webp");
   border-image-slice: 100 110 100 110 fill;
   border-image-width: 26px 29px 26px 29px;
   border-image-repeat: stretch;
   pointer-events: none;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result > * {
+  position: relative;
+  z-index: 2;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-result-trophy {
   display: block;
