@@ -8,6 +8,24 @@ window.GameUI = (() => {
     return node;
   }
 
+  // The same ornate tab is used for static Conjugaison labels and
+  // interactive exercise families (e.g. Français).
+  function tabs(container, entries, selected, onSelect) {
+    container.replaceChildren();
+    for (const [value, label] of entries) {
+      const active = value === selected;
+      const button = element("button", "academy-tab" + (active ? " active" : ""));
+      button.type = "button";
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", String(active));
+      const text = element("span", "tab-label", label);
+      button.append(text);
+      button.onclick = () => onSelect(value);
+      container.append(button);
+    }
+    return container;
+  }
+
   function editNumber(answer, command, maxLength) {
     if (command === "clear") return "";
     if (command === "erase") return answer.slice(0, -1);
@@ -40,7 +58,7 @@ window.GameUI = (() => {
       const editing = command === "clear" || command === "erase";
       const label =
         command === "clear" ? clearLabel : command === "erase" ? "⌫" : command;
-      const button = element("button", editing ? "erase" : "", label);
+      const button = element("button", "academy-key" + (editing ? " erase" : ""), label);
       button.type = "button";
       button.disabled = disabled;
       if (editing)
@@ -109,5 +127,5 @@ window.GameUI = (() => {
     return container;
   }
 
-  return { element, editNumber, keypad, editWord, azertyKeyboard };
+  return { element, tabs, editNumber, keypad, editWord, azertyKeyboard };
 })();
