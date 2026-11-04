@@ -797,7 +797,10 @@ html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .prim
 /* Longer success/error messages wrap instead of overflowing the compact button. */
 html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary.feedback-retry,
 html[data-theme="magical-academy"] body.conjugaison-page .exercise-actions .primary.feedback-success {
-  font-size: clamp(.9rem, 3.55vw, 1.05rem);
+  /* Longer state labels get a little more room, without changing the blue
+     Vérifier button or the shared action height. */
+  width: min(305px, 82%);
+  font-size: clamp(1rem, 4.9vw, 1.25rem);
   white-space: normal;
 }
 @media (max-width: 360px) {
