@@ -45,26 +45,40 @@ html[data-theme="magical-academy"] body.francais-page .choices .academy-key {
   font-weight: 700;
   line-height: 1.1;
 }
-/* The completed word takes only its natural width. Invisible full-word
-   variants remain measurable for the reserve at the end of the sentence
-   line (applied in JS as padding-inline-end). */
+/* The hidden reference determines where the longest possible spelling
+   wraps. Real lines retain that width, but their text is left-aligned
+   inside it, so spare space is at the line end, not after the word. */
+html[data-theme="magical-academy"] body.francais-page .question-frame .sentence-measure {
+  visibility: hidden;
+}
+html[data-theme="magical-academy"] body.francais-page .question-frame .sentence-token {
+  white-space: nowrap;
+}
 html[data-theme="magical-academy"] body.francais-page .question-frame .word {
-  position: relative;
   display: inline-block;
   vertical-align: baseline;
   white-space: nowrap;
 }
+html[data-theme="magical-academy"] body.francais-page .question-frame .sentence-measure .word {
+  display: inline-grid;
+  grid-template-columns: max-content;
+}
+html[data-theme="magical-academy"] body.francais-page .question-frame .sentence-measure .word > span {
+  grid-area: 1 / 1;
+}
 html[data-theme="magical-academy"] body.francais-page .question-frame .word-reserve {
-  position: absolute;
-  inset-inline-start: 0;
-  top: 0;
-  width: max-content;
   visibility: hidden;
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
 }
 html[data-theme="magical-academy"] body.francais-page .question-frame .word-visible {
+  white-space: nowrap;
+}
+html[data-theme="magical-academy"] body.francais-page .question-frame .sentence-line {
+  display: block;
+  margin-inline: auto;
+  text-align: left;
   white-space: nowrap;
 }
 /* Match the actual hole's font metrics when measuring the invisible
