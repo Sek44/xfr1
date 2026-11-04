@@ -10,19 +10,19 @@
     <link rel="stylesheet" href="./scores-theme.css?v=20261101-school" />
     <link rel="stylesheet" href="./school-common.css?v=20261102-questions" />
       <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=10-portrait-cover" />
-    <link rel="stylesheet" href="./styles/themes/magical-academy/classic.css?v=10-score-only" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/classic.css?v=12-css-only-tabs" />
   </head>
   <body class="school-page academy-page scores-page">
     <main>
       <nav class="page-nav page-header school-banner academy-banner" data-academy-header data-title="Mes scores" data-icon="scores" data-restart="false" data-scores="false" data-back-id="scores-back"></nav>
-      <div class="filter">
-        <a href="./scores.html" data-game="all">Tous</a
-        ><a href="./scores.html?game=francais" data-game="francais">Français</a
-        ><a href="./scores.html?game=conjugaison" data-game="conjugaison">Conjugaison</a
-        ><a href="./scores.html?game=calcul" data-game="calcul">Calcul</a
-        ><a href="./scores.html?game=space" data-game="space">Mission calcul</a
-        ><a href="./scores.html?game=magic" data-game="magic">Mission magique</a>
-      </div>
+      <nav class="filter academy-tabs academy-score-tabs" aria-label="Filtrer les scores">
+        <a class="academy-tab" href="./scores.html" data-game="all">Tous</a>
+        <a class="academy-tab" href="./scores.html?game=francais" data-game="francais">Français</a>
+        <a class="academy-tab" href="./scores.html?game=conjugaison" data-game="conjugaison">Conjugaison</a>
+        <a class="academy-tab" href="./scores.html?game=calcul" data-game="calcul">Calcul</a>
+        <a class="academy-tab" href="./scores.html?game=space" data-game="space">Mission calcul</a>
+        <a class="academy-tab" href="./scores.html?game=magic" data-game="magic">Mission magique</a>
+      </nav>
       <section id="history" class="history-panel"></section>
     </main>
     <script src="./academy-header.js?v=1"></script>
