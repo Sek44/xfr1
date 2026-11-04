@@ -454,11 +454,10 @@
     showRetry = false;
     game.next();
   }
-  // The active sentence changes on every question; keep only one resize
-  // handler and remeasure after a font or viewport change.
-  let updateWordReserve = () => {};
-  window.addEventListener("resize", () => updateWordReserve());
-  document.fonts?.ready?.then(() => updateWordReserve());
+  // Rebuild line positions when the viewport or font metrics change.
+  // A line layout based on the longest spelling is independent of the chosen answer.
+  window.addEventListener("resize", () => render());
+  document.fonts?.ready?.then(() => render());
   function render() {
     const tabs = document.getElementById("tabs"),
       panel = document.getElementById("panel"),
@@ -473,44 +472,56 @@
       total = questions.length;
     game.progress(scoreCard, "Phrase");
     if (game.index === total) {
-      updateWordReserve = () => {};
       game.finish(panel, () => switchTab(tab));
       return;
     }
-    const [before, after] = questions[game.index],
-      sentence = make("div", "sentence");
+    const [before, after] = questions[game.index];
     const match = before.match(/^(.*?)([^\s]*)$/s),
       prefix = match[1],
-      fragment = match[2];
-    sentence.append(document.createTextNode(prefix));
-    const word = make("span", "word");
-    const suffix = after.match(/^[^\s]*/)[0];
-    const capitalize = prefix === "" && fragment === "";
-    // Measure the widest complete spelling. Its unused width is reserved
-    // at the line's right edge, not as a gap after the displayed word.
-    // The word itself stays naturally sized with its letters joined.
-    function wordVariant(answer, hidden) {
+      fragment = match[2],
+      suffix = after.match(/^[^\s]*/)[0],
+      remainder = after.slice(suffix.length),
+      capitalize = prefix === "" && fragment === "";
+    function spelling(answer, hidden) {
       const variant = make("span", hidden ? "word-reserve" : "word-visible");
       if (hidden) variant.setAttribute("aria-hidden", "true");
       variant.append(document.createTextNode(fragment));
       const value = answer === null
         ? "\u00a0"
         : capitalize ? answer.toUpperCase() : answer;
-      const letters = make(
-        "span",
-        hidden ? "hole-measure" : answer === null ? "hole hole-empty" : "hole",
-        value,
+      variant.append(
+        make("span", hidden ? "hole-measure" : answer === null ? "hole hole-empty" : "hole", value),
+        document.createTextNode(suffix),
       );
-      variant.append(letters, document.createTextNode(suffix));
       return variant;
     }
-    const reserves = data.options.map((option) => wordVariant(option, true));
-    for (const variant of reserves) word.append(variant);
-    const visible = wordVariant(selected, false);
-    word.append(visible);
-    sentence.append(word, document.createTextNode(after.slice(suffix.length)));
+    // Measure normal line wrapping with the longest possible spelling.
+    // Every visible spelling then uses those same line breaks, and the
+    // difference in width becomes empty space at the right end of its line.
+    const tokens = [];
+    function tokenize(text) {
+      for (const value of text.match(/\s+|\S+/gu) || [])
+        tokens.push({ type: /^\s+$/u.test(value) ? "space" : "text", value });
+    }
+    tokenize(prefix);
+    tokens.push({ type: "word" });
+    tokenize(remainder);
+    const reference = make("div", "sentence sentence-measure");
+    reference.setAttribute("aria-hidden", "true");
+    const referenceWord = make("span", "word");
+    for (const option of sets[tab].options) referenceWord.append(spelling(option, true));
+    referenceWord.append(spelling(selected, false));
+    for (const token of tokens) {
+      if (token.type === "space") {
+        reference.append(document.createTextNode(token.value));
+      } else {
+        token.node = token.type === "word"
+          ? referenceWord : make("span", "sentence-token", token.value);
+        reference.append(token.node);
+      }
+    }
     const questionFrame = make("div", "question-frame");
-    questionFrame.append(sentence);
+    questionFrame.append(reference);
     panel.append(questionFrame);
     const controls = make("div", "keyboard-panel");
     const options = make("div", "choices");
@@ -536,18 +547,53 @@
     actions.append(button);
     controls.append(actions);
     panel.append(controls);
-    // Padding compensates for the shorter answer without inserting a gap
-    // between the word and the following text. With centered text, the
-    // whole current line keeps the same starting position for every choice.
-    updateWordReserve = () => {
-      if (typeof visible.getBoundingClientRect !== "function") return;
-      const widths = reserves.map((item) => item.getBoundingClientRect().width);
-      const currentWidth = visible.getBoundingClientRect().width;
-      if (!Number.isFinite(currentWidth) || widths.some((width) => !Number.isFinite(width))) return;
-      const difference = Math.max(0, Math.max(...widths) - currentWidth);
-      sentence.style.paddingInlineEnd = difference.toFixed(2) + "px";
-    };
-    updateWordReserve();
+    // DOM test fixtures lack geometry; in that case the reference sentence
+    // remains as a normal visible fallback.
+    const firstToken = tokens.find((token) => token.node);
+    if (typeof firstToken?.node.getBoundingClientRect !== "function") {
+      reference.className = "sentence";
+      reference.removeAttribute?.("aria-hidden");
+      return;
+    }
+    const computed = window.getComputedStyle(reference);
+    const lineHeight = Number.parseFloat(computed.lineHeight) ||
+      Number.parseFloat(computed.fontSize) * 1.25 || 44;
+    const threshold = lineHeight * .38;
+    const lines = [];
+    let whitespace = "";
+    for (const token of tokens) {
+      if (token.type === "space") {
+        whitespace += token.value;
+        continue;
+      }
+      const rect = token.node.getBoundingClientRect();
+      const center = (rect.top + rect.bottom) / 2;
+      let line = lines.at(-1);
+      if (!line || Math.abs(center - line.center) > threshold) {
+        line = { center, left: rect.left, right: rect.right, entries: [] };
+        lines.push(line);
+      }
+      line.entries.push({ token, space: line.entries.length ? whitespace : "" });
+      line.right = rect.right;
+      whitespace = "";
+    }
+    const sentence = make("div", "sentence");
+    for (const line of lines) {
+      const row = make("span", "sentence-line");
+      row.style.width = Math.ceil(line.right - line.left + 1) + "px";
+      for (const { token, space } of line.entries) {
+        if (space) row.append(document.createTextNode(space));
+        if (token.type === "word") {
+          const word = make("span", "word");
+          word.append(spelling(selected, false));
+          row.append(word);
+        } else {
+          row.append(document.createTextNode(token.value));
+        }
+      }
+      sentence.append(row);
+    }
+    reference.replaceWith(sentence);
   }
   document.getElementById("restart-series").onclick = game.restartButton(() => switchTab(tab)).onclick;
   if (!restore()) game.reset(questions.length);
