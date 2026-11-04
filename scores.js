@@ -409,7 +409,7 @@ window.ExerciseScores = (() => {
           ? "—"
           : r.mode === "arcade"
             ? r.score + " points"
-            : r.score + " / " + (r.total ?? "—"),
+            : String(r.score),
       ]) {
         const td = document.createElement("td");
         td.textContent = value;
