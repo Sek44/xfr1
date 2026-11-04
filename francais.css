@@ -45,6 +45,29 @@ html[data-theme="magical-academy"] body.francais-page .choices .academy-key {
   font-weight: 700;
   line-height: 1.1;
 }
+/* A fixed intrinsic-width slot for the current question's alternatives.
+   Hidden candidates contribute to grid sizing, never to visible text. */
+html[data-theme="magical-academy"] body.francais-page .question-frame .word .hole {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+html[data-theme="magical-academy"] body.francais-page .question-frame .word .hole > span {
+  grid-area: 1 / 1;
+  font: inherit;
+  white-space: pre;
+}
+html[data-theme="magical-academy"] body.francais-page .question-frame .word .hole-reserve {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+html[data-theme="magical-academy"] body.francais-page .question-frame .word .hole-answer {
+  justify-self: center;
+  text-align: center;
+}
+
 .actions {
   margin-top: 10px;
   justify-content: center;
