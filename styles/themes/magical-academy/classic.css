@@ -341,6 +341,7 @@ html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .act
   line-height: 1.08;
   text-align: center;
   white-space: nowrap;
+  touch-action: manipulation;
 }
 html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .actions, .academy-result-actions) .primary::before {
   content: "";
