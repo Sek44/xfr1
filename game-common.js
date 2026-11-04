@@ -9,7 +9,8 @@ window.ExerciseGame = (() => {
       total = 10,
       timer = null,
       deadline = 0,
-      remaining = null;
+      remaining = null,
+      action = null;
     function cancel() {
       if (timer !== null) {
         clearTimeout(timer);
@@ -219,14 +220,20 @@ window.ExerciseGame = (() => {
       return button;
     }
     function actionButton() {
-      const button = document.createElement("button");
-      button.className = "primary";
-      button.textContent = correct
+      // Keep the same DOM button when validation changes its appearance.
+      // Replacing the pressed element can swallow a rapid second tap on
+      // mobile, leaving only the automatic next-question timer working.
+      if (!action) {
+        action = document.createElement("button");
+        action.type = "button";
+      }
+      action.className = "primary";
+      action.textContent = correct
         ? index === total - 1
           ? "Voir mon score maintenant"
           : "Suivant →"
         : "Vérifier";
-      return button;
+      return action;
     }
     return {
       reset,
