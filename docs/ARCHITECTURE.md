@@ -5,7 +5,7 @@
 Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépendance d'exécution. Publication GitHub Pages sous `/xfr1/`. Les chemins des pages sont relatifs et les jeux fonctionnent sur téléphone, tablette et ordinateur.
 
 - `index.html` : accueil avec cinq liens vers `francais.html`, `conjugaison.html`, `calcul.html`, `space.html` et `magic.html`.
-- `home.css` : style scolaire de l’accueil ; `exercise-theme.css` : mêmes couleurs, panneaux et contrôles pour Français, Conjugaison et Calcul, chargé après les styles propres aux pages.
+- `styles/themes/magical-academy/classic.css` : **source de vérité des composants visuels communs** à Français, Conjugaison, Calcul et Scores (cadre extérieur, navigation, typographies, cartes Question/Score, cadres parchemin 9-slice, boutons, contrôles et responsive). Les fichiers `francais.css`, `calcul.css`, `conjugaison.css` / `conjugaison-v3.css` et `scores.css` ne gèrent que les particularités de leur page ; `theme.css` contient la palette et les fonds.
 - `scores.html` : historique général et filtres par jeu, avec courbe uniquement sur les pages de scores filtrées par jeu.
 - Chaque page de jeu charge ses modules communs puis son contrôleur propre. Les fichiers des jeux restent dans la racine du dépôt ; leurs documents sont dans `docs/games/<id>/`.
 
@@ -22,11 +22,13 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 | `daily-exercises.js` | `DailyExercises` : crédits d’exercices quotidiens, minutes autorisées, progression des jeux continus et lecture inter-sites de même origine |
 | `score-view.js` | `ScoreView` : scores en iframe sans détruire le jeu, suspension/reprise et navigation par l'historique |
 | `app-confirm.js` | `AppConfirm` : dialogue de confirmation interne |
-| `shared.css`, `keyboard.css`, `score-view.css`, `app-confirm.css` | Styles partagés, clavier AZERTY réutilisable et navigation |
+| `academy-header.js` (`AcademyHeader`) | Bandeau commun des quatre pages classiques, généré via les attributs du `<nav data-academy-header>` ; préserve `restart-series`, `scores-back`, liens, libellés accessibles et navigation Scores en iframe |
+| `styles/themes/magical-academy/classic.css` | Styles réutilisables de l'identité Académie magique : panneaux, progressions, boutons, navigation, typographie et adaptations mobiles |
+| `shared.css`, `keyboard.css`, `score-view.css`, `app-confirm.css` | Base historique partagée, clavier AZERTY, affichage des scores et confirmations |
 
 `francais.js`, `calcul.js` et `conjugaison.js` utilisent `ExerciseGame`. Français et Conjugaison partagent également `ExerciseWeighting` ; leurs statistiques et questions restent distinctes. Les jeux d'arcade délèguent leurs règles à des moteurs isolables (`space-engine.js` et `magic-engine.js`) tandis que leurs contrôleurs gèrent interface, événements, rendu et persistance. Voir leurs architectures dédiées.
 
-Les scripts sont chargés dans l'ordre des dépendances. Les modules communs exposent leurs APIs sur `window` ; les contrôleurs de jeux restent dans des portées privées. Les fichiers HTML contiennent encore une partie des styles/du comportement de page ; ne pas présumer d'une architecture à base de répertoires par jeu.
+Les scripts sont chargés dans l'ordre des dépendances. Les modules communs exposent leurs APIs sur `window` ; les contrôleurs de jeux restent dans des portées privées. Les styles de mise en page ont été extraits des fichiers HTML de Français, Calcul et Scores. Leurs CSS dédiés sont chargés avant `classic.css` ; les règles de thème communes ont ainsi la priorité. Les contrôleurs ne manipulent que les classes des composants standard (`academy-playing`, `question-frame`, `keyboard-panel`, `feedback-retry`, `feedback-success`).
 
 ## Données locales et compatibilité
 
@@ -59,8 +61,12 @@ La validation visuelle/tactile sur mobile et tablette, le comportement selon l'o
 
 ## Identité graphique commune
 
-`school-common.css` définit la palette bleu scolaire renforcée, les panneaux communs et le bandeau supérieur des exercices Français, Conjugaison, Calcul et de la page Scores. `home.css`, `exercise-theme.css` et `scores-theme.css` conservent les détails propres à chaque écran ; les deux missions n'importent pas cette feuille et gardent leur identité visuelle. Le bandeau conserve les actions de navigation (retour, recommencer lorsqu'il existe, scores) et ne change pas leur comportement.
+La page **Conjugaison** est la référence visuelle des sous-pages classiques : Français, Calcul et Scores. Toutes chargent, **en dernier**, `styles/themes/magical-academy/classic.css` après le thème général et les styles de jeu.
 
-Le thème scolaire commun conserve un bandeau discret bleu clair, une seconde couleur d'accent ocre et une typographie système harmonisée. L'accueil affiche la progression du jour comme un encart informatif, sans effet de bouton. En conjugaison, le verbe et la phrase sont mis en valeur par des encarts dédiés. Les deux missions restent isolées du thème.
+- **Bandeau** : un seul générateur `academy-header.js` crée le titre, l’illustration, les liens et le bouton de reprise de série à partir des attributs `data-title`, `data-icon`, `data-game`, `data-restart`, `data-scores` et `data-back-id`. Il doit être chargé avant les contrôleurs des exercices et avant le script de routage de Scores. Les boutons d’illustration restent de vrais liens/boutons accessibles. Sur Scores, `scores-back` permet toujours le retour au jeu et l’usage en iframe.
+- **Cadre global** : `body.academy-page main` contient un encadrement unique et un fond bleu translucide.
+- **Score courant** : `.progress-row` et ses pastilles `.progress-label` / `.progress-score` utilisent les mêmes proportions, étoile et ombres. `game-common.js` reste seul responsable du texte et du score.
+- **Question et saisie** : `.question-frame` (parchemin 9-slice), puis `.keyboard-panel` (fond crème et touches). L’état `.panel.academy-playing` rend leur parent transparent ; une page de résultat final conserve son panneau parchemin.
+- **Actions et contrôles** : `.exercise-actions .primary` ou `.actions .primary`, `.feedback-retry`, `.feedback-success` emploient la même grammaire de boutons, y compris icônes et ombres adaptées. Les touches, listes déroulantes et filtres utilisent la palette commune.
 
-Les trois exercices scolaires partagent désormais un cadre de question bleu clair (`school-common.css` : `.sentence`, `.conjugaison-sentence`, `.equation-row`). Seules les réponses, et l'infinitif en conjugaison, sont en gras ; l'accentuation colorée reste exclusivement bleue.
+Les feuilles `francais.css`, `calcul.css`, `scores.css` et `styles/themes/magical-academy/conjugaison-v3.css` doivent contenir **uniquement** les adaptations propres à leurs pages. Ne pas recopier le bandeau ou les règles de taille des boutons. `school-common.css` et `exercise-theme.css` conservent temporairement les styles de base historiques, surchargés par `classic.css` pour les quatre pages. Les jeux d’arcade n’utilisent pas ces composants et conservent leur apparence indépendante.
