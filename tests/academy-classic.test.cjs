@@ -146,7 +146,11 @@ test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () 
   const tabStyles = common.split("/* Academy tabs")[1].split("/* Progress cards")[0];
   assert.ok(tabStyles.includes(".academy-tabs .academy-tab"));
   assert.ok(tabStyles.includes("linear-gradient("));
-  assert.ok(tabStyles.includes("border-radius: 10px 10px 7px 7px"));
+  assert.ok(tabStyles.includes("border-radius: 9px;"));
+  assert.ok(tabStyles.includes("border: 1.5px solid #bd985c;"));
+  assert.equal(tabStyles.includes(".academy-tab::before"), false);
+  assert.equal(tabStyles.includes(".academy-tab::after"), false);
+  assert.equal(tabStyles.includes("border-bottom-color"), false);
   assert.ok(tabStyles.includes(".academy-score-tabs"));
   assert.ok(tabStyles.includes("focus-visible"));
   for (const imageStyling of ["url(", "border-image", ".webp"]) {
