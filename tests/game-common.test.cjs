@@ -10,7 +10,7 @@ class Node {
     this.children = [];
     this.attributes = {};
     this.style = { setProperty() {} };
-    this.classList = { toggle() {} };
+    this.classList = { toggle() {}, add() {}, remove() {} };
   }
   append(...nodes) {
     for (const node of nodes) {
@@ -38,6 +38,9 @@ class Node {
     this.replaceChildren(new Node("svg"));
   }
   addEventListener() {}
+  querySelector(selector) {
+    return selector.startsWith(".") ? findByClass(this, selector.slice(1)) : null;
+  }
 }
 // Exercises now nest the question and inputs inside shared visual components.
 function findByClass(root, className) {
@@ -78,6 +81,7 @@ function setup(files = ["game-state.js", "game-ui.js", "game-common.js", "exerci
         return elements.get(id);
       },
       addEventListener() {},
+      querySelector: (selector) => selector === "main" ? new Node("main") : null,
     },
     Date: { now: () => now },
     setTimeout(callback, delay) {
