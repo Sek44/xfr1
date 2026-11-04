@@ -544,6 +544,16 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
   }
 }
 
+/* The final card already contains the definitive score. Hide the
+   in-session progress pills to avoid displaying the same score twice.
+   Keep the family tabs and difficulty selectors available for a new session. */
+html[data-theme="magical-academy"] body.academy-page:has(.academy-result) .academy-progress {
+  display: none;
+}
+html[data-theme="magical-academy"] body.francais-page:has(.academy-result) .exercise-intro {
+  display: none;
+}
+
 /* One shared final-result screen for Français, Calcul and Conjugaison.
    Use the filled 9-slice parchment from normal question frames rather than
    a rectangular generic .panel. The content stays selectable and accessible. */
