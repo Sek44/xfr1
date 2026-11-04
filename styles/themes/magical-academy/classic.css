@@ -103,9 +103,18 @@ html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.a
   cursor: pointer;
   transition: filter .16s ease, transform .16s ease;
 }
-html[data-theme="magical-academy"] body.academy-page .academy-banner .academy-nav-back { background-image: url("./assets/nav-back-academy.webp"); }
-html[data-theme="magical-academy"] body.academy-page .academy-banner .academy-nav-restart { background-image: url("./assets/nav-restart-academy.webp"); }
-html[data-theme="magical-academy"] body.academy-page .academy-banner .academy-nav-scores { background-image: url("./assets/nav-scores-academy.webp"); }
+/* This selector must outrank theme.css's older
+   .school-page .page-header.school-banner .nav-icon background shorthand;
+   otherwise its parchment gradient erases the illustrated background-image. */
+html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-back {
+  background: transparent url("./assets/nav-back-academy.webp") center / contain no-repeat;
+}
+html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-restart {
+  background: transparent url("./assets/nav-restart-academy.webp") center / contain no-repeat;
+}
+html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-scores {
+  background: transparent url("./assets/nav-scores-academy.webp") center / contain no-repeat;
+}
 html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button:hover,
 html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button:focus-visible {
   border: 0;
