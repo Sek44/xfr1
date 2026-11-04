@@ -69,17 +69,6 @@
   font-weight: bold;
   margin: 8px 0;
 }
-.feedback {
-  min-height: 25px;
-  font-weight: bold;
-  margin: 6px 0;
-}
-.good {
-  color: #177447;
-}
-.bad {
-  color: #bd3535;
-}
 .muted {
   color: #637188;
 }
@@ -145,11 +134,6 @@
   font-size: clamp(0.75rem, 2.2vw, 1rem);
   padding: 8px 2px;
   white-space: nowrap;
-}
-.feedback {
-  text-align: center;
-  margin: 5px 0;
-  min-height: 22px;
 }
 .panel .progress {
   text-align: left;
@@ -252,11 +236,6 @@
   .keypad button.erase {
     font-size: 0.9rem;
   }
-  .feedback {
-    min-height: 21px;
-    margin: 4px 0;
-    font-size: 1rem;
-  }
 }
 /* Only very short landscape viewports need the tighter sizing. */
 @media (orientation: landscape) and (max-height: 530px) {
@@ -282,9 +261,5 @@
   .keypad button {
     min-height: 36px;
     padding: 3px;
-  }
-  .feedback {
-    min-height: 17px;
-    margin: 2px 0;
   }
 }
