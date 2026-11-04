@@ -2,7 +2,7 @@
 
 ## Fichiers et responsabilités
 
-- `francais.html` : écran, sélecteur de famille, score courant, zone de réponse et styles locaux.
+- `francais.html` : structure de la page et liens vers les composants standards ; `francais.css` : styles spécifiques aux choix et aux phrases. Le bandeau provient de `academy-header.js` ; les panneaux et boutons de `styles/themes/magical-academy/classic.css`.
 - `francais.js` : banque interne de phrases, découpage en préfixe / choix / suffixe, clés par mot et migration des anciennes statistiques.
 - `exercise-weighting.js` : pondération, tirage et suivi des apparitions/erreurs du français, avec ses clés historiques inchangées.
 - `game-common.js` (`ExerciseGame`) : machine de session (index, premier échec, réussite, score), temporisateur de 3 secondes, instantané et reprise.
