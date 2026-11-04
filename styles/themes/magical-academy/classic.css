@@ -3,7 +3,12 @@
  * la navigation, les pastilles de progression, les panneaux, les boutons,
  * les marges et la typographie. Les règles de saisie restent propres au jeu.
  */
+html[data-theme="magical-academy"] body.academy-page,
+html[data-theme="magical-academy"] body.academy-page *,
+html[data-theme="magical-academy"] body.academy-page *::before,
+html[data-theme="magical-academy"] body.academy-page *::after { box-sizing: border-box; }
 html[data-theme="magical-academy"] body.academy-page {
+  margin: 0;
   padding: 5px max(6px, env(safe-area-inset-right)) 10px max(6px, env(safe-area-inset-left));
 }
 html[data-theme="magical-academy"] body.academy-page main {
@@ -303,7 +308,7 @@ html[data-theme="magical-academy"] body.academy-page button {
   font: inherit;
   cursor: pointer;
 }
-html[data-theme="magical-academy"] body.academy-page button:disabled { cursor: default; }
+html[data-theme="magical-academy"] body.academy-page button:disabled { cursor: default; opacity: .55; }
 /* Other standard controls share the raised parchment finish. */
 html[data-theme="magical-academy"] body.academy-page :is(.choices button, .keypad button, .setting select, .filter a) {
   border: 1.5px solid #c8a66e;
