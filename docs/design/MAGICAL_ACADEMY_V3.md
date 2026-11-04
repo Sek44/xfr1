@@ -133,9 +133,8 @@ Définir aussi les tailles minimales tactiles, espacements, états `hover/focus/
 
 ### Assets illustrés ajoutés
 
-- `styles/themes/magical-academy/assets/castle.svg` : fond panoramique nocturne.
-- `styles/themes/magical-academy/assets/book.svg` : livre décoratif.
-- `styles/themes/magical-academy/assets/lantern.svg` : lanterne décorative.
+- Les anciens SVG de château et de lanterne, non utilisés, ont été supprimés au profit des décors WebP.
+- `styles/themes/magical-academy/assets/book.svg` reste utilisé sur l’accueil pour l’illustration `.hero-book`.
 
 Ces illustrations sont des recréations SVG, et non des extractions pixel à pixel de la maquette. Les éléments interactifs restent du HTML et du CSS.
 
@@ -162,12 +161,12 @@ La feuille `styles/themes/magical-academy/theme.css` a été restructurée pour 
 - Le bandeau `.conjugaison-banner` affiche la plume `--art-quill` auprès du titre, avec trois contrôles circulaires (accueil, recommencer, scores). Les **identifiants, liens et gestionnaires existants restent inchangés** ; le lien Scores garde le filtre `?game=conjugaison`.
 - Le temps courant est présenté sur un cartouche parchemin indépendant et les blocs Question/Score sont deux plaques arrondies.
 - L'élément `.question-frame` regroupe **uniquement** le verbe et la phrase. Il utilise `--art-parchment` (fichier `docs/design/parchment-ornament.webp`) comme illustration de cadre, avec une bordure et un fond CSS de secours ; les textes et la réponse restent de vrais éléments DOM.
-- Le clavier AZERTY commun et la validation restent **à l'extérieur** du sous-cadre afin de préserver la largeur des dix touches, notamment sur téléphone. Un fichier dédié `styles/themes/magical-academy/conjugaison-v3.css` isole ces règles visuelles.
+- Le clavier AZERTY commun et la validation restent **à l'extérieur** du sous-cadre afin de préserver la largeur des dix touches, notamment sur téléphone. Un fichier dédié `styles/themes/magical-academy/conjugaison.css` isole ces règles visuelles.
 - Vérifications statiques effectuées : structure HTML, syntaxe JavaScript, liens des contrôles, ressources du thème et règles responsive. **Vérification visuelle réelle et exécution complète des tests Node encore nécessaires.**
 
 ## Correctif cadres 9-slice transparents (3 novembre 2026)
 
-Les deux cadres générés pour Conjugaison remplacent l’ancien `parchment-ornament.webp` étiré : fichiers WebP RGBA optimisés `styles/themes/magical-academy/assets/title-frame-9slice.webp` et `question-frame-9slice.webp`. Le cartouche du temps et le cadre de la question sont dessinés en **9-slice CSS (`border-image-slice`)**, avec conservation des quatre coins, étirement limité aux segments rectilignes et centre transparent. Les fonds parchemin sont désormais des dégradés CSS indépendants des images. Les textes et contrôles restent dans le DOM, le clavier garde sa largeur. Sources, dimensions et valeurs de découpe : voir `docs/design/README.md`.
+Les cadres utilisés sont désormais `styles/themes/magical-academy/assets/title-frame-filled-9slice.webp` et `question-frame-filled-9slice.webp`, avec remplissage parchemin intégré. Les anciennes versions à centre transparent ont été supprimées. Les contrôles et les textes restent dans le DOM. Voir `docs/design/README.md`.
 
 ## Conjugaison — cadres avec fond intégré et clavier séparé (3 novembre 2026)
 
@@ -185,7 +184,7 @@ La décoration et les zones tactiles sont indépendantes. Les quatre nouveaux We
 
 Le panneau extérieur est désormais rempli d'un bleu nuit **translucide** `rgba(6, 23, 58, .58)` pour laisser transparaître le décor sans perdre le contraste des éléments clairs. Les marges verticales ont été réduites dans l'en-tête, autour du cartouche du temps, des panneaux Question/Score, du cadre du verbe et sous la phrase. Le cadre du verbe place maintenant **« Verbe à conjuguer » et l'infinitif sur une même ligne**, avec typographie adaptative pour les petits écrans.
 
-La zone de feedback vide ne réserve plus inutilement de hauteur : elle reprend son espace lorsque des messages sont affichés. Les hauteurs minimales des touches AZERTY et le fonctionnement des boutons Vérifier/Suivant, Reset, Scores et de la persistance n'ont pas été changés. Le travail est contenu dans `styles/themes/magical-academy/conjugaison-v3.css` ; aucun changement de données ni de logique métier.
+La zone de feedback vide ne réserve plus inutilement de hauteur : elle reprend son espace lorsque des messages sont affichés. Les hauteurs minimales des touches AZERTY et le fonctionnement des boutons Vérifier/Suivant, Reset, Scores et de la persistance n'ont pas été changés. Le travail est contenu dans `styles/themes/magical-academy/conjugaison.css` ; aucun changement de données ni de logique métier.
 
 ## Conjugaison — typographie et dimensions du 3 novembre 2026
 
@@ -193,7 +192,7 @@ Le cartouche « Présent de l’indicatif · 1er groupe » a désormais une larg
 
 Dans le cadre de la question, les libellés et l'infinitif sont plus lisibles sur une même ligne, avec une réduction contrôlée sur les écrans étroits. La phrase en police d'affichage est agrandie. Le cadre n'impose plus de hauteur minimale : l'espace sous la phrase est déterminé par la marge intérieure nécessaire au contour doré, et augmente naturellement si la phrase revient à la ligne.
 
-Les caractères des touches AZERTY deviennent plus grands et plus gras, sans changer les dimensions tactiles des touches ni la disposition commune. Les touches d'actions (« Tout effacer », « Espace », suppression) conservent une taille de texte spécifique pour ne pas déborder. Tous ces réglages sont limités à Conjugaison, dans `styles/themes/magical-academy/conjugaison-v3.css`. Aucun changement de score, logique de jeu ou stockage.
+Les caractères des touches AZERTY deviennent plus grands et plus gras, sans changer les dimensions tactiles des touches ni la disposition commune. Les touches d'actions (« Tout effacer », « Espace », suppression) conservent une taille de texte spécifique pour ne pas déborder. Tous ces réglages sont limités à Conjugaison, dans `styles/themes/magical-academy/conjugaison.css`. Aucun changement de score, logique de jeu ou stockage.
 
 ## Conjugaison — stabilité de la réponse et touches d'édition (3 novembre 2026)
 
@@ -217,4 +216,4 @@ Les caractères des touches AZERTY deviennent plus grands et plus gras, sans cha
 
 Les pastilles Question et Score ont maintenant deux colonnes intrinsèques de même taille. Leur largeur est fixée par le texte le plus large, au lieu d'occuper systématiquement toute la page ; le groupe reste centré et peut se réduire sur les petits écrans. Les marges horizontales internes sont proches des marges verticales. L'étoile du score est agrandie et alignée verticalement par flexbox.
 
-Le libellé du verbe se termine par « : » avant l'infinitif. Le comportement du bouton principal dépend du résultat : erreur rouge, reprise de la saisie en bleu, réussite verte, sans panneau d'information supplémentaire ni changement de hauteur. La zone accessible `conjugaison-feedback-live` porte l'annonce vocale. Aucun autre exercice ne reçoit ces styles ou ce comportement.
+Le libellé du verbe se termine par « : » avant l'infinitif. Le comportement du bouton principal dépend du résultat : erreur rouge, reprise de la saisie en bleu, réussite verte, sans panneau d'information supplémentaire ni changement de hauteur. La zone accessible `conjugaison-feedback-live` porte l'annonce vocale. Français et Calcul utilisent désormais les mêmes états du bouton commun, sans notification visible supplémentaire.
