@@ -246,13 +246,6 @@ html[data-theme="magical-academy"] body.academy-page .keyboard-panel {
   background: linear-gradient(160deg, #fff7e5, #f4dcb2);
   box-shadow: inset 0 0 0 3px #fff9e9bd, 0 7px 15px #06162d66;
 }
-html[data-theme="magical-academy"] body.academy-page .keyboard-panel .feedback { max-width: 100%; }
-html[data-theme="magical-academy"] body.academy-page .keyboard-panel .feedback:empty {
-  min-height: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-}
 
 /* Standard action button: one blue-and-gold shape, colour-matched feedback. */
 html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .actions) { display: flex; justify-content: center; margin: 8px 0 1px; }
