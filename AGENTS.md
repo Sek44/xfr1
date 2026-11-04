@@ -37,4 +37,6 @@ Le code reste actuellement à la **racine** du dépôt. Ne pas le déplacer dans
 - **Pas de changelog ni de fichier REFACTORING.md permanent** : Git conserve l'historique ; n'ouvrir de plan de refactoring que temporairement.
 - Mettre à jour la documentation affectée **dans le même changement que le code**. Ne pas dupliquer la source de vérité : faire des liens. Un souhait non livré relève du backlog, pas des spécifications.
 
+Pour les sous-pages classiques (`francais`, `conjugaison`, `calcul`, `scores`), la référence graphique est Conjugaison : modifier les éléments partagés dans `styles/themes/magical-academy/classic.css`, **pas** dans plusieurs CSS de jeu. Les quatre bandeaux sont créés par `academy-header.js` depuis `data-academy-header` ; maintenir les identifiants de navigation, les liens Scores et le retour iframe. Réserver les CSS de page aux composants métier.
+
 Vérifier les liens relatifs des documents et lancer `node --test tests/*.test.cjs` avant publication. Pour tout changement HTML/JS/CSS, conserver les conventions Prettier indiquées dans `README.md`. Signaler les tests navigateur (touch, portrait/paysage, pause/reprise) non effectués. La nouvelle documentation ne modifie en rien les exigences de compatibilité et de navigation ci-dessus.
