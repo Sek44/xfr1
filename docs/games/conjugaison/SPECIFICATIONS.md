@@ -8,7 +8,7 @@ Six familles : **-er** régulier, **-ger**, **-cer**, **-guer**, **-yer** (passa
 
 ## Score et correction
 
-La session comporte 10 combinaisons distinctes (famille, infinitif, personne). Après saisie, « Vérifier » signale la justesse. Une erreur au premier essai empêche de gagner le point sur cette question ; une bonne correction permet d’avancer mais ne rapporte pas de point. Après réussite, la question suivante arrive automatiquement au bout d’environ 3 secondes ou immédiatement avec « Suivant ».
+La session comporte 10 combinaisons distinctes (famille, infinitif, personne). Après saisie, « Vérifier » signale la justesse. Le bouton bleu est centré et volontairement plus étroit que le clavier, avec un libellé large et une icône de baguette ; ses variantes de correction gardent la même hauteur et adaptent leur typographie aux textes plus longs. Une erreur au premier essai empêche de gagner le point sur cette question ; une bonne correction permet d’avancer mais ne rapporte pas de point. Après réussite, la question suivante arrive automatiquement au bout d’environ 3 secondes ou immédiatement avec « Suivant ».
 
 Une série terminée produit un score sur 10 dans l’historique commun et donne **1 point d’exercice quotidien**, soit actuellement **5 minutes de jeu autorisées** quel que soit le résultat. Une session interrompue ne crédite rien. Le bouton d’icône « Recommencer la série », placé dans l’en-tête juste à gauche des scores, demande confirmation : annuler reprend le jeu, confirmer recrée une série de dix questions avec un score nul, sans enregistrer ni créditer la série abandonnée.
 
