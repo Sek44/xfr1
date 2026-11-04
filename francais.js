@@ -456,6 +456,7 @@
     panel.replaceChildren();
     scoreCard.replaceChildren();
     scoreCard.hidden = false;
+    panel.classList.toggle("academy-playing", game.index !== game.total);
     for (const [key, entry] of Object.entries(sets)) {
       const b = make("button", tab === key ? "active" : "", entry.name);
       b.onclick = () => switchTab(key);
@@ -490,7 +491,10 @@
     const suffix = after.match(/^[^\s]*/)[0];
     word.append(document.createTextNode(suffix));
     sentence.append(word, document.createTextNode(after.slice(suffix.length)));
-    panel.append(sentence);
+    const questionFrame = make("div", "question-frame");
+    questionFrame.append(sentence);
+    panel.append(questionFrame);
+    const controls = make("div", "keyboard-panel");
     const options = make("div", "choices");
     for (const value of data.options) {
       const b = make("button", selected === value ? "selected" : "", value);
@@ -498,18 +502,21 @@
       b.onclick = () => select(value);
       options.append(b);
     }
-    panel.append(options);
+    controls.append(options);
     const message = game.feedback({
       correction: "Bonne correction ! Pas de point pour cette phrase.",
       retry: "Essaie encore ! Tu peux changer ta réponse.",
     });
-    panel.append(message);
+    controls.append(message);
     const actions = make("div", "actions"),
       button = game.actionButton();
     button.disabled = !game.correct && selected === null;
+    button.classList.toggle("feedback-success", game.correct);
+    button.classList.toggle("feedback-retry", game.failed && !game.correct);
     button.onclick = game.correct ? advance : verify;
     actions.append(button);
-    panel.append(actions);
+    controls.append(actions);
+    panel.append(controls);
   }
   document.getElementById("restart-series").onclick = game.restartButton(() => switchTab(tab)).onclick;
   if (!restore()) game.reset(questions.length);
