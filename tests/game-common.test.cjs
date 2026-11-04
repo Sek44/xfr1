@@ -136,6 +136,44 @@ function setup(files = ["game-state.js", "game-ui.js", "game-common.js", "exerci
   return { context, run, advance, elements, sessions, saved, timers, storage };
 }
 
+test("shared progress displays Question current/max and Score number only", () => {
+  const f = setup();
+  const game = f.context.ExerciseGame.create({ onChange() {}, onFinish() {} });
+  const holder = new Node("div");
+  game.reset(10);
+  game.progress(holder);
+  assert.equal(holder.children[0].textContent, "Question 1/10");
+  assert.equal(holder.children[1].children[0].textContent, "Score");
+  assert.equal(holder.children[1].children[1].textContent, "0");
+  game.validate(true);
+  game.progress(holder);
+  assert.equal(holder.children[1].children[1].textContent, "1");
+  game.next();
+  game.progress(holder);
+  assert.equal(holder.children[0].textContent, "Question 2/10");
+  assert.equal(holder.children[1].children[1].textContent, "1");
+  game.validate(false);
+  game.validate(true);
+  game.progress(holder);
+  assert.equal(holder.children[1].children[1].textContent, "1");
+});
+
+test("shared ornate tabs use accessible selection and preserve callbacks", () => {
+  const f = setup();
+  const parent = new Node("div");
+  const calls = [];
+  f.context.GameUI.tabs(parent, [["g", "g / gu / ge"], ["c", "c / ç"]], "c",
+    (value) => calls.push(value));
+  assert.equal(parent.children.length, 2);
+  assert.equal(parent.children[0].className, "academy-tab");
+  assert.equal(parent.children[1].className, "academy-tab active");
+  assert.equal(parent.children[0].attributes["aria-selected"], "false");
+  assert.equal(parent.children[1].attributes["aria-selected"], "true");
+  assert.equal(parent.children[1].children[0].textContent, "c / ç");
+  parent.children[0].onclick();
+  assert.deepEqual(calls, ["g"]);
+});
+
 test("numeric controls use identical commands with game-specific labels, limits and disabled state", () => {
   const { context } = setup(),
     ui = context.GameUI,
@@ -149,6 +187,7 @@ test("numeric controls use identical commands with game-specific labels, limits 
     assert.equal(container.children.length, 12);
     assert.equal(container.children[9].textContent, clearLabel);
     assert.ok(container.children.every((key) => key.disabled));
+    assert.ok(container.children.every((key) => key.className.includes("academy-key")));
     container.children[9].onclick();
     container.children[11].onclick();
   }
