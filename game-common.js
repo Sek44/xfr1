@@ -147,7 +147,7 @@ window.ExerciseGame = (() => {
 
       const result = document.createElement("div");
       result.className = "academy-result-score";
-      result.setAttribute("aria-label", "Score final : " + score + " sur " + total);
+      result.setAttribute("aria-label", "Score final : " + score);
       const label = document.createElement("span");
       label.className = "academy-result-score-label";
       label.textContent = "Ton score";
@@ -156,10 +156,7 @@ window.ExerciseGame = (() => {
       const value = document.createElement("strong");
       value.className = "academy-result-score-value";
       value.textContent = String(score);
-      const maximum = document.createElement("span");
-      maximum.className = "academy-result-score-maximum";
-      maximum.textContent = " / " + total;
-      numbers.append(value, maximum);
+      numbers.append(value);
       result.append(label, numbers);
 
       const message = document.createElement("p");
