@@ -183,6 +183,7 @@
     const sc = el("score");
     game.progress(sc, "Calcul");
     const p = el("panel");
+    p.classList.toggle("academy-playing", questions.length > 0 && game.index !== game.total);
     p.replaceChildren();
     if (!questions.length) {
       const message = document.createElement("p");
@@ -209,7 +210,12 @@
     display.setAttribute("role", "status");
     display.textContent = answer || " ";
     equation.append(display);
-    p.append(equation);
+    const questionFrame = document.createElement("div");
+    questionFrame.className = "question-frame";
+    questionFrame.append(equation);
+    p.append(questionFrame);
+    const controls = document.createElement("div");
+    controls.className = "keyboard-panel";
     const keypad = document.createElement("div");
     keypad.className = "keypad";
     function edit(value) {
@@ -220,19 +226,22 @@
       persist();
     }
     GameUI.keypad(keypad, edit, { disabled: game.correct });
-    p.append(keypad);
+    controls.append(keypad);
     const feedback = game.feedback({
       correction: "Bonne correction ! Aucun point pour ce calcul.",
       retry: "Essaie encore ! Corrige ton résultat puis vérifie à nouveau.",
     });
-    p.append(feedback);
+    controls.append(feedback);
     const button = game.actionButton();
     button.disabled = !game.correct && !answer.trim();
+    button.classList.toggle("feedback-success", game.correct);
+    button.classList.toggle("feedback-retry", game.failed && !game.correct);
     button.onclick = game.correct ? next : verify;
     const actions = document.createElement("div");
     actions.className = "exercise-actions";
     actions.append(button);
-    p.append(actions);
+    controls.append(actions);
+    p.append(controls);
   }
   document.getElementById("restart-series").onclick = game.restartButton(newSession).onclick;
   if (!restore()) newSession();
