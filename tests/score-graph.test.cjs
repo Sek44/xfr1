@@ -113,6 +113,23 @@ test("per-game graphs follow the table, filter records and plot oldest first wit
   f.render(null);
   assert.equal(tags(f.root, "svg").length, 0);
 });
+test("score history shows points without denominators, preserving saved totals", () => {
+  const records = [
+    { tab: "g", score: 7, total: 10, date: "2026-10-18" },
+    { tab: "math", score: 3, total: 20, date: "2026-10-17" },
+    { tab: "space", score: 40, mode: "arcade", date: "2026-10-16" },
+    { tab: "g", score: null, date: "2026-10-15" },
+  ];
+  const f = setup(records);
+  const original = f.stored;
+  f.render(null);
+  const body = tags(f.root, "tbody")[0];
+  assert.deepEqual(body.children.map(row => row.children[3].textContent),
+    ["7", "3", "40 points", "—"]);
+  assert.equal(f.stored, original);
+  assert.equal(f.writes, 0);
+});
+
 test("missing legacy scores create gaps, placeholders, and never invented zeroes", () => {
   const f = setup([
     { tab: "math", score: 9 },
