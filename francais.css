@@ -30,18 +30,6 @@
   font-size: 1.35rem;
   font-weight: 700;
 }
-.feedback {
-  min-height: 26px;
-  margin-top: 10px;
-  font-weight: 700;
-  text-align: center;
-}
-.bad {
-  color: #bd3535;
-}
-.good {
-  color: #177447;
-}
 .actions {
   margin-top: 10px;
   justify-content: center;
