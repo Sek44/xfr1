@@ -2,7 +2,7 @@
 
 ## Organisation
 
-- `calcul.html` : écran de choix catégorie/difficulté, affichage de l'opération, entrée numérique, progression et messages.
+- `calcul.html` : structure de la page et ses dépendances ; `calcul.css` : disposition et responsive spécifiques aux listes catégorie/difficulté, à l’opération et au pavé numérique. Le bandeau provient de `academy-header.js` et les panneaux, boutons, marges et fontes communes de `styles/themes/magical-academy/classic.css`.
 - `calcul.js` : tables `levels` et `ranges`, génération des opérations, sélection des options, validation et restauration des données du jeu.
 - `game-common.js` (`ExerciseGame`) : état de session, score au premier essai, correction, délai auto de 3 secondes, snapshot.
 - `game-ui.js` : `GameUI.keypad` et `GameUI.editNumber` pour la saisie sur six chiffres au maximum.
