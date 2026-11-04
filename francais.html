@@ -143,55 +143,17 @@
     <link rel="stylesheet" href="./exercise-theme.css?v=20261101-school" />
     <link rel="stylesheet" href="./school-common.css?v=20261102-even-borders" />
       <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=10-portrait-cover" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/classic.css?v=1" />
   </head>
-  <body class="school-page">
+  <body class="school-page academy-page francais-page">
     <main>
-      <nav class="page-nav page-header school-banner">
-        <a
-          class="nav-link nav-icon"
-          href="./"
-          aria-label="Retour à l’accueil"
-          title="Accueil"
-          ><svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            width="29"
-            height="29"
-            fill="none"
-            stroke="#1757a7"
-            stroke-width="2.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M19 12H5m7-7-7 7 7 7" /></svg
-        ></a>
-        <h1 class="page-title">Français</h1>
-        <button id="restart-series" class="nav-link nav-icon restart-header" type="button" aria-label="Recommencer la série" title="Recommencer la série"><svg viewBox="0 0 24 24" aria-hidden="true" width="29" height="29" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11a9 9 0 1 1 2.7 6.4" /><path d="M3 4v7h7" /></svg></button>
-        <a
-          class="nav-link nav-icon"
-          href="./scores.html?game=francais"
-          aria-label="Voir les scores"
-          title="Mes scores"
-          ><svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            width="29"
-            height="29"
-            fill="none"
-            stroke="#1757a7"
-            stroke-width="2.4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect x="4" y="3" width="16" height="18" rx="2" />
-            <path d="M8 8h8M8 12h8M8 16h5" /></svg
-        ></a>
-      </nav>
+      <nav class="page-nav page-header school-banner academy-banner" data-academy-header data-title="Français" data-icon="francais" data-game="francais" data-restart="true" data-scores="true"></nav>
       <p>Choisis les lettres manquantes et vérifie ta réponse.</p>
       <div class="tabs" id="tabs"></div>
       <div class="score-card" id="score-card" aria-live="polite"></div>
       <div class="panel" id="panel"></div>
     </main>
+    <script src="./academy-header.js?v=1"></script>
     <script src="./daily-exercises.js?v=20261101-5min"></script>
     <script src="./game-state.js?v=20261019-save-state1"></script>
     <script src="./score-view.js?v=20261018-state9"></script>
