@@ -109,20 +109,22 @@ window.ExerciseGame = (() => {
       resume();
       return true;
     }
+    // Single progress component shared by the classic exercises.
+    // Question is always current/max; Score is the earned-point count only.
     function progress(container) {
       container.classList.toggle("progress-row", true);
+      container.classList.toggle("academy-progress", true);
       container.replaceChildren();
       const left = document.createElement("span");
       left.className = "progress-label";
-      left.textContent =
-        index === total ? "Terminé" : "Question " + (index + 1) + "/" + total;
+      left.textContent = "Question " + Math.min(index + 1, total) + "/" + total;
       const right = document.createElement("span");
       right.className = "progress-score";
       const label = document.createElement("span");
       label.className = "progress-score-label";
       label.textContent = "Score";
       const value = document.createElement("strong");
-      value.textContent = score + "/" + total;
+      value.textContent = String(score);
       right.append(label, value);
       container.append(left, right);
     }
