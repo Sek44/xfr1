@@ -297,6 +297,13 @@ html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .act
 html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .actions) .primary.feedback-success::before { background-image: url("./assets/verifier-success.webp"); }
 html[data-theme="magical-academy"] body.academy-page :is(.exercise-actions, .actions) .primary:disabled { opacity: .58; }
 
+/* Plain controls receive the same base font and touch affordance;
+   page-specific layouts may still define their own sizing. */
+html[data-theme="magical-academy"] body.academy-page button {
+  font: inherit;
+  cursor: pointer;
+}
+html[data-theme="magical-academy"] body.academy-page button:disabled { cursor: default; }
 /* Other standard controls share the raised parchment finish. */
 html[data-theme="magical-academy"] body.academy-page :is(.choices button, .keypad button, .setting select, .filter a) {
   border: 1.5px solid #c8a66e;
