@@ -174,6 +174,48 @@ test("shared ornate tabs use accessible selection and preserve callbacks", () =>
   assert.deepEqual(calls, ["g"]);
 });
 
+test("shared final result uses an accessible trophy card and restarts without changing scoring", () => {
+  const f = setup();
+  let finishes = 0;
+  let restarts = 0;
+  const game = f.context.ExerciseGame.create({
+    onChange() {},
+    onFinish() { finishes++; },
+  });
+  game.reset(3);
+  game.validate(true);
+  game.next();
+  game.validate(false);
+  game.validate(true);
+  game.next();
+  game.validate(true);
+  game.next();
+  assert.equal(finishes, 1);
+  assert.equal(game.score, 2);
+
+  const panel = new Node("div");
+  game.finish(panel, () => { restarts++; });
+  assert.equal(panel.children.length, 1);
+  const card = panel.children[0];
+  assert.equal(card.className, "academy-result");
+  assert.equal(card.attributes["aria-label"], "Résultat de l'exercice");
+  assert.equal(card.children[0].className, "academy-result-trophy");
+  assert.equal(card.children[0].attributes["aria-hidden"], "true");
+  assert.equal(card.children[1].textContent, "Exercice terminé !");
+  const result = card.children[2];
+  assert.equal(result.attributes["aria-label"], "Score final : 2 sur 3");
+  assert.equal(result.children[0].textContent, "Ton score");
+  assert.equal(result.children[1].children[0].textContent, "2");
+  assert.equal(result.children[1].children[1].textContent, " / 3");
+  assert.equal(card.children[3].textContent, "Bravo");
+  const button = card.children[4].children[0];
+  assert.equal(button.type, "button");
+  assert.equal(button.textContent, "Recommencer");
+  button.onclick();
+  assert.equal(restarts, 1);
+  assert.equal(finishes, 1);
+});
+
 test("numeric controls use identical commands with game-specific labels, limits and disabled state", () => {
   const { context } = setup(),
     ui = context.GameUI,
