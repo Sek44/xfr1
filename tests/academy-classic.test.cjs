@@ -124,3 +124,40 @@ test("Conjugaison loads one specifically named stylesheet and retired files are 
     assert.equal(fs.existsSync(path.join(root, file)), false, file);
   }
 });
+
+test("French and Conjugaison share the ornate tabs without duplicate CSS", () => {
+  const common = read("styles/themes/magical-academy/classic.css");
+  const conjugaison = read("styles/themes/magical-academy/conjugaison.css");
+  const french = read("francais.html");
+  const conjugaisonPage = read("conjugaison.html");
+  assert.ok(common.includes(".academy-tabs .academy-tab"));
+  assert.ok(common.includes("title-frame-filled-9slice.webp"));
+  assert.equal(conjugaison.includes("body.conjugaison-page .tabs"), false);
+  assert.ok(french.includes('class="tabs academy-tabs"'));
+  assert.ok(conjugaisonPage.includes('class="tab-current academy-tab"'));
+  assert.ok(read("francais.js").includes("GameUI.tabs("));
+});
+
+test("French choices, numeric keys and AZERTY reuse the standard key finish", () => {
+  const common = read("styles/themes/magical-academy/classic.css");
+  assert.ok(common.includes("--academy-key-background"));
+  assert.ok(common.includes(".academy-key, .azerty-keyboard .keyboard-key"));
+  assert.ok(read("francais.js").includes('"academy-key"'));
+  assert.ok(read("game-ui.js").includes('"academy-key"'));
+});
+
+test("classic exercises do not append score denominators per page", () => {
+  const common = read("game-common.js");
+  const conjugaison = read("conjugaison.js");
+  assert.ok(common.includes('"Question " + Math.min(index + 1, total) + "/" + total'));
+  assert.ok(common.includes("value.textContent = String(score)"));
+  assert.ok(common.includes("academy-progress"));
+  assert.equal(conjugaison.includes('score.querySelector(".progress-score strong")'), false);
+});
+
+test("Calcul has a deliberate gap after the difficulty selectors", () => {
+  const css = read("calcul.css");
+  assert.ok(css.includes("#categories.settings"));
+  assert.ok(css.includes("margin: 9px 2px 16px"));
+  assert.ok(css.includes("#score.academy-progress"));
+});
