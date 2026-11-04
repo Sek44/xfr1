@@ -125,113 +125,77 @@ html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.a
 html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon:last-child { grid-column: 4; }
 html[data-theme="magical-academy"] body.academy-page .academy-banner .banner-spacer { grid-column: 3 / 5; }
 
-/* Academy tabs — CSS-only engraved navigation plaques.
- * Unlike the cream Question/Score bubbles, tabs are dark sapphire with
- * squared, softly beveled corners and a gold edge. No image dependencies.
- * Used by Français buttons, the Conjugaison tense, and Scores links.
+/* Shared navigation tabs: simple symmetrical rounded rectangles.
+ * Navy for inactive tabs, brighter blue for the current selection.
+ * A discreet gold outline connects them to the academy theme without
+ * resembling the cream Question/Score bubbles. Entirely CSS-based.
  */
 html[data-theme="magical-academy"] body.academy-page .academy-tabs {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: clamp(7px, 1.8vw, 12px);
   flex-wrap: wrap;
+  gap: 9px;
   margin: 7px 0 13px;
   padding: 0 8px;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab {
-  position: relative;
-  isolation: isolate;
   box-sizing: border-box;
   display: inline-flex;
   flex: 0 1 auto;
   align-items: center;
   justify-content: center;
   max-width: 100%;
-  min-height: 46px;
-  padding: 9px clamp(13px, 2.9vw, 24px) 11px;
-  border: 2px solid #ad874e;
-  border-bottom-color: #78562f;
-  border-radius: 10px 10px 7px 7px;
-  background: linear-gradient(165deg, #294470 0%, #172c54 54%, #0c1d3e 100%);
-  color: #fff0cf;
-  box-shadow: inset 0 1px 0 #ffffff29, inset 0 0 0 1px #5970916b,
-              0 3px 0 #0a1836, 0 5px 9px #020e2870;
+  min-height: 44px;
+  padding: 9px clamp(14px, 2.8vw, 23px);
+  border: 1.5px solid #bd985c;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #233d66, #162b50);
+  color: #fff1d5;
+  box-shadow: inset 0 1px 0 #ffffff20, 0 2px 5px #05142d7a;
   font-family: var(--font-ui);
   font-size: clamp(.89rem, 2.55vw, 1.12rem);
   font-weight: 800;
-  letter-spacing: .005em;
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
-  text-wrap: balance;
   white-space: normal;
   cursor: default;
   touch-action: manipulation;
-  transition: filter .15s ease, transform .15s ease, box-shadow .15s ease;
-}
-/* An inset engraved line and short gold glint, created entirely in CSS. */
-html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  z-index: 0;
-  border: 1px solid #e4c98d48;
-  border-radius: 6px 6px 3px 3px;
-  pointer-events: none;
-}
-html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 3px;
-  width: 32%;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, transparent, #d5ac62b3, transparent);
-  transform: translateX(-50%);
-  pointer-events: none;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab .tab-label {
-  position: relative;
-  z-index: 1;
+  display: inline;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs :is(button, a).academy-tab {
   cursor: pointer;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab:is(.active, .tab-current, [aria-selected="true"], [aria-current="page"]) {
   border-color: #f0c679;
-  border-bottom-color: #b67b32;
-  background: linear-gradient(165deg, #278cc5 0%, #176394 55%, #10436d 100%);
-  color: #fff9e8;
-  box-shadow: inset 0 1px 0 #ffffff6e, inset 0 0 0 1px #76b4d48a,
-              0 3px 0 #734720, 0 6px 12px #06112b85;
-}
-html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab:is(.active, .tab-current, [aria-selected="true"], [aria-current="page"])::after {
-  width: 46%;
-  background: linear-gradient(90deg, transparent, #ffe5a0, transparent);
-  box-shadow: 0 0 4px #ffcf6899;
+  background: linear-gradient(180deg, #2588b8, #14618e);
+  color: #fffaf0;
+  box-shadow: inset 0 1px 0 #ffffff35, 0 2px 6px #05142d85;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs :is(button, a).academy-tab:hover {
-  filter: brightness(1.14);
-  transform: translateY(-1px);
+  border-color: #f0c679;
+  filter: brightness(1.09);
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs :is(button, a).academy-tab:focus-visible {
   outline: 3px solid #ffe2a0;
   outline-offset: 3px;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-tabs :is(button, a).academy-tab:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 2px 5px #0014318a, 0 1px 0 #51351e;
+  background: linear-gradient(180deg, #155783, #10416c);
+  box-shadow: inset 0 1px 3px #00143183;
 }
-/* The wider Scores navigation may wrap onto two or three rows on phones. */
+/* Scores uses the same rectangles at a slightly more compact size. */
 html[data-theme="magical-academy"] body.academy-page .academy-score-tabs {
   gap: 8px;
   margin: 10px 0 17px;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .academy-tab {
   min-height: 42px;
-  padding: 8px 12px 10px;
+  padding: 8px 12px;
   font-size: clamp(.81rem, 2.3vw, 1rem);
 }
 /* Progress cards — same star, font metrics, pill shadows and spacing. */
@@ -572,8 +536,8 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
     gap: 7px;
   }
   html[data-theme="magical-academy"] body.academy-page .academy-tabs .academy-tab {
-    min-height: 43px;
-    padding: 8px 13px 10px;
+    min-height: 42px;
+    padding: 8px 13px;
     font-size: clamp(.82rem, 3.2vw, 1rem);
   }
   html[data-theme="magical-academy"] body.academy-page .academy-score-tabs {
@@ -582,7 +546,7 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
   }
   html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .academy-tab {
     min-height: 40px;
-    padding: 7px 10px 9px;
+    padding: 8px 10px;
     font-size: clamp(.78rem, 2.9vw, .91rem);
   }
 }
