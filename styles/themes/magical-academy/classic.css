@@ -394,10 +394,10 @@ html[data-theme="magical-academy"] body.academy-page :is(.academy-key, .azerty-k
   color: var(--academy-key-ink);
   box-shadow: var(--academy-key-shadow);
   font-family: var(--font-ui);
-  font-weight: 800;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-key {
   display: grid;
+  font-weight: 800;
   place-items: center;
   min-height: 44px;
   touch-action: manipulation;
