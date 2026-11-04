@@ -308,6 +308,64 @@ test("shared session preserves correction state and remaining delay during score
   assert.equal(game.index, 2);
 });
 
+test("rapid Bravo tap advances once and cancels the pending timer", () => {
+  const f = setup();
+  let button;
+  let finishes = 0;
+  let game;
+  game = f.context.ExerciseGame.create({
+    onChange() {
+      // Controllers rebuild their markup on state changes.
+      button = game.actionButton();
+      button.onclick = () => game.correct ? game.next() : game.validate(true);
+    },
+    onFinish() { finishes++; },
+  });
+  game.reset(2);
+  const verifyButton = button;
+  verifyButton.onclick();
+  assert.equal(game.correct, true);
+  assert.strictEqual(button, verifyButton, "Feedback must not replace the pressed button");
+  assert.equal(f.timers.size, 1);
+  // The next touch can happen immediately: no 3-second wait.
+  button.onclick();
+  assert.equal(game.index, 1);
+  assert.equal(game.correct, false);
+  assert.equal(f.timers.size, 0);
+  f.advance(4000);
+  assert.equal(game.index, 1);
+  assert.equal(finishes, 0);
+  game.validate(true);
+  button.onclick();
+  assert.equal(finishes, 1);
+  f.advance(4000);
+  assert.equal(finishes, 1);
+});
+
+test("all classic exercises keep the same button when success is displayed", () => {
+  for (const file of ["francais.js", "calcul.js", "conjugaison.js"]) {
+    const extras = file === "conjugaison.js" ? ["conjugaison-data.js"] : [];
+    const f = setup(
+      ["game-state.js", "game-ui.js", "game-common.js", "exercise-weighting.js", ...extras],
+    );
+    f.run(file);
+    const game = f.sessions[0];
+    const panel = f.elements.get("panel");
+    const initial = findByClass(panel, "primary");
+    assert.ok(initial, file + " should have an initial button");
+    const originalIndex = game.index;
+    game.validate(true);
+    const bravo = findByClass(panel, "primary");
+    assert.strictEqual(bravo, initial, file + " replaced the button after validation");
+    assert.equal(bravo.disabled, false);
+    assert.match(bravo.textContent, /Suivant|score/);
+    bravo.onclick();
+    assert.equal(game.index, originalIndex + 1, file + " did not advance immediately");
+    f.advance(4000);
+    assert.equal(game.index, originalIndex + 1, file + " timer advanced twice");
+  }
+});
+
 test("reset cancels an earlier session auto-next timer", () => {
   const f = setup(),
     game = f.context.ExerciseGame.create({
