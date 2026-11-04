@@ -458,16 +458,11 @@
     const tabs = document.getElementById("tabs"),
       panel = document.getElementById("panel"),
       scoreCard = document.getElementById("score-card");
-    tabs.replaceChildren();
     panel.replaceChildren();
     scoreCard.replaceChildren();
     scoreCard.hidden = false;
     panel.classList.toggle("academy-playing", game.index !== game.total);
-    for (const [key, entry] of Object.entries(sets)) {
-      const b = make("button", tab === key ? "active" : "", entry.name);
-      b.onclick = () => switchTab(key);
-      tabs.append(b);
-    }
+    GameUI.tabs(tabs, Object.entries(sets).map(([key, entry]) => [key, entry.name]), tab, switchTab);
 
     const data = sets[tab],
       total = questions.length;
@@ -503,7 +498,8 @@
     const controls = make("div", "keyboard-panel");
     const options = make("div", "choices");
     for (const value of data.options) {
-      const b = make("button", selected === value ? "selected" : "", value);
+      const b = make("button", "academy-key" + (selected === value ? " selected" : ""), value);
+      b.type = "button";
       b.disabled = game.correct;
       b.onclick = () => select(value);
       options.append(b);
