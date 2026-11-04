@@ -543,7 +543,8 @@
         ? "Bravo ! Voir mon score"
         : game.failed ? "Bien corrigé ! Suivant" : "Bravo ! Suivant"
       : showRetry ? "Incorrect · Réessaie" : "Vérifier";
-    button.onclick = game.correct ? advance : verify;
+    // Dispatch against the current state, not the state when the handler was assigned.
+    button.onclick = () => game.correct ? advance() : verify();
     actions.append(button);
     controls.append(actions);
     panel.append(controls);
