@@ -39,6 +39,16 @@ class Node {
   }
   addEventListener() {}
 }
+// Exercises now nest the question and inputs inside shared visual components.
+function findByClass(root, className) {
+  if ((root.className || "").split(/\s+/).includes(className)) return root;
+  for (const child of root.children || []) {
+    const found = findByClass(child, className);
+    if (found) return found;
+  }
+  return null;
+}
+
 function setup(files = ["game-state.js", "game-ui.js", "game-common.js", "exercise-weighting.js"], storage = new Map()) {
   let now = 0,
     id = 0;
@@ -240,10 +250,10 @@ test("Additions controller uses the shared keypad and retains typed input over s
   f.run("calcul.js");
   const game = f.sessions[0],
     panel = f.elements.get("panel");
-  let keypad = panel.children.find((node) => node.className === "keypad");
+  let keypad = findByClass(panel, "keypad");
   keypad.children[0].onclick();
   keypad.children[1].onclick();
-  const display = panel.children[0].children[1];
+  const display = findByClass(panel, "answer-display");
   assert.equal(display.textContent, "12");
   f.context.visit.suspend();
   f.advance(10000);
@@ -251,15 +261,15 @@ test("Additions controller uses the shared keypad and retains typed input over s
   assert.equal(display.textContent, "12");
   assert.equal(game.index, 0);
   keypad.children[9].onclick();
-  assert.equal(display.textContent, " ");
+  assert.equal(display.textContent.trim(), "");
   // Answer each generated equation through the real controls.
   for (let i = 0; i < game.total; i++) {
-    const equation = panel.children[0].children[0].textContent;
+    const equation = findByClass(panel, "question").textContent;
     const [a, b] = equation.match(/\d+/g).map(Number);
-    keypad = panel.children.find((node) => node.className === "keypad");
+    keypad = findByClass(panel, "keypad");
     for (const digit of String(a + b))
       keypad.children[digit === "0" ? 10 : Number(digit) - 1].onclick();
-    panel.children.at(-1).children[0].onclick();
+    findByClass(panel, "exercise-actions").children[0].onclick();
     assert.equal(game.correct, true);
     f.advance(3000);
   }
@@ -267,24 +277,24 @@ test("Additions controller uses the shared keypad and retains typed input over s
   assert.equal(f.saved[0].score, 10);
 });
 
-test("French controller starts with shared progress, feedback and resumable session", () => {
+test("French controller uses shared tabs, choice keys and resumable session", () => {
   const f = setup();
   f.run("francais.js");
   const game = f.sessions[0],
     panel = f.elements.get("panel");
   assert.equal(game.total, 10);
-  assert.equal(
-    panel.children.find((node) => node.className === "feedback ").attributes
-      .role,
-    "status",
-  );
-  const options = panel.children.find((node) => node.className === "choices");
+  assert.equal(findByClass(panel, "feedback"), null);
+  const tabs = f.elements.get("tabs");
+  assert.equal(tabs.children.length, 2);
+  assert.ok(tabs.children.every((tab) => tab.className.includes("academy-tab")));
+  const options = findByClass(panel, "choices");
+  assert.ok(options.children.every((button) => button.className.includes("academy-key")));
   options.children[0].onclick();
-  const selected = panel.children[0].children[1].children[1].textContent;
+  const selected = findByClass(panel, "hole").textContent;
   f.context.visit.suspend();
   f.advance(10000);
   f.context.visit.resume();
-  assert.equal(panel.children[0].children[1].children[1].textContent, selected);
+  assert.equal(findByClass(panel, "hole").textContent, selected);
   assert.equal(f.saved.length, 0);
 });
 
@@ -354,10 +364,10 @@ test("French and additions keep the same questions, answers and feedback after a
     const progress = before.sessions[0];
     const panel = before.elements.get("panel");
     if (file === "calcul.js") {
-      panel.children.find((n) => n.className === "keypad").children[1].onclick();
+      findByClass(panel, "keypad").children[1].onclick();
     } else {
-      panel.children.find((n) => n.className === "choices").children[1].onclick();
-      panel.children.at(-1).children[0].onclick(); // May be a correction.
+      findByClass(panel, "choices").children[1].onclick();
+      findByClass(panel, "actions").children[0].onclick(); // May be a correction.
     }
     const stored = JSON.parse(
       before.storage.get(
@@ -453,12 +463,12 @@ test("finishing a question session removes the checkpoint without a duplicate sc
   assert.ok(f.storage.has("exercices_in_progress_calcul"));
   for (let i = 0; i < game.total; i++) {
     const panel = f.elements.get("panel"),
-      equation = panel.children[0].children[0].textContent,
+      equation = findByClass(panel, "question").textContent,
       [a, b] = equation.match(/\d+/g).map(Number),
-      keypad = panel.children.find((node) => node.className === "keypad");
+      keypad = findByClass(panel, "keypad");
     for (const digit of String(a + b))
       keypad.children[digit === "0" ? 10 : Number(digit) - 1].onclick();
-    panel.children.at(-1).children[0].onclick();
+    findByClass(panel, "exercise-actions").children[0].onclick();
     game.next();
   }
   assert.equal(f.storage.has("exercices_in_progress_calcul"), false);
@@ -583,8 +593,7 @@ test("conjugation keeps its checkpoint and scores only first-try successes", () 
   assert.equal(new Set(checkpoint.questions.map((q) =>
     JSON.stringify([q.type, q.verb, q.person]))).size, 10);
   // A full word can be typed through the virtual keyboard.
-  const keyboard = first.elements.get("panel").children.find(
-    (node) => node.className === "azerty-keyboard");
+  const keyboard = findByClass(first.elements.get("panel"), "azerty-keyboard");
   const firstAnswer = checkpoint.questions[0].answer;
   for (const letter of firstAnswer) {
     const keyButton = keyboard.children.flatMap((row) => row.children)
@@ -593,7 +602,7 @@ test("conjugation keeps its checkpoint and scores only first-try successes", () 
     keyButton.onclick();
   }
   assert.equal(JSON.parse(first.storage.get(key)).session.answer, firstAnswer);
-  first.elements.get("panel").children.at(-1).children[0].onclick();
+  findByClass(first.elements.get("panel"), "exercise-actions").children[0].onclick();
   assert.equal(game.score, 1);
   first.visit.suspend();
   const pending = JSON.parse(first.storage.get(key)).session.progress.remaining;
