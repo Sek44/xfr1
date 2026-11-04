@@ -128,20 +128,55 @@ window.ExerciseGame = (() => {
       right.append(label, value);
       container.append(left, right);
     }
+    // One final-result card across Français, Calcul and Conjugaison.
+    // The ornate parchment and button appearance live in classic.css.
     function finish(container, restart) {
       container.replaceChildren();
+
+      const card = document.createElement("section");
+      card.className = "academy-result";
+      card.setAttribute("aria-label", "Résultat de l'exercice");
+
+      const trophy = document.createElement("span");
+      trophy.className = "academy-result-trophy";
+      trophy.setAttribute("aria-hidden", "true");
+
       const heading = document.createElement("h2");
+      heading.className = "academy-result-title";
       heading.textContent = "Exercice terminé !";
-      const result = document.createElement("p");
-      result.textContent = "Score : " + score + " / " + total + ".";
+
+      const result = document.createElement("div");
+      result.className = "academy-result-score";
+      result.setAttribute("aria-label", "Score final : " + score + " sur " + total);
+      const label = document.createElement("span");
+      label.className = "academy-result-score-label";
+      label.textContent = "Ton score";
+      const numbers = document.createElement("div");
+      numbers.className = "academy-result-score-numbers";
+      const value = document.createElement("strong");
+      value.className = "academy-result-score-value";
+      value.textContent = String(score);
+      const maximum = document.createElement("span");
+      maximum.className = "academy-result-score-maximum";
+      maximum.textContent = " / " + total;
+      numbers.append(value, maximum);
+      result.append(label, numbers);
+
       const message = document.createElement("p");
-      message.className = "encouragement";
+      message.className = "encouragement academy-result-message";
       message.textContent = ExerciseScores.encourage(score, total);
+
+      const actions = document.createElement("div");
+      actions.className = "academy-result-actions";
       const button = document.createElement("button");
+      button.type = "button";
       button.className = "primary";
       button.textContent = "Recommencer";
       button.onclick = restart;
-      container.append(heading, result, message, button);
+      actions.append(button);
+
+      card.append(trophy, heading, result, message, actions);
+      container.append(card);
     }
     function feedback({ correction, retry }) {
       const node = GameUI.element(
