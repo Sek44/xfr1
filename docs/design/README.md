@@ -40,7 +40,7 @@ La plume et les trois boutons illustrés sont des images WebP RGBA recadrées, s
 - `nav-restart-academy.webp` (320 × 320), relancer la série.
 - `nav-scores-academy.webp` (320 × 320), accès aux scores.
 
-`conjugaison-nav-art.css` applique les images sans fond CSS additionnel. Les vrais éléments `a` et `button` ainsi que leurs libellés accessibles, liens, gestionnaires d'événements et styles de focus restent actifs. Les glyphes SVG redondants sont seulement masqués dans la page Conjugaison. Ces assets pourront être réutilisés par les autres jeux avec les classes correspondantes, après validation de leur bandeau.
+Le bandeau et ces assets sont désormais partagés par **Conjugaison, Français, Calcul et Scores** : `academy-header.js` crée les éléments de navigation accessibles, et `styles/themes/magical-academy/classic.css` applique les illustrations, la typographie, les marges et les états interactifs. `conjugaison-nav-art.css` a été supprimé pour éviter les doublons. Le bouton de redémarrage garde l’identifiant `restart-series`, et la navigation de Scores garde `scores-back` pour le retour au jeu.
 
 ## Icônes d'action Conjugaison — Vérifier, Réessaie, Réussite
 
