@@ -161,3 +161,17 @@ test("Calcul has a deliberate gap after the difficulty selectors", () => {
   assert.ok(css.includes("margin: 9px 2px 16px"));
   assert.ok(css.includes("#score.academy-progress"));
 });
+
+test("final results reuse the shared parchment and standard button styling", () => {
+  const css = read("styles/themes/magical-academy/classic.css");
+  const js = read("game-common.js");
+  assert.ok(css.includes(".panel:has(> .academy-result)"));
+  assert.ok(css.includes(".academy-result::before"));
+  assert.ok(css.includes("question-frame-filled-9slice.webp"));
+  assert.ok(css.includes("home-cup.webp"));
+  assert.ok(css.includes(".academy-result-score-value"));
+  assert.ok(css.includes(".academy-result-actions .primary"));
+  assert.ok(js.includes('card.className = "academy-result"'));
+  assert.ok(js.includes('heading.textContent = "Exercice terminé !"'));
+  assert.ok(js.includes('button.textContent = "Recommencer"'));
+});
