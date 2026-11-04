@@ -137,17 +137,30 @@ test("French text reserves width at the end of its measured lines", () => {
   assert.equal(css.includes('padding-inline-end'), false);
 });
 
-test("French and Conjugaison share the ornate tabs without duplicate CSS", () => {
+test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () => {
   const common = read("styles/themes/magical-academy/classic.css");
   const conjugaison = read("styles/themes/magical-academy/conjugaison.css");
   const french = read("francais.html");
   const conjugaisonPage = read("conjugaison.html");
-  assert.ok(common.includes(".academy-tabs .academy-tab"));
-  assert.ok(common.includes("title-frame-filled-9slice.webp"));
+  const scores = read("scores.html");
+  const tabStyles = common.split("/* Academy tabs")[1].split("/* Progress cards")[0];
+  assert.ok(tabStyles.includes(".academy-tabs .academy-tab"));
+  assert.ok(tabStyles.includes("linear-gradient("));
+  assert.ok(tabStyles.includes("border-radius: 10px 10px 7px 7px"));
+  assert.ok(tabStyles.includes(".academy-score-tabs"));
+  assert.ok(tabStyles.includes("focus-visible"));
+  for (const imageStyling of ["url(", "border-image", ".webp"]) {
+    assert.equal(tabStyles.includes(imageStyling), false);
+  }
   assert.equal(conjugaison.includes("body.conjugaison-page .tabs"), false);
   assert.ok(french.includes('class="tabs academy-tabs"'));
   assert.ok(conjugaisonPage.includes('class="tab-current academy-tab"'));
+  assert.ok(scores.includes('class="filter academy-tabs academy-score-tabs"'));
+  assert.equal((scores.match(/class="academy-tab" href=/g) || []).length, 6);
+  assert.ok(scores.includes('link.classList.add("active")'));
+  assert.ok(scores.includes('link.setAttribute("aria-current", "page")'));
   assert.ok(read("francais.js").includes("GameUI.tabs("));
+  assert.equal(read("scores-theme.css").includes(".filter a"), false);
 });
 
 test("French choices, numeric keys and AZERTY reuse the standard key finish", () => {
