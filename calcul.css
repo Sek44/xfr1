@@ -1,3 +1,22 @@
+/* Calcul — spacing between dropdowns, progress plaques and numeric pad. */
+html[data-theme="magical-academy"] body.calcul-page #categories.settings {
+  margin: 9px 2px 16px;
+}
+html[data-theme="magical-academy"] body.calcul-page #score.academy-progress {
+  margin-bottom: 12px;
+}
+html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key {
+  font-size: clamp(1.35rem, 5.1vw, 1.72rem);
+  font-weight: 850;
+}
+html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
+  font-size: clamp(1rem, 3.8vw, 1.2rem);
+}
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.calcul-page #categories.settings {
+    margin: 7px 1px 14px;
+  }
+}
 .answer-display {
   font-size: 1.8rem;
   font-weight: 700;
