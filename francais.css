@@ -45,26 +45,27 @@ html[data-theme="magical-academy"] body.francais-page .choices .academy-key {
   font-weight: 700;
   line-height: 1.1;
 }
-/* The complete word gets the width of its longest possible spelling.
-   The real answer is left-aligned inside the word, never centered in a
-   wide blank between fragments (e.g. "neige", not "nei g e"). */
+/* The completed word takes only its natural width. Invisible full-word
+   variants remain measurable for the reserve at the end of the sentence
+   line (applied in JS as padding-inline-end). */
 html[data-theme="magical-academy"] body.francais-page .question-frame .word {
-  display: inline-grid;
-  grid-template-columns: max-content;
+  position: relative;
+  display: inline-block;
   vertical-align: baseline;
   white-space: nowrap;
 }
-html[data-theme="magical-academy"] body.francais-page .question-frame .word > span {
-  grid-area: 1 / 1;
-  white-space: nowrap;
-}
 html[data-theme="magical-academy"] body.francais-page .question-frame .word-reserve {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: max-content;
   visibility: hidden;
   pointer-events: none;
   user-select: none;
+  white-space: nowrap;
 }
 html[data-theme="magical-academy"] body.francais-page .question-frame .word-visible {
-  justify-self: start;
+  white-space: nowrap;
 }
 /* Match the actual hole's font metrics when measuring the invisible
    alternatives; the selected letter itself gets no artificial padding. */
