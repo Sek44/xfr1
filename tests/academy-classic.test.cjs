@@ -125,6 +125,18 @@ test("Conjugaison loads one specifically named stylesheet and retired files are 
   }
 });
 
+test("French text reserves width at the end of its measured lines", () => {
+  const script = read("francais.js");
+  const css = read("francais.css");
+  assert.ok(script.includes('sentence sentence-measure'));
+  assert.ok(script.includes('sentence-line'));
+  assert.ok(script.includes('reference.replaceWith(sentence)'));
+  assert.ok(script.includes('line.right - line.left'));
+  assert.ok(css.includes('.sentence-line {'));
+  assert.ok(css.includes('text-align: left'));
+  assert.equal(css.includes('padding-inline-end'), false);
+});
+
 test("French and Conjugaison share the ornate tabs without duplicate CSS", () => {
   const common = read("styles/themes/magical-academy/classic.css");
   const conjugaison = read("styles/themes/magical-academy/conjugaison.css");
