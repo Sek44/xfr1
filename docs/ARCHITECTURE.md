@@ -13,8 +13,8 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 
 | Fichier | API / responsabilité |
 | --- | --- |
-| `game-common.js` | `ExerciseGame` : déroulement des questions, validation, score de premier essai, délai avant question suivante, snapshot et reprise du délai |
-| `game-ui.js` | `GameUI` : éléments DOM, pavé numérique, clavier AZERTY partagé, édition de nombres et de mots (dont espaces) |
+| `game-common.js` | `ExerciseGame` : déroulement des questions, validation, score de premier essai, délai avant question suivante, snapshot et reprise ; **composant `progress()` partagé** avec « Question x/maximum » et « Score x » (sans dénominateur) |
+| `game-ui.js` | `GameUI` : éléments DOM, `tabs()` pour les cartouches interactifs accessibles, touches `.academy-key` du pavé numérique, clavier AZERTY partagé, édition de nombres et de mots |
 | `exercise-weighting.js` | `ExerciseWeighting` : compteurs d'apparition/erreur et tirage pondéré sans remise |
 | `conjugaison-data.js` | `ConjugaisonData` : banque de verbes, sujets et règles du présent du 1er groupe |
 | `game-state.js` | `GameState` : lecture/écriture/suppression prudentes des sessions en `localStorage` |
@@ -65,7 +65,9 @@ La page **Conjugaison** est la référence visuelle des sous-pages classiques : 
 
 - **Bandeau** : un seul générateur `academy-header.js` crée le titre, l’illustration, les liens et le bouton de reprise de série à partir des attributs `data-title`, `data-icon`, `data-game`, `data-restart`, `data-scores` et `data-back-id`. Il doit être chargé avant les contrôleurs des exercices et avant le script de routage de Scores. Les boutons d’illustration restent de vrais liens/boutons accessibles. Sur Scores, `scores-back` permet toujours le retour au jeu et l’usage en iframe.
 - **Cadre global** : `body.academy-page main` contient un encadrement unique et un fond bleu translucide.
-- **Score courant** : `.progress-row` et ses pastilles `.progress-label` / `.progress-score` utilisent les mêmes proportions, étoile et ombres. `game-common.js` reste seul responsable du texte et du score.
+- **Question/Score** : `ExerciseGame.progress(container)` crée le composant `.academy-progress.progress-row` pour les trois exercices. La question indique toujours `Question x/maximum`, et le score indique simplement `Score x` (sans `/maximum`). `classic.css` impose les mêmes proportions, étoile, typographie et ombres ; ne pas retoucher le DOM dans chaque jeu.
+- **Onglets** : le cartouche parchemin `.academy-tabs .academy-tab` et son image 9-slice sont partagés entre le temps fixe de Conjugaison et les familles interactives du Français via `GameUI.tabs()` (`role=tab`, `aria-selected`).
+- **Touches** : `.academy-key` (choix Français et pavé Calcul) partage sa texture crème, bordure et ombre avec `.azerty-keyboard .keyboard-key` ; les dimensions et la disposition des touches AZERTY demeurent spécifiques à Conjugaison.
 - **Question et saisie** : `.question-frame` (parchemin 9-slice), puis `.keyboard-panel` (fond crème et touches). L’état `.panel.academy-playing` rend leur parent transparent ; une page de résultat final conserve son panneau parchemin.
 - **Actions et contrôles** : `.exercise-actions .primary` ou `.actions .primary`, `.feedback-retry`, `.feedback-success` emploient la même grammaire de boutons, y compris icônes et ombres adaptées. Les touches, listes déroulantes et filtres utilisent la palette commune.
 
