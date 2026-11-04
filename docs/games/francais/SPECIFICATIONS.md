@@ -6,6 +6,8 @@ Compléter une phrase en choisissant les lettres manquantes. Deux familles d'exe
 
 Une session comporte **10 phrases**. Le joueur choisit une réponse et la vérifie ; en cas d'erreur, il peut corriger. **Seule une bonne réponse au premier essai rapporte un point.** Après correction réussie, la progression continue sans point supplémentaire. Une bonne réponse passe à la suivante automatiquement après environ **3 secondes**, ou immédiatement par le bouton d'avancement. Le résultat final est noté sur 10. Une session menée jusqu’à son terme vaut **1 point d’exercice quotidien**, quel que soit le score (y compris avec des corrections), et ajoute actuellement **5 minutes de jeu autorisées** au compteur commun. Une session interrompue ne compte pas. Le bouton d’icône « Recommencer la série », placé dans l’en-tête juste à gauche des scores, ouvre une confirmation interne : annuler reprend la partie, confirmer crée une nouvelle série avec un score nul, sans enregistrer ni créditer la série abandonnée.
 
+Après validation, le retour est affiché uniquement sur le bouton d'action : bleu « Vérifier », rouge « Incorrect · Réessaie », vert « Bravo ! Suivant » ou « Bien corrigé ! Suivant ». Le choix d'une autre réponse après un échec remet le bouton au bleu ; aucune notification visible distincte n'est affichée.
+
 ## Répartition des questions
 
 Le tirage sélectionne d'abord des **mots distincts** (pas des phrases) ; plusieurs phrases utilisant le même mot ne le rendent donc pas plus fréquent. Une variante de phrase est ensuite tirée pour chaque mot choisi. Les apparitions sont comptabilisées par mot et famille d'exercices dans l'espace local du navigateur.
