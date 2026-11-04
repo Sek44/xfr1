@@ -13,9 +13,9 @@ The original reference sheet is included for implementation guidance only and co
 
 ## Cadres 9-slice utilisés sur les pages classiques
 
-Les cadres avec parchemin intégré sont les seules versions conservées dans `styles/themes/magical-academy/assets/` :
+Les cadres avec parchemin intégré sont les seules variantes 9-slice conservées dans `styles/themes/magical-academy/assets/` :
 
-- `title-frame-filled-9slice.webp` (1200 × 230 px), pour les cartouches de titre ou de temps : `border-image-slice: 55 110 55 110 fill`.
+- `title-frame-filled-9slice.webp` (1200 × 230 px) : ressource décorative conservée, **non utilisée pour les onglets** depuis leur passage au CSS pur (`border-image-slice: 55 110 55 110 fill` pour un éventuel cadre illustré).
 - `question-frame-filled-9slice.webp` (1000 × 495 px), pour les questions : `border-image-slice: 100 110 100 110 fill`.
 
 Ces images contiennent la bordure dorée et le centre parchemin ; seules les zones externes irrégulières restent transparentes. Le rendu `border-image` conserve les proportions des coins. Les anciennes images à centre transparent et la plume illustrée inutilisée ont été retirées.
