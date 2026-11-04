@@ -245,7 +245,7 @@
         ? "Bravo ! Voir mon score"
         : game.failed ? "Bien corrigé ! Suivant" : "Bravo ! Suivant"
       : showRetry ? "Incorrect · Réessaie" : "Vérifier";
-    button.onclick = game.correct ? next : verify;
+    button.onclick = () => game.correct ? next() : verify();
     const actions = document.createElement("div");
     actions.className = "exercise-actions";
     actions.append(button);
