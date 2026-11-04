@@ -479,15 +479,28 @@
     sentence.append(document.createTextNode(prefix));
     const word = make("span", "word");
     word.append(document.createTextNode(fragment));
-    const hole = make(
+    // Reserve the actual rendered width of every possible answer.
+    // Overlay the selected choice in the same grid cell so changing from
+    // g to gu/ge (or c to ç) never moves the rest of the sentence.
+    const hole = make("span", "hole");
+    const capitalize = prefix === "" && fragment === "";
+    for (const option of data.options) {
+      const reserve = make(
+        "span",
+        "hole-reserve",
+        capitalize ? option.toUpperCase() : option,
+      );
+      reserve.setAttribute("aria-hidden", "true");
+      hole.append(reserve);
+    }
+    const visible = make(
       "span",
-      "hole",
+      "hole-answer",
       selected === null
         ? "\u00a0"
-        : prefix === "" && fragment === ""
-          ? selected.toUpperCase()
-          : selected,
+        : capitalize ? selected.toUpperCase() : selected,
     );
+    hole.append(visible);
     word.append(hole);
     const suffix = after.match(/^[^\s]*/)[0];
     word.append(document.createTextNode(suffix));
