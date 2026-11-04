@@ -3,7 +3,7 @@
 ## Fichiers et responsabilités
 
 - `francais.html` : structure de la page et liens vers les composants standards ; `francais.css` : styles spécifiques aux choix et aux phrases. Le bandeau provient de `academy-header.js` ; les panneaux et boutons de `styles/themes/magical-academy/classic.css`.
-- `francais.js` : banque interne de phrases, découpage en préfixe / choix / suffixe, clés par mot et migration des anciennes statistiques.
+- `francais.js` : banque interne de phrases, découpage en préfixe / choix / suffixe, clés par mot et migration des anciennes statistiques. La zone manquante est un petit `inline-grid` : chaque proposition est rendue de manière invisible dans une même cellule pour réserver la plus grande largeur réelle, puis la proposition sélectionnée est superposée. Le mot entier reste insécable, ce qui évite les changements de ligne lors des choix. Les candidats invisibles sont masqués aux lecteurs d'écran.
 - `exercise-weighting.js` : pondération, tirage et suivi des apparitions/erreurs du français, avec ses clés historiques inchangées.
 - `game-common.js` (`ExerciseGame`) : machine de session (index, premier échec, réussite, score), temporisateur de 3 secondes, instantané et reprise.
 - `GameUI.tabs()` génère les deux cartouches de famille accessibles, et les choix portent la classe partagée `.academy-key` ; `ExerciseGame.progress()` affiche `Question x/10` et `Score x` comme Conjugaison. `classic.css` conserve seul le design commun.
