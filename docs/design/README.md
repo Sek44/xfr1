@@ -38,4 +38,4 @@ Trois WebP transparents optimisés (320 × 320, alpha préservé), issus des ima
 
 ## Onglets communs (CSS uniquement)
 
-Les onglets de Français, Conjugaison et les filtres de Scores utilisent maintenant les classes `academy-tabs` et `academy-tab`, définies dans `styles/themes/magical-academy/classic.css`. Leur style bleu saphir avec gravure dorée et sélection bleue lumineuse est entièrement réalisé en CSS. **Aucun cadre WebP n’est utilisé pour les onglets** : les images 9-slice restent réservées aux cadres de questions et aux autres éléments illustrés qui les nécessitent.
+Les onglets de Français, Conjugaison et les filtres de Scores utilisent maintenant les classes `academy-tabs` et `academy-tab`, définies dans `styles/themes/magical-academy/classic.css`. Leur style bleu saphir, aux rectangles symétriques légèrement arrondis et contour doré sobre, avec sélection bleue lumineuse, est entièrement réalisé en CSS. Aucun liseré intérieur ni décoration de coins n'est nécessaire. **Aucun cadre WebP n’est utilisé pour les onglets** : les images 9-slice restent réservées aux cadres de questions et aux autres éléments illustrés qui les nécessitent.
