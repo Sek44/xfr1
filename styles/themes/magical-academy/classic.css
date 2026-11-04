@@ -56,7 +56,7 @@ html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.
   box-shadow: none;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-banner::before { content: none; }
-html[data-theme="magical-academy"] body.academy-page .academy-banner .page-title {
+html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -493,7 +493,7 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
     gap: 5px;
     padding: 2px 4px;
   }
-  html[data-theme="magical-academy"] body.academy-page .academy-banner .page-title {
+  html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title {
     gap: 5px;
     font-size: clamp(1.28rem, 5.5vw, 1.78rem);
   }
@@ -510,7 +510,7 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
 }
 @media (max-width: 360px) {
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner { grid-template-columns: 42px minmax(0, 1fr) 42px 42px; gap: 3px; }
-  html[data-theme="magical-academy"] body.academy-page .academy-banner .page-title { font-size: clamp(1.2rem, 5.55vw, 1.28rem); gap: 3px; }
+  html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title { font-size: clamp(1.2rem, 5.55vw, 1.28rem); gap: 3px; }
   html[data-theme="magical-academy"] body.academy-page .academy-title-art { flex-basis: 27px; width: 27px; height: 42px; }
   html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button { width: 42px; height: 42px; }
   html[data-theme="magical-academy"] body.academy-page .progress-row { --academy-progress-label-size: 1.06rem; gap: 7px; padding: 0 1px; }
