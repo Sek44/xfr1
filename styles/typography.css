@@ -1,0 +1,58 @@
+/* Official typography system shared by the seven site pages.
+ * Sizes use rem to honor browser text preferences. */
+:root {
+  --font-ui: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+
+  --text-xs: 0.875rem; /* 14px */
+  --text-sm: 1rem; /* 16px */
+  --text-md: 1.125rem; /* 18px */
+  --text-lg: 1.375rem; /* 22px */
+  --text-xl: 1.75rem; /* 28px */
+  --text-2xl: 2.25rem; /* 36px */
+  --text-3xl: 2.75rem; /* 44px */
+  --text-4xl: 3.25rem; /* 52px */
+
+  --weight-normal: 400;
+  --weight-medium: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+
+  --type-home-title: var(--text-3xl);
+  --type-page-title: var(--text-2xl);
+  --type-section-title: var(--text-xl);
+  --type-card-title: var(--text-lg);
+  --type-question: var(--text-2xl);
+  --type-action: var(--text-lg);
+  --type-tab: var(--text-md);
+  --type-score-tab: var(--text-sm);
+  --type-progress-label: var(--text-lg);
+  --type-score-number: var(--text-xl);
+  --type-result-score: var(--text-4xl);
+  --type-stat: var(--text-lg);
+}
+
+@media (max-width: 520px) {
+  :root {
+    --type-home-title: var(--text-2xl);
+    --type-page-title: var(--text-xl);
+    --type-section-title: var(--text-lg);
+    --type-card-title: var(--text-md);
+    --type-question: var(--text-xl);
+    --type-tab: var(--text-sm);
+    --type-score-tab: var(--text-xs);
+    --type-progress-label: var(--text-md);
+    --type-score-number: var(--text-lg);
+    --type-stat: var(--text-md);
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --type-home-title: var(--text-xl);
+    --type-page-title: var(--text-lg);
+    --type-section-title: var(--text-md);
+    --type-tab: var(--text-xs);
+    --type-stat: var(--text-sm);
+  }
+}
