@@ -47,3 +47,26 @@ test("classic navigation, controls, questions and progress share semantic type r
     assert.ok(home.includes("var(--type-" + role + ")"), role);
   }
 });
+
+test("all CSS font size and weight declarations use the shared tokens", () => {
+  const cssFiles = (dir) =>
+    fs.readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap((entry) => {
+      const relative = path.join(dir, entry.name);
+      if (entry.isDirectory() && ![".git", "node_modules"].includes(entry.name)) {
+        return cssFiles(relative);
+      }
+      return entry.isFile() && entry.name.endsWith(".css") ? [relative] : [];
+    });
+
+  for (const file of cssFiles(".")) {
+    const css = read(file);
+    if (file.endsWith(path.join("styles", "typography.css"))) continue;
+    for (const [, rawValue] of css.matchAll(/\bfont-size\s*:\s*([^;{}]+);/g)) {
+      const value = rawValue.trim();
+      assert.ok(value === "0" || value.includes("var("), file + ": " + value);
+    }
+    for (const [, rawValue] of css.matchAll(/\bfont-weight\s*:\s*([^;{}]+);/g)) {
+      assert.ok(rawValue.includes("var("), file + ": " + rawValue.trim());
+    }
+  }
+});
