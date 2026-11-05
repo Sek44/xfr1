@@ -178,7 +178,7 @@ html[data-theme="magical-academy"] .daily-panel {
   margin: 0 13px 27px;
   padding: 13px 22px 14px;
   border: 0;
-  font-family: var(--font-ui);
+  font-family: var(--font-display);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -224,7 +224,7 @@ html[data-theme="magical-academy"] .daily-heading {
 html[data-theme="magical-academy"] .daily-heading h2 {
   margin: 0;
   color: #1e2d50;
-  font-family: var(--font-ui);
+  font-family: var(--font-display);
   font-size: var(--type-section-title);
   font-weight: var(--weight-heavy);
   line-height: 1.16;
@@ -263,7 +263,7 @@ html[data-theme="magical-academy"] .daily-stat-icon {
 html[data-theme="magical-academy"] .daily-stat-icon svg { width: 100%; height: 100%; }
 html[data-theme="magical-academy"] .daily-stat strong {
   color: #243154;
-  font-family: var(--font-ui);
+  font-family: var(--font-display);
   font-size: var(--type-stat);
   font-weight: var(--weight-heavy);
   line-height: 1.2;

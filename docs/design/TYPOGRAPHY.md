@@ -57,3 +57,7 @@ redéfinir ces composants communs.
 La page d'accueil utilise les mêmes rôles dans `home-v3.css`. Mission Calcul
 et Mission Magique réutilisent la même échelle et les mêmes graisses, tout
 en conservant leurs positions et tailles de HUD propres au jeu.
+
+Le cadre « Mes progrès aujourd'hui » de l'accueil utilise Georgia
+(`--font-display`) pour son titre, ses valeurs et les libellés de progression,
+tout en conservant les tailles typographiques sémantiques partagées.

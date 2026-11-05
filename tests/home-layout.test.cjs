@@ -52,10 +52,10 @@ test("daily progress uses shared responsive typography and scaled icons", () => 
   assert.ok(css.includes("width: 47px; height: 47px; flex-basis: 47px;"));
   assert.ok(css.includes("flex-basis: clamp(34px, 10.4vw, 46px)"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=typography-1"));
+  assert.ok(html.includes("home-v3.css?v=georgia-progress-1"));
 });
 
-test("daily card stays compact, enlarges all icons and uses the standard UI font", () => {
+test("daily card stays compact, enlarges icons and uses Georgia", () => {
   assert.ok(css.includes("padding: 13px 22px 14px;"));
   assert.ok(css.includes("padding: 10px 16px 12px;"));
   assert.ok(css.includes("margin-top: 7px;"));
@@ -70,6 +70,6 @@ test("daily card stays compact, enlarges all icons and uses the standard UI font
   const heading = css.split('html[data-theme="magical-academy"] .daily-heading h2 {')[1].split("}")[0];
   const stats = css.split('html[data-theme="magical-academy"] .daily-stat strong {')[1].split("}")[0];
   for (const block of [panel, heading, stats]) {
-    assert.ok(block.includes("font-family: var(--font-ui);"));
+    assert.ok(block.includes("font-family: var(--font-display);"));
   }
 });
