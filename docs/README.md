@@ -7,6 +7,7 @@ La documentation est versionnée avec le code et décrit **l'état actuel**. L'h
 | Périmètre | Document |
 | --- | --- |
 | Site, services communs, persistance et tests | [Architecture transversale](ARCHITECTURE.md) |
+| Typographie commune | [Guide typographique](design/TYPOGRAPHY.md) |
 | Travaux communs encore ouverts | [Backlog transversal](BACKLOG.md) |
 | Décisions techniques communes | [ADR transversaux](adr/README.md) |
 | Français | [Spécifications](games/francais/SPECIFICATIONS.md) · [Architecture](games/francais/ARCHITECTURE.md) · [Backlog](games/francais/BACKLOG.md) |

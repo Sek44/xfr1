@@ -137,19 +137,20 @@ test("French text reserves width at the end of its measured lines", () => {
   assert.equal(css.includes('padding-inline-end'), false);
 });
 
-test("shared navigation titles and illustrations scale together on small screens", () => {
+test("shared navigation titles and illustrations use official responsive typography", () => {
   const css = read("styles/themes/magical-academy/classic.css");
+  const tokens = read("styles/typography.css");
   const selector = 'body.academy-page .page-header.school-banner.academy-banner .page-title';
-  // Must outrank the old theme.css title font shorthand.
   assert.equal(css.split(selector).length - 1, 3);
-  assert.ok(css.includes('font: 700 clamp(1.55rem, 4.9vw, 2.6rem)'));
-  assert.ok(css.includes('font-size: clamp(1.4rem, 6.1vw, 1.75rem)'));
-  assert.ok(css.includes('font-size: clamp(1.35rem, 5.9vw, 1.4rem)'));
-  assert.ok(css.includes('flex: 0 0 clamp(32px, 5.7vw, 49px)'));
-  assert.ok(css.includes('flex-basis: 34px; width: 34px; height: 50px'));
-  assert.ok(css.includes('flex-basis: 27px; width: 27px; height: 42px'));
+  assert.ok(css.includes("font: var(--weight-bold) var(--type-page-title)/1.12 var(--font-display)"));
+  assert.ok(css.includes("font-size: var(--type-page-title)"));
+  assert.ok(tokens.includes("--type-page-title: var(--text-xl)"));
+  assert.ok(tokens.includes("--type-page-title: var(--text-lg)"));
+  assert.ok(css.includes("flex: 0 0 clamp(36px, 6.2vw, 54px)"));
+  assert.ok(css.includes("flex-basis: 38px; width: 38px; height: 55px"));
+  assert.ok(css.includes("flex-basis: 30px; width: 30px; height: 46px"));
   for (const page of ["francais", "conjugaison", "calcul", "scores"]) {
-    assert.ok(read(page + ".html").includes('classic.css?v=16-larger-nav-titles'));
+    assert.ok(read(page + ".html").includes("classic.css?v=typography-1"));
   }
 });
 

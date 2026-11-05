@@ -5,6 +5,7 @@
 Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépendance d'exécution. Publication GitHub Pages sous `/xfr1/`. Les chemins des pages sont relatifs et les jeux fonctionnent sur téléphone, tablette et ordinateur.
 
 - `index.html` : accueil avec cinq liens vers `francais.html`, `conjugaison.html`, `calcul.html`, `space.html` et `magic.html`.
+- `styles/typography.css` : **source de vérité des deux familles, huit tailles, quatre graisses et rôles typographiques responsives**, chargée en premier sur les sept pages (voir le [guide](design/TYPOGRAPHY.md)).
 - `styles/themes/magical-academy/classic.css` : **source de vérité des composants visuels communs** à Français, Conjugaison, Calcul et Scores (cadre extérieur, navigation, typographies, cartes Question/Score, cadres parchemin 9-slice, boutons, contrôles et responsive). Les fichiers `francais.css`, `calcul.css` et `styles/themes/magical-academy/conjugaison.css` ne gèrent que les particularités de leur page ; `theme.css` contient la palette et les fonds.
 - `scores.html` : historique général et filtres par jeu, avec courbe uniquement sur les pages de scores filtrées par jeu.
 - Chaque page de jeu charge ses modules communs puis son contrôleur propre. Les fichiers des jeux restent dans la racine du dépôt ; leurs documents sont dans `docs/games/<id>/`.
@@ -23,10 +24,13 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 | `score-view.js` | `ScoreView` : scores en iframe sans détruire le jeu, suspension/reprise et navigation par l'historique |
 | `app-confirm.js` | `AppConfirm` : dialogue de confirmation interne |
 | `academy-header.js` (`AcademyHeader`) | Bandeau commun des quatre pages classiques, généré via les attributs du `<nav data-academy-header>` ; préserve `restart-series`, `scores-back`, liens, libellés accessibles et navigation Scores en iframe |
+| `styles/typography.css` | Échelle de huit tailles, quatre graisses, deux familles et rôles responsives communs à toutes les pages |
 | `styles/themes/magical-academy/classic.css` | Styles réutilisables de l'identité Académie magique : panneaux, progressions, boutons, navigation, typographie et adaptations mobiles |
 | `shared.css`, `keyboard.css`, `score-view.css`, `app-confirm.css` | Base historique partagée, clavier AZERTY, affichage des scores et confirmations |
 
 `francais.js`, `calcul.js` et `conjugaison.js` utilisent `ExerciseGame`. Français et Conjugaison partagent également `ExerciseWeighting` ; leurs statistiques et questions restent distinctes. Les jeux d'arcade délèguent leurs règles à des moteurs isolables (`space-engine.js` et `magic-engine.js`) tandis que leurs contrôleurs gèrent interface, événements, rendu et persistance. Voir leurs architectures dédiées.
+
+Les sept pages chargent d'abord `styles/typography.css`. Les composants classiques conservent leur priorité dans `classic.css`, chargé en dernier après les CSS historiques et de jeu ; les jeux d'arcade utilisent les mêmes tokens et gardent leurs adaptations de HUD.
 
 Les scripts sont chargés dans l'ordre des dépendances. Les modules communs exposent leurs APIs sur `window` ; les contrôleurs de jeux restent dans des portées privées. Les styles de mise en page ont été extraits des fichiers HTML de Français, Calcul et Scores. Leurs CSS dédiés sont chargés avant `classic.css` ; les règles de thème communes ont ainsi la priorité. Les contrôleurs ne manipulent que les classes des composants standard (`academy-playing`, `question-frame`, `keyboard-panel`, `feedback-retry`, `feedback-success`).
 

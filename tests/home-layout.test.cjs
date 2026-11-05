@@ -43,15 +43,16 @@ test("daily progress keeps the accessible live counters inside a shared ornate f
   }
 });
 
-test("progress title, values and icons are enlarged and remain mobile-responsive", () => {
-  assert.ok(css.includes("font-size: clamp(1.22rem, 3.45vw, 1.65rem)"));
-  assert.ok(css.includes("font-size: clamp(1.08rem, 4.65vw, 1.42rem)"));
-  assert.ok(css.includes("font-size: clamp(.9rem, 4vw, 1.13rem)"));
-  assert.ok(css.includes("font-size: clamp(1rem, 2.85vw, 1.38rem)"));
+test("daily progress uses shared responsive typography and scaled icons", () => {
+  const tokens = read("styles/typography.css");
+  assert.ok(css.includes("font-size: var(--type-section-title)"));
+  assert.ok(css.includes("font-size: var(--type-stat)"));
+  assert.ok(tokens.includes("--type-section-title: var(--text-lg)"));
+  assert.ok(tokens.includes("--type-stat: var(--text-md)"));
   assert.ok(css.includes("width: 47px; height: 47px; flex-basis: 47px;"));
   assert.ok(css.includes("flex-basis: clamp(34px, 10.4vw, 46px)"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=4-compact-progress"));
+  assert.ok(html.includes("home-v3.css?v=typography-1"));
 });
 
 test("daily card stays compact, enlarges all icons and uses the standard UI font", () => {
