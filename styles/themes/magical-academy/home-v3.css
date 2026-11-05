@@ -290,7 +290,7 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
     bottom: 77px;
   }
   html[data-theme="magical-academy"] .hero-plaque {
-    width: 87%;
+    width: 80%;
     min-height: 72px;
     padding: 17px 11px 14px;
     border-width: 3px;
