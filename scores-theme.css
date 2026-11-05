@@ -2,7 +2,7 @@
 :root { color-scheme: light; --school-ink: #23334d; --school-muted: #62738a; --school-border: #dce5f0; --school-blue: #2768b7; --school-bg: #f4f7fc; }
 body { background: var(--school-bg); color: var(--school-ink); }
 .page-header { margin-bottom: 16px; }
-.page-header .page-title { color: #163b69; font-weight: 800; letter-spacing: -.035em; }
+.page-header .page-title { color: #163b69; font-weight: var(--weight-heavy); letter-spacing: -.035em; }
 .page-header .nav-icon { background: #fff; border: 1px solid #cbd9ed; color: #285a9c; border-radius: 12px; box-shadow: 0 2px 8px #1e3d6810; }
 .page-header .nav-icon:hover, .page-header .nav-icon:focus-visible { background: #e8f1ff; border-color: #9bbbe6; }
 /* Score filters now use the shared .academy-tabs/.academy-tab in classic.css. */

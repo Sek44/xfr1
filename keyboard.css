@@ -35,7 +35,7 @@
   min-width: 0;
   min-height: clamp(44px, 5.5vw, 62px);
   padding: 3px 0;
-  font: 750 clamp(1.2rem, 3.8vw, 2rem) system-ui, sans-serif;
+  font: var(--weight-bold) clamp(var(--text-md), 3.8vw, var(--text-xl)) var(--font-ui);
   color: #203954;
   background: #eef4fe;
   border: 1px solid #b6c9e6;
@@ -47,7 +47,7 @@
   border-color: #dae5f2;
 }
 .azerty-keyboard .keyboard-row--controls .keyboard-key {
-  font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+  font-size: clamp(var(--text-xs), 2.5vw, var(--text-md));
   background: white;
 }
 .azerty-keyboard .keyboard-key--space {

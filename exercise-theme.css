@@ -5,7 +5,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
 .page-header { margin-bottom: 12px; }
 .page-header .page-title {
   color: #163b69;
-  font-weight: 800;
+  font-weight: var(--weight-heavy);
   letter-spacing: -.035em;
 }
 .page-header .nav-icon, .page-header .restart-header {
@@ -41,7 +41,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
 .panel { border-radius: 19px; }
 .tabs button, .tabs .tab-current {
   border-radius: 12px;
-  font-weight: 750;
+  font-weight: var(--weight-bold);
 }
 .tabs button:not(.active) {
   background: #fff;
@@ -68,7 +68,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
   background: var(--school-blue);
   border-color: var(--school-blue);
   color: #fff;
-  font-weight: 750;
+  font-weight: var(--weight-bold);
   border-radius: 12px;
 }
 .keypad button { background: #f4f8fe; border-color: #cddbed; color: #285a9c; }

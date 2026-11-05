@@ -40,9 +40,9 @@ body { background: var(--school-bg); color: var(--school-ink); }
 .school-page .page-header.school-banner .page-title {
   color: #1b4b7e;
   letter-spacing: -.02em;
-  font-size: clamp(1.2rem, 3.8vw, 1.6rem);
+  font-size: clamp(var(--text-md), 3.8vw, var(--text-xl));
   text-align: center;
-  font-weight: 750;
+  font-weight: var(--weight-bold);
 }
 .school-page .page-header.school-banner .nav-icon {
   display: flex; align-items: center; justify-content: center;
@@ -79,7 +79,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
 }
 
 /* Consistent typography and calmer panel treatment. */
-body { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+body { font-family: var(--font-ui); }
 .school-page .panel, .school-page .history-panel, .school-page .setting {
   border-width: 1px;
   box-shadow: var(--school-shadow);
@@ -110,15 +110,15 @@ body { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
   border-radius: 12px;
   background: #edf5ff;
   color: #1b3555;
-  font-weight: 400;
+  font-weight: var(--weight-normal);
 }
-.school-page .panel .sentence { font-weight: 400; }
-.school-page .panel .conjugaison-sentence { font-weight: 400; }
-.school-page .panel .equation-row .question { font-weight: 400; }
+.school-page .panel .sentence { font-weight: var(--weight-normal); }
+.school-page .panel .conjugaison-sentence { font-weight: var(--weight-normal); }
+.school-page .panel .equation-row .question { font-weight: var(--weight-normal); }
 .school-page .panel .typed-answer,
 .school-page .panel .equation-row .answer-display,
-.school-page .panel .sentence .hole { font-weight: 750; }
-.school-page .panel .verb-label strong { font-weight: 800; }
+.school-page .panel .sentence .hole { font-weight: var(--weight-bold); }
+.school-page .panel .verb-label strong { font-weight: var(--weight-heavy); }
 @media (max-width: 420px) {
   .school-page .panel .sentence,
   .school-page .panel .conjugaison-sentence,

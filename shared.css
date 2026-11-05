@@ -16,7 +16,7 @@
   background: #fff;
   color: #1757a7;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   box-shadow: 0 2px 8px #1e3d6810;
 }
 .nav-link:hover,
@@ -42,12 +42,12 @@
 }
 .history-summary {
   color: #637188;
-  font-weight: 600;
+  font-weight: var(--weight-medium);
 }
 .encouragement {
-  font-weight: 750;
+  font-weight: var(--weight-bold);
   color: #1757a7;
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   line-height: 1.5;
 }
 .history-panel {
@@ -70,7 +70,7 @@
   margin: 0 0 4px;
 }
 .page-header .page-title {
-  font-size: clamp(1.35rem, 4.5vw, 2rem);
+  font-size: clamp(var(--text-lg), 4.5vw, var(--text-xl));
   line-height: 1.2;
   text-align: center;
   margin: 0;
@@ -83,8 +83,8 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-heavy);
   line-height: 1;
 }
 .page-header .nav-icon:last-child {
@@ -99,7 +99,7 @@
     margin: 0 0 2px;
   }
   .page-header .page-title {
-    font-size: 1.55rem;
+    font-size: var(--text-lg);
   }
 }
 
@@ -125,7 +125,7 @@
 }
 .score-evolution h3 {
   margin: 0 0 12px;
-  font-size: 1.15rem;
+  font-size: var(--text-md);
 }
 .score-evolution svg {
   display: block;
@@ -133,7 +133,7 @@
   height: auto;
   overflow: visible;
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--text-xs);
   fill: #637188;
 }
 .score-grid {
@@ -154,11 +154,11 @@
 }
 .score-evolution p {
   color: #637188;
-  font-size: 0.9rem;
+  font-size: var(--text-xs);
 }
 @media (max-width: 420px) {
   .score-evolution svg {
-    font-size: 14px;
+    font-size: var(--text-xs);
   }
 }
 
@@ -190,8 +190,8 @@
 .score.progress-row .progress-label,
 .score-card.progress-row .progress-label,
 .progress-row .progress-score-label {
-  font-size: 0.95rem;
-  font-weight: 400;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
   color: #637188;
   line-height: 1.4;
 }

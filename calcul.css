@@ -6,11 +6,11 @@ html[data-theme="magical-academy"] body.calcul-page #score.academy-progress {
   margin-bottom: 12px;
 }
 html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key {
-  font-size: clamp(1.35rem, 5.1vw, 1.72rem);
-  font-weight: 850;
+  font-size: clamp(var(--text-lg), 5.1vw, var(--text-xl));
+  font-weight: var(--weight-heavy);
 }
 html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
-  font-size: clamp(1rem, 3.8vw, 1.2rem);
+  font-size: clamp(var(--text-sm), 3.8vw, var(--text-md));
 }
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.calcul-page #categories.settings {
@@ -18,8 +18,8 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   }
 }
 .answer-display {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
   min-height: 48px;
   width: 160px;
   max-width: 100%;
@@ -37,13 +37,13 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   margin: 8px 0;
 }
 .keypad button {
-  font-size: 1.6rem;
-  font-weight: 650;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
   min-height: 44px;
   touch-action: manipulation;
 }
 .keypad button.erase {
-  font-size: 1.15rem;
+  font-size: var(--text-md);
 }
 .keypad button:active {
   background: #dbeafe;
@@ -66,8 +66,8 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
 }
 .setting label {
   display: block;
-  font-weight: 650;
-  font-size: 0.9rem;
+  font-weight: var(--weight-medium);
+  font-size: var(--text-xs);
   margin-bottom: 5px;
 }
 .setting select {
@@ -84,8 +84,8 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   }
 }
 .question {
-  font-size: clamp(2rem, 7vw, 3rem);
-  font-weight: bold;
+  font-size: clamp(var(--text-xl), 7vw, var(--text-3xl));
+  font-weight: var(--weight-bold);
   margin: 8px 0;
 }
 .muted {
@@ -103,12 +103,12 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
     padding: 6px;
   }
   .setting select {
-    font-size: 0.85rem;
+    font-size: var(--text-xs);
     padding: 6px;
   }
 }
 .progress {
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
   margin: 0 0 6px;
   color: #637188;
 }
@@ -121,7 +121,7 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   min-width: 0;
 }
 .question {
-  font-size: clamp(1.3rem, 5.5vw, 2.5rem);
+  font-size: clamp(var(--text-lg), 5.5vw, var(--text-2xl));
   line-height: 1.2;
   white-space: nowrap;
   margin: 0;
@@ -133,7 +133,7 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   min-width: 76px;
   max-width: 160px;
   flex: 1 1 95px;
-  font-size: clamp(1.3rem, 5vw, 2rem);
+  font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
   min-height: 52px;
   display: flex;
   align-items: center;
@@ -150,7 +150,7 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   padding: 8px 4px;
 }
 .keypad button.erase {
-  font-size: clamp(0.75rem, 2.2vw, 1rem);
+  font-size: clamp(var(--text-xs), 2.2vw, var(--text-sm));
   padding: 8px 2px;
   white-space: nowrap;
 }
@@ -177,7 +177,7 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
     gap: 6px;
   }
   .question {
-    font-size: clamp(1.15rem, 5vw, 1.7rem);
+    font-size: clamp(var(--text-md), 5vw, var(--text-xl));
   }
   .answer-display {
     min-width: 65px;
@@ -190,19 +190,19 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   margin: 16px auto 14px;
 }
 .question {
-  font-size: clamp(2rem, 7vw, 3.25rem);
-  font-weight: 750;
+  font-size: clamp(var(--text-xl), 7vw, var(--text-4xl));
+  font-weight: var(--weight-bold);
 }
 .answer-display {
   flex: 0 1 160px;
   min-width: 88px;
   max-width: 160px;
   min-height: 60px;
-  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-size: clamp(var(--text-xl), 6vw, var(--text-3xl));
 }
 @media (max-width: 390px) {
   .question {
-    font-size: clamp(1.75rem, 6.8vw, 2.5rem);
+    font-size: clamp(var(--text-xl), 6.8vw, var(--text-2xl));
   }
   .equation-row {
     gap: 8px;
@@ -223,23 +223,23 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
     padding: 7px 10px;
   }
   .setting label {
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
     margin-bottom: 3px;
   }
   .setting select {
     padding: 6px 8px;
-    font-size: 1rem;
+    font-size: var(--text-sm);
   }
   .equation-row {
     margin: 7px auto 9px;
     gap: 12px;
   }
   .question {
-    font-size: clamp(2rem, 5.7vh, 2.8rem);
+    font-size: clamp(var(--text-xl), 5.7vh, var(--text-3xl));
   }
   .answer-display {
     min-height: 52px;
-    font-size: 1.9rem;
+    font-size: var(--text-xl);
   }
   .keypad {
     gap: 5px;
@@ -250,10 +250,10 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   .keypad button {
     min-height: 49px;
     padding: 7px 4px;
-    font-size: 1.5rem;
+    font-size: var(--text-lg);
   }
   .keypad button.erase {
-    font-size: 0.9rem;
+    font-size: var(--text-xs);
   }
 }
 /* Only very short landscape viewports need the tighter sizing. */

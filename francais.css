@@ -2,8 +2,8 @@
 html[data-theme="magical-academy"] body.francais-page .exercise-intro {
   margin: 7px 12px 10px;
   color: #fff3db;
-  font-size: clamp(.88rem, 2.8vw, 1.05rem);
-  font-weight: 600;
+  font-size: clamp(var(--text-xs), 2.8vw, var(--text-sm));
+  font-weight: var(--weight-medium);
   text-align: center;
   text-shadow: 0 1px 3px #03162d;
 }
@@ -18,7 +18,7 @@ html[data-theme="magical-academy"] body.francais-page .choices .academy-key {
   min-width: clamp(68px, 18vw, 92px);
   min-height: 48px;
   padding: 7px 12px;
-  font-size: clamp(1.28rem, 4.6vw, 1.55rem);
+  font-size: var(--text-lg);
 }
 .actions {
   display: flex;
@@ -29,7 +29,7 @@ html[data-theme="magical-academy"] body.francais-page .choices .academy-key {
   color: #637188;
 }
 .sentence {
-  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-size: clamp(var(--text-lg), 5vw, var(--text-xl));
   line-height: 1.5;
   margin: 16px 0;
 }
@@ -42,7 +42,7 @@ html[data-theme="magical-academy"] body.francais-page .choices .academy-key {
   border-bottom: 3px solid #2064c7;
   text-align: center;
   color: #2064c7;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   line-height: 1.1;
 }
 /* The hidden reference determines where the longest possible spelling
@@ -86,7 +86,7 @@ html[data-theme="magical-academy"] body.francais-page .question-frame .sentence-
 html[data-theme="magical-academy"] body.francais-page .question-frame :is(.hole, .hole-measure) {
   display: inline-block;
   min-width: 0;
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   line-height: 1.1;
 }
 html[data-theme="magical-academy"] body.francais-page .question-frame .hole-empty {
