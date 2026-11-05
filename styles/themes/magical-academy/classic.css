@@ -64,16 +64,16 @@ html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.
   min-width: 0;
   margin: 0;
   color: #fff6e4;
-  font: 700 clamp(1.55rem, 4.9vw, 2.6rem)/1.12 var(--font-display);
+  font: 700 clamp(1.7rem, 5.35vw, 2.85rem)/1.12 var(--font-display);
   letter-spacing: -.025em;
   text-shadow: 0 2px 3px #020d2b;
   white-space: nowrap;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-title-art {
   display: inline-block;
-  flex: 0 0 clamp(32px, 5.7vw, 49px);
-  width: clamp(32px, 5.7vw, 49px);
-  height: clamp(48px, 8.2vw, 72px);
+  flex: 0 0 clamp(36px, 6.2vw, 54px);
+  width: clamp(36px, 6.2vw, 54px);
+  height: clamp(52px, 8.8vw, 78px);
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
@@ -495,9 +495,9 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
   }
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title {
     gap: 5px;
-    font-size: clamp(1.4rem, 6.1vw, 1.75rem);
+    font-size: clamp(1.55rem, 6.6vw, 1.9rem);
   }
-  html[data-theme="magical-academy"] body.academy-page .academy-title-art { flex-basis: 34px; width: 34px; height: 50px; }
+  html[data-theme="magical-academy"] body.academy-page .academy-title-art { flex-basis: 38px; width: 38px; height: 55px; }
   html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button { width: 44px; height: 44px; }
   html[data-theme="magical-academy"] body.academy-page .progress-row { margin-bottom: 7px; gap: 8px; padding: 0 1px; }
   html[data-theme="magical-academy"] body.academy-page .progress-row > :is(.progress-label, .progress-score) { min-height: 45px; padding: 7px clamp(6px, 1.8vw, 10px); }
@@ -510,8 +510,8 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
 }
 @media (max-width: 360px) {
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner { grid-template-columns: 42px minmax(0, 1fr) 42px 42px; gap: 3px; }
-  html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title { font-size: clamp(1.35rem, 5.9vw, 1.4rem); gap: 3px; }
-  html[data-theme="magical-academy"] body.academy-page .academy-title-art { flex-basis: 27px; width: 27px; height: 42px; }
+  html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title { font-size: clamp(1.43rem, 6.15vw, 1.53rem); gap: 3px; }
+  html[data-theme="magical-academy"] body.academy-page .academy-title-art { flex-basis: 30px; width: 30px; height: 46px; }
   html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button { width: 42px; height: 42px; }
   html[data-theme="magical-academy"] body.academy-page .progress-row { --academy-progress-label-size: 1.06rem; gap: 7px; padding: 0 1px; }
   html[data-theme="magical-academy"] body.academy-page .progress-row strong { font-size: 1.35rem; }
