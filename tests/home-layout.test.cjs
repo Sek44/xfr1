@@ -15,6 +15,7 @@ test("homepage title plaque and book form a compact, centered composition", () =
   assert.ok(html.includes('<h1 id="welcome-title">Entraînement</h1>'));
   assert.ok(css.includes("height: clamp(170px, 43vw, 205px)"));
   assert.ok(css.includes("bottom: 77px;"));
+  assert.ok(css.includes("width: 80%;"));
   assert.ok(css.includes("transform: none;"));
   assert.ok(css.includes('background-image: url("./assets/home-book.webp")'));
 });
