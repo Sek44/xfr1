@@ -48,8 +48,27 @@ test("progress title, values and icons are enlarged and remain mobile-responsive
   assert.ok(css.includes("font-size: clamp(1.08rem, 4.65vw, 1.42rem)"));
   assert.ok(css.includes("font-size: clamp(.9rem, 4vw, 1.13rem)"));
   assert.ok(css.includes("font-size: clamp(1rem, 2.85vw, 1.38rem)"));
-  assert.ok(css.includes("width: 40px; height: 40px; flex-basis: 40px;"));
-  assert.ok(css.includes("flex-basis: clamp(31px, 8.8vw, 40px)"));
+  assert.ok(css.includes("width: 47px; height: 47px; flex-basis: 47px;"));
+  assert.ok(css.includes("flex-basis: clamp(34px, 10.4vw, 46px)"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=3-progress-heading"));
+  assert.ok(html.includes("home-v3.css?v=4-compact-progress"));
+});
+
+test("daily card stays compact, enlarges all icons and uses the standard UI font", () => {
+  assert.ok(css.includes("padding: 13px 22px 14px;"));
+  assert.ok(css.includes("padding: 10px 16px 12px;"));
+  assert.ok(css.includes("margin-top: 7px;"));
+  assert.ok(css.includes("padding-bottom: 6px;"));
+  assert.ok(css.includes("width: 54px;"));
+  assert.ok(css.includes("flex: 0 0 50px;"));
+  assert.ok(css.includes("width: 47px; height: 47px; flex-basis: 47px;"));
+  assert.ok(css.includes("flex-basis: clamp(34px, 10.4vw, 46px)"));
+  assert.ok(css.includes("width: 39px; height: 39px; flex-basis: 39px;"));
+  assert.ok(css.includes("flex-basis: 34px; width: 34px; height: 34px;"));
+  const panel = css.split('html[data-theme="magical-academy"] .daily-panel {')[1].split("}")[0];
+  const heading = css.split('html[data-theme="magical-academy"] .daily-heading h2 {')[1].split("}")[0];
+  const stats = css.split('html[data-theme="magical-academy"] .daily-stat strong {')[1].split("}")[0];
+  for (const block of [panel, heading, stats]) {
+    assert.ok(block.includes("font-family: var(--font-ui);"));
+  }
 });
