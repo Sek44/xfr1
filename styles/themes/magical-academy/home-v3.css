@@ -97,14 +97,14 @@ html[data-theme="magical-academy"] .preferences-panel {
 }
 html[data-theme="magical-academy"] .preferences-panel h2 {
   margin: 0 0 10px;
-  font-size: 1rem;
+  font-size: var(--text-sm);
   font-family: var(--font-display);
 }
 html[data-theme="magical-academy"] .preferences-panel label {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: .9rem;
+  font-size: var(--text-xs);
   line-height: 1.35;
   cursor: pointer;
 }
@@ -141,7 +141,7 @@ html[data-theme="magical-academy"] .hero-plaque::after {
   position: absolute;
   top: 50%;
   color: #f3c96e;
-  font-size: 1.5rem;
+  font-size: var(--text-lg);
   line-height: 1;
   transform: translateY(-50%);
   text-shadow: 0 1px 4px #0e1038;
@@ -153,7 +153,7 @@ html[data-theme="magical-academy"] .hero-plaque h1 {
   padding: 0;
   color: #ffe5a0;
   text-align: center;
-  font: 700 clamp(2.2rem, 6.8vw, 3.55rem)/1.05 var(--font-display);
+  font: var(--weight-bold) var(--type-home-title)/1.05 var(--font-display);
   letter-spacing: -.035em;
   text-shadow: 0 3px 1px #4d261a, 0 0 13px #ffc96a75;
 }
@@ -209,7 +209,7 @@ html[data-theme="magical-academy"] .daily-panel::after {
   z-index: 2;
   transform: translateX(-50%);
   color: #f8d77b;
-  font-size: 15px;
+  font-size: var(--text-xs);
   line-height: 1;
   text-shadow: 0 1px 2px #77522b;
 }
@@ -225,8 +225,8 @@ html[data-theme="magical-academy"] .daily-heading h2 {
   margin: 0;
   color: #1e2d50;
   font-family: var(--font-ui);
-  font-size: clamp(1.22rem, 3.45vw, 1.65rem);
-  font-weight: 850;
+  font-size: var(--type-section-title);
+  font-weight: var(--weight-heavy);
   line-height: 1.16;
   text-align: center;
 }
@@ -264,11 +264,11 @@ html[data-theme="magical-academy"] .daily-stat-icon svg { width: 100%; height: 1
 html[data-theme="magical-academy"] .daily-stat strong {
   color: #243154;
   font-family: var(--font-ui);
-  font-size: clamp(1rem, 2.85vw, 1.38rem);
-  font-weight: 850;
+  font-size: var(--type-stat);
+  font-weight: var(--weight-heavy);
   line-height: 1.2;
 }
-html[data-theme="magical-academy"] .daily-error { margin: 7px 0 0; color: #8a2d30; font-size: .85rem; text-align: center; }
+html[data-theme="magical-academy"] .daily-error { margin: 7px 0 0; color: #8a2d30; font-size: var(--text-xs); text-align: center; }
 html[data-theme="magical-academy"] .daily-error[hidden] { display: none; }
 html[data-theme="magical-academy"].home-compact .activity-body .description { display: none; }
 html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73px; }
@@ -298,9 +298,9 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
     padding: 17px 11px 14px;
     border-width: 3px;
   }
-  html[data-theme="magical-academy"] .hero-plaque h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+  html[data-theme="magical-academy"] .hero-plaque h1 { font-size: var(--type-home-title); }
   html[data-theme="magical-academy"] .hero-plaque::before,
-  html[data-theme="magical-academy"] .hero-plaque::after { font-size: .9rem; }
+  html[data-theme="magical-academy"] .hero-plaque::after { font-size: var(--text-xs); }
   html[data-theme="magical-academy"] .hero-plaque::before { left: 4px; }
   html[data-theme="magical-academy"] .hero-plaque::after { right: 4px; }
   html[data-theme="magical-academy"] .daily-panel {
@@ -308,7 +308,7 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
     padding: 10px 16px 12px;
   }
   html[data-theme="magical-academy"] .daily-heading { gap: 8px; padding-bottom: 6px; }
-  html[data-theme="magical-academy"] .daily-heading h2 { font-size: clamp(1.08rem, 4.65vw, 1.42rem); }
+  html[data-theme="magical-academy"] .daily-heading h2 { font-size: var(--type-section-title); }
   html[data-theme="magical-academy"] .daily-trophy { width: 47px; height: 47px; flex-basis: 47px; }
   html[data-theme="magical-academy"] .daily-stat { gap: 5px; padding: 1px; }
   html[data-theme="magical-academy"] .daily-stat-icon {
@@ -316,17 +316,17 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
     width: clamp(34px, 10.4vw, 46px);
     height: clamp(34px, 10.4vw, 46px);
   }
-  html[data-theme="magical-academy"] .daily-stat strong { font-size: clamp(.9rem, 4vw, 1.13rem); }
+  html[data-theme="magical-academy"] .daily-stat strong { font-size: var(--type-stat); }
 }
 @media (max-width: 350px) {
   html[data-theme="magical-academy"] .hero-tool { width: 41px; height: 41px; }
   html[data-theme="magical-academy"] .hero-book { width: 124px; height: 90px; bottom: 73px; }
-  html[data-theme="magical-academy"] .hero-plaque h1 { font-size: 1.82rem; }
+  html[data-theme="magical-academy"] .hero-plaque h1 { font-size: var(--type-home-title); }
   html[data-theme="magical-academy"] .daily-panel { padding-inline: 14px; }
-  html[data-theme="magical-academy"] .daily-heading h2 { font-size: 1.03rem; }
+  html[data-theme="magical-academy"] .daily-heading h2 { font-size: var(--type-section-title); }
   html[data-theme="magical-academy"] .daily-trophy { width: 39px; height: 39px; flex-basis: 39px; }
   html[data-theme="magical-academy"] .daily-stat-icon { flex-basis: 34px; width: 34px; height: 34px; }
-  html[data-theme="magical-academy"] .daily-stat strong { font-size: .88rem; }
+  html[data-theme="magical-academy"] .daily-stat strong { font-size: var(--type-stat); }
 }
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="magical-academy"] .academy-hero *,

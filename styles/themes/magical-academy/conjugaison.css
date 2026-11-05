@@ -24,15 +24,15 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-l
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-caption {
   color: #213556;
   font-family: var(--font-ui);
-  font-size: clamp(.98rem, 3.3vw, 1.18rem);
-  font-weight: 750;
+  font-size: clamp(var(--text-sm), 3.3vw, var(--text-md));
+  font-weight: var(--weight-bold);
   flex: 0 0 auto;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
   color: #182f56;
   font-family: var(--font-ui);
-  font-size: clamp(1.32rem, 4.3vw, 1.8rem);
-  font-weight: 850;
+  font-size: clamp(var(--text-lg), 4.3vw, var(--text-xl));
+  font-weight: var(--weight-heavy);
   line-height: 1.13;
   white-space: nowrap;
   overflow-wrap: normal;
@@ -47,7 +47,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjug
   background: transparent;
   box-shadow: none;
   color: #172a4d;
-  font: 500 clamp(1.66rem, 5.55vw, 2.4rem)/1.23 var(--font-display);
+  font: var(--weight-normal) clamp(var(--text-xl), 5.55vw, var(--text-2xl))/1.23 var(--font-display);
   text-align: center;
   overflow-wrap: normal;
 }
@@ -61,7 +61,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .typed-
   border-radius: 3px 3px 0 0;
   background: #e4eefc;
   color: #1c4e8e;
-  font-weight: 750;
+  font-weight: var(--weight-bold);
 }
 
 /* The two text layers share a single grid cell. The hidden, correctly
@@ -86,15 +86,15 @@ html[data-theme="magical-academy"] body.conjugaison-page .typed-answer .answer-v
 /* Preserve all ten AZERTY columns; improve raised-key finish and the action. */
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key {
   padding: 2px 0;
-  font-size: clamp(1.45rem, 5.7vw, 1.95rem);
-  font-weight: 900;
+  font-size: clamp(var(--text-lg), 5.7vw, var(--text-xl));
+  font-weight: var(--weight-heavy);
   line-height: 1.05;
 }
 /* Action-key labels have longer text; keep them distinct from letter glyphs. */
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key {
   font-family: var(--font-ui);
-  font-size: clamp(.88rem, 2.85vw, 1.13rem);
-  font-weight: 800;
+  font-size: clamp(var(--text-xs), 2.85vw, var(--text-md));
+  font-weight: var(--weight-heavy);
   line-height: 1.12;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key:active {
@@ -117,13 +117,13 @@ html[data-theme="magical-academy"] body.conjugaison-page .feedback {
     margin-bottom: 12px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
-    font-size: clamp(1.64rem, 5.55vw, 2.05rem);
+    font-size: clamp(var(--text-xl), 5.55vw, var(--text-2xl));
     line-height: 1.19;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key {
     border-radius: 7px;
-    font-size: clamp(1.4rem, 5.7vw, 1.85rem);
-    font-weight: 900;
+    font-size: clamp(var(--text-lg), 5.7vw, var(--text-xl));
+    font-weight: var(--weight-heavy);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -143,12 +143,12 @@ html[data-theme="magical-academy"] body.conjugaison-page .feedback {
     margin-bottom: 12px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-caption {
-    font-size: clamp(.98rem, 3.15vw, 1.13rem);
-    font-weight: 750;
+    font-size: clamp(var(--text-sm), 3.15vw, var(--text-md));
+    font-weight: var(--weight-bold);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
-    font-size: clamp(1.27rem, 4.35vw, 1.58rem);
-    font-weight: 850;
+    font-size: clamp(var(--text-lg), 4.35vw, var(--text-xl));
+    font-weight: var(--weight-heavy);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
     min-height: 0;
@@ -165,16 +165,16 @@ html[data-theme="magical-academy"] body.conjugaison-page .feedback {
     padding-inline: 10px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-caption {
-    font-size: .89rem;
+    font-size: var(--text-xs);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
-    font-size: 1.17rem;
+    font-size: var(--text-md);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key:not(.keyboard-key--space) {
-    font-size: 1.32rem;
+    font-size: var(--text-lg);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key {
-    font-size: clamp(.84rem, 2.9vw, 1rem);
+    font-size: clamp(var(--text-xs), 2.9vw, var(--text-sm));
   }
 }
 
@@ -190,8 +190,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
   justify-content: center;
   gap: 1px;
   padding: 5px 8px;
-  font-size: clamp(1.05rem, 4.1vw, 1.26rem);
-  font-weight: 800;
+  font-size: clamp(var(--text-sm), 4.1vw, var(--text-lg));
+  font-weight: var(--weight-heavy);
   line-height: 1.04;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key--clear span {
@@ -200,15 +200,15 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
 }
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--space {
   padding-inline: 8px;
-  font-size: clamp(1.13rem, 4.35vw, 1.38rem);
-  font-weight: 800;
+  font-size: clamp(var(--text-md), 4.35vw, var(--text-lg));
+  font-weight: var(--weight-heavy);
 }
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--erase {
   display: grid;
   place-items: center;
   padding: 0 6px;
-  font-size: clamp(1.72rem, 6.2vw, 2.18rem);
-  font-weight: 750;
+  font-size: clamp(var(--text-xl), 6.2vw, var(--text-2xl));
+  font-weight: var(--weight-bold);
   line-height: 1;
 }
 @media (max-width: 360px) {
@@ -216,14 +216,14 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
     grid-template-columns: minmax(0, 1.54fr) minmax(0, 2.56fr) minmax(0, 1.16fr);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--clear {
-    font-size: 1.02rem;
+    font-size: var(--text-sm);
     padding-inline: 6px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--space {
-    font-size: 1.16rem;
+    font-size: var(--text-md);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--erase {
-    font-size: 1.72rem;
+    font-size: var(--text-xl);
   }
 }
 
