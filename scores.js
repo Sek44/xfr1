@@ -176,7 +176,8 @@ window.ExerciseScores = (() => {
       return;
     }
 
-    const height = 320,
+    const width = 600,
+      height = 320,
       right = 24,
       top = 24,
       bottom = 52;
@@ -190,12 +191,10 @@ window.ExerciseScores = (() => {
     const step = game === null ? 2 : Math.max(1, Math.ceil(maximum / 5)),
       ceiling = step * 5,
       left = Math.max(56, 20 + String(ceiling).length * 12),
-      // Keep dots legible in long histories instead of compressing hundreds
-      // of scores into one tiny SVG. The viewport scrolls horizontally.
-      wide = sessions.length > 12,
-      width = wide
-        ? Math.max(760, left + right + (sessions.length - 1) * 44)
-        : 600;
+      // All sessions share the same chart width. Dense curves keep their
+      // lines but omit markers; intermediate curves hide markers on mobile.
+      hideDots = sessions.length > 28,
+      hideDotsMobile = sessions.length > 14;
     const x = (index) =>
       sessions.length === 1
         ? (left + width - right) / 2
@@ -211,9 +210,7 @@ window.ExerciseScores = (() => {
     }
     const svg = svgNode("svg", {
       viewBox: "0 0 " + width + " " + height,
-      width,
-      height,
-      class: wide ? "score-chart-wide" : "score-chart-compact",
+      class: hideDotsMobile ? "score-chart-mobile-dense" : "score-chart-compact",
       role: "img",
       "aria-label":
         "Évolution des scores, " +
@@ -331,7 +328,7 @@ window.ExerciseScores = (() => {
       );
     }
 
-    for (const point of points) {
+    if (!hideDots) for (const point of points) {
       const dot = svgNode("circle", {
         cx: x(point.index),
         cy: y(point.value),
@@ -373,10 +370,11 @@ window.ExerciseScores = (() => {
       svg.append(dot);
     }
 
-    // Long histories repeat date labels along the scrollable axis.
-    const labelEvery = wide
-      ? 4
-      : Math.max(1, Math.ceil((sessions.length - 1) / 3));
+    // Keep date labels readable regardless of the number of points.
+    const labelEvery = Math.max(
+      1,
+      Math.ceil((sessions.length - 1) / 3),
+    );
     const ticks = new Set();
     for (let index = 0; index < sessions.length; index += labelEvery)
       ticks.add(index);
@@ -404,15 +402,7 @@ window.ExerciseScores = (() => {
         ),
       );
     }
-    const viewport = document.createElement("div");
-    viewport.className = "score-chart-scroll";
-    viewport.setAttribute("tabindex", "0");
-    viewport.setAttribute("role", "region");
-    viewport.setAttribute("aria-label", "Graphique des scores" + (wide ? ", défilement horizontal" : ""));
-    viewport.append(svg);
-    container.append(viewport);
-    // Reveal the newest results first; all older results remain reachable.
-    if (wide) viewport.scrollLeft = viewport.scrollWidth;
+    container.append(svg);
   }
   function render(container, game = null, chartContainer = null) {
     container.replaceChildren();
