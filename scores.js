@@ -198,7 +198,7 @@ window.ExerciseScores = (() => {
       const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
       for (const [name, value] of Object.entries(attributes))
         node.setAttribute(name, String(value));
-      if (text !== undefined) node.textContent = text;
+      if (text !== undefined) node.textContent = String(text);
       return node;
     }
     const svg = svgNode("svg", {
