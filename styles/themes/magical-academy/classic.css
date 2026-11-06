@@ -210,11 +210,6 @@ html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .score-
   flex-wrap: wrap;
   gap: 8px;
 }
-html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .score-tab-group-label {
-  color: #fff0cb;
-  font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
-}
 /* Progress cards — same star, font metrics, pill shadows and spacing. */
 html[data-theme="magical-academy"] body.academy-page :is(.score-card, .score).progress-row {
   display: grid;
