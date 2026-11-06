@@ -178,7 +178,7 @@ html[data-theme="magical-academy"] .daily-panel {
   --daily-icon-size: 46px;
   --daily-divider-gap: 12px;
   --daily-title-shift-x: -6px;
-  --daily-title-shift-y: 4px;
+  --daily-title-shift-y: 5px;
   --daily-stat-inset: 6px;
   width: min(calc(100% - 28px), 680px);
   margin: 0 auto 27px;
@@ -266,10 +266,10 @@ html[data-theme="magical-academy"] .daily-stat {
 html[data-theme="magical-academy"] .daily-stat:last-child { justify-content: flex-end; }
 /* Move both counter groups inward, without moving the central divider. */
 html[data-theme="magical-academy"] .daily-stat:first-child > * {
-  transform: translate(var(--daily-stat-inset), -1px);
+  transform: translate(var(--daily-stat-inset), -2px);
 }
 html[data-theme="magical-academy"] .daily-stat:last-child > * {
-  transform: translate(calc(-1 * var(--daily-stat-inset)), -1px);
+  transform: translate(calc(-1 * var(--daily-stat-inset)), -2px);
 }
 html[data-theme="magical-academy"] .daily-stat + .daily-stat { border-left: 1px solid #d4ba89; }
 html[data-theme="magical-academy"] .daily-stat-icon {
