@@ -227,7 +227,15 @@ test("Tous uses exercise scores normalized to ten and excludes missions from bot
   const dots = tags(f.chart, "circle");
   assert.equal(dots.length, 3);
   assert.deepEqual(
-    dots.map((dot) => Number(dot.children[0].textContent.match(/ · (\\d+(?:[,.]\\d+)?) \\/ 10/)[1].replace(",", "."))),
+    dots.map((dot) =>
+      Number(
+        dot.children[0].textContent
+          .split(" · ")
+          .at(-1)
+          .split(" / 10")[0]
+          .replace(",", "."),
+      ),
+    ),
     [9, 8, 7.5],
   );
   const svg = tags(f.chart, "svg")[0];
