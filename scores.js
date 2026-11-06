@@ -168,7 +168,10 @@ window.ExerciseScores = (() => {
     });
     if (!points.length) {
       const empty = document.createElement("p");
-      empty.textContent = "Pas encore de score à afficher sur le graphique.";
+      empty.textContent =
+        game === null && records.length
+          ? "Aucun score avec un total valide à tracer sur 10."
+          : "Pas encore de score à afficher sur le graphique.";
       container.append(empty);
       return;
     }
@@ -207,7 +210,8 @@ window.ExerciseScores = (() => {
       "aria-label":
         "Évolution des scores, " +
         points.length +
-        " résultat(s), du plus ancien au plus récent, en points.",
+        " résultat(s), du plus ancien au plus récent, " +
+        (game === null ? "ramenés sur 10." : "en points."),
     });
 
     const defs = svgNode("defs");
