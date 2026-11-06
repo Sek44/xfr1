@@ -62,6 +62,9 @@ Le cadre « Mes progrès aujourd'hui » de l'accueil utilise Georgia
 (`--font-display`) pour son titre, ses valeurs et les libellés de progression.
 Son titre utilise `--type-card-title`, comme les noms d'exercices sur
 l'accueil ; ses compteurs utilisent `--type-stat`, limités au minimum
-`--text-sm` sur téléphone pour éviter le débordement. Les espacements
-internes et les tailles d'icônes s'adaptent à la largeur disponible
-dans `home-v3.css` sans modifier les dimensions du cadre décoratif.
+`--text-sm` sur téléphone pour éviter le débordement. Dans `home-v3.css`, le titre et les compteurs utilisent la même taille
+de boîte pour leurs icônes et la variable `--daily-divider-gap` garantit
+un écart égal entre chaque rangée et la ligne de séparation. Les compteurs
+s'alignent respectivement sur les marges gauche et droite du cadre,
+avec un padding extérieur symétrique, adapté aux écrans étroits.
+Le cadre décoratif reste inchangé.
