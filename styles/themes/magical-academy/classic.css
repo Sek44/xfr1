@@ -514,24 +514,6 @@ html[data-theme="magical-academy"] body.academy-page .score-chart-panel svg {
   font-size: 17px;
   font-weight: var(--weight-medium);
 }
-html[data-theme="magical-academy"] body.academy-page .score-chart-scroll {
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: #bb9356 #f4e6c9;
-  -webkit-overflow-scrolling: touch;
-}
-html[data-theme="magical-academy"] body.academy-page .score-chart-scroll:focus-visible {
-  outline: 2px solid #1868b9;
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-html[data-theme="magical-academy"] body.academy-page .score-chart-scroll .score-chart-wide {
-  width: auto;
-  max-width: none;
-  margin: 0 auto;
-}
 html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-grid {
   stroke: #d6d5d0;
   stroke-width: 1;
@@ -729,6 +711,11 @@ html[data-theme="magical-academy"] body.academy-page #history .history-table tbo
   }
 }
 
+@media (max-width: 600px) {
+  html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-chart-mobile-dense .score-dot {
+    display: none;
+  }
+}
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.academy-page .score-chart-panel {
     padding: 13px 7px 11px;
