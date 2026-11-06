@@ -506,6 +506,10 @@ html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-g
   stroke: #d6d5d0;
   stroke-width: 1;
 }
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-axis {
+  stroke: #304875;
+  stroke-width: 2;
+}
 html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-area {
   fill: #8dc8f8;
   fill-opacity: .55;
