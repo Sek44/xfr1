@@ -79,15 +79,15 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
   assert.ok(css.includes("padding: 14px 22px;"));
   assert.ok(css.includes("padding-inline: 18px;"));
   // One variable gives the same distance above and below the separator.
-  assert.match(heading, /padding: 0 0 var\\(--daily-divider-gap\\);/);
-  assert.match(stats, /margin-top: var\\(--daily-divider-gap\\);/);
+  assert.ok(heading.includes("padding: 0 0 var(--daily-divider-gap);"));
+  assert.ok(stats.includes("margin-top: var(--daily-divider-gap);"));
   assert.ok(css.includes("--daily-divider-gap: 12px;"));
   assert.ok(css.includes("--daily-divider-gap: 11px;"));
   assert.ok(css.includes("--daily-divider-gap: 10px;"));
   // Both rows have identical icon geometry: text is vertically centered.
   for (const rule of [trophy, icon]) {
-    assert.match(rule, /width: var\\(--daily-icon-size\\);/);
-    assert.match(rule, /height: var\\(--daily-icon-size\\);/);
+    assert.ok(rule.includes("width: var(--daily-icon-size);"));
+    assert.ok(rule.includes("height: var(--daily-icon-size);"));
   }
   assert.match(heading, /align-items: center;/);
   assert.match(firstStat, /align-items: center;/);
@@ -95,9 +95,9 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
   assert.match(firstStat, /justify-content: flex-start;/);
   assert.ok(css.includes(".daily-stat:last-child { justify-content: flex-end; }"));
   assert.match(firstStat, /padding: 0;/);
-  assert.match(headingText, /font-size: var\\(--type-card-title\\);/);
-  assert.match(statText, /font-size: var\\(--type-stat\\);/);
+  assert.ok(headingText.includes("font-size: var(--type-card-title);"));
+  assert.ok(statText.includes("font-size: var(--type-stat);"));
   for (const rule of [panel, headingText, statText]) {
-    assert.match(rule, /font-family: var\\(--font-display\\);/);
+    assert.ok(rule.includes("font-family: var(--font-display);"));
   }
 });
