@@ -108,3 +108,36 @@ test("stale deletion never removes a score added or changed in the meantime", ()
   assert.equal(fixture.scores.remove(selected), false);
   assert.equal(fixture.stored, before);
 });
+
+test("new scores carry a separate exercise/mission category without touching the exercise level label", () => {
+  const fixture = setup(JSON.stringify([
+    { tab: "magic", score: 23, extra: "legacy" },
+    { tab: "math", category: "Additions 0-100", score: 7, total: 10 },
+  ]));
+  const before = JSON.parse(fixture.stored);
+  assert.equal(
+    fixture.scores.save({
+      tab: "math",
+      category: "Additions 100-1000",
+      score: 12,
+      total: 20,
+    }),
+    true,
+  );
+  assert.equal(
+    fixture.scores.save({
+      tab: "space",
+      category: "Mission calcul",
+      score: 77,
+      total: 1,
+      mode: "arcade",
+    }),
+    true,
+  );
+  const saved = JSON.parse(fixture.stored);
+  assert.equal(saved[0].scoreCategory, "mission");
+  assert.equal(saved[1].scoreCategory, "exercise");
+  assert.equal(saved[0].category, "Mission calcul");
+  assert.equal(saved[1].category, "Additions 100-1000");
+  assert.deepEqual(saved.slice(2), before);
+});
