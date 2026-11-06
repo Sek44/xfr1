@@ -144,7 +144,6 @@ window.ExerciseScores = (() => {
 
     const width = 600,
       height = 320,
-      left = 56,
       right = 24,
       top = 24,
       bottom = 52;
@@ -153,7 +152,8 @@ window.ExerciseScores = (() => {
       ...points.map((point) => point.value),
     );
     const step = Math.max(1, Math.ceil(maximum / 5)),
-      ceiling = step * 5;
+      ceiling = step * 5,
+      left = Math.max(56, 20 + String(ceiling).length * 12);
     const x = (index) =>
       sessions.length === 1
         ? (left + width - right) / 2
