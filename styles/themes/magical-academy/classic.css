@@ -198,6 +198,23 @@ html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .academ
   padding: 8px 12px;
   font-size: var(--type-score-tab);
 }
+html[data-theme="magical-academy"] body.academy-page .academy-score-tabs {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .score-tab-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-score-tabs .score-tab-group-label {
+  color: #fff0cb;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
 /* Progress cards — same star, font metrics, pill shadows and spacing. */
 html[data-theme="magical-academy"] body.academy-page :is(.score-card, .score).progress-row {
   display: grid;
@@ -511,8 +528,7 @@ html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-a
   stroke-width: 2;
 }
 html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-area {
-  fill: #8dc8f8;
-  fill-opacity: .55;
+  fill: url("#score-area-gradient");
 }
 html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-line {
   fill: none;
