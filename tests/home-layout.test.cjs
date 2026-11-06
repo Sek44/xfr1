@@ -43,32 +43,35 @@ test("daily progress keeps the accessible live counters inside a shared ornate f
   }
 });
 
-test("daily progress uses shared responsive typography and scaled icons", () => {
+test("daily progress heading matches exercise card typography and icons stay balanced", () => {
   const tokens = read("styles/typography.css");
-  assert.ok(css.includes("font-size: var(--type-section-title)"));
+  assert.ok(css.includes("font-size: var(--type-card-title)"));
   assert.ok(css.includes("font-size: var(--type-stat)"));
-  assert.ok(tokens.includes("--type-section-title: var(--text-lg)"));
+  assert.ok(tokens.includes("--type-card-title: var(--text-md)"));
   assert.ok(tokens.includes("--type-stat: var(--text-md)"));
-  assert.ok(css.includes("width: 47px; height: 47px; flex-basis: 47px;"));
-  assert.ok(css.includes("flex-basis: clamp(34px, 10.4vw, 46px)"));
+  assert.ok(css.includes("width: 42px; height: 42px; flex-basis: 42px;"));
+  assert.ok(css.includes("flex-basis: clamp(34px, 10vw, 42px)"));
+  assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=georgia-progress-1"));
+  assert.ok(html.includes("home-v3.css?v=progress-balance-20261106"));
 });
 
-test("daily card stays compact, enlarges icons and uses Georgia", () => {
-  assert.ok(css.includes("padding: 13px 22px 14px;"));
-  assert.ok(css.includes("padding: 10px 16px 12px;"));
-  assert.ok(css.includes("margin-top: 7px;"));
-  assert.ok(css.includes("padding-bottom: 6px;"));
-  assert.ok(css.includes("width: 54px;"));
-  assert.ok(css.includes("flex: 0 0 50px;"));
-  assert.ok(css.includes("width: 47px; height: 47px; flex-basis: 47px;"));
-  assert.ok(css.includes("flex-basis: clamp(34px, 10.4vw, 46px)"));
-  assert.ok(css.includes("width: 39px; height: 39px; flex-basis: 39px;"));
+test("daily card uses even padding, compact title and aligned counter spacing", () => {
+  assert.ok(css.includes("padding: 14px 22px 15px;"));
+  assert.ok(css.includes("padding: 12px 18px 13px;"));
+  assert.ok(css.includes("margin-top: 8px;"));
+  assert.ok(css.includes("padding: 2px 3px 8px;"));
+  assert.ok(css.includes("width: 50px;"));
+  assert.ok(css.includes("flex: 0 0 46px;"));
+  assert.ok(css.includes("width: 42px; height: 42px; flex-basis: 42px;"));
+  assert.ok(css.includes("flex-basis: clamp(34px, 10vw, 42px)"));
+  assert.ok(css.includes("width: 38px; height: 38px; flex-basis: 38px;"));
   assert.ok(css.includes("flex-basis: 34px; width: 34px; height: 34px;"));
+  assert.ok(css.includes("gap: 10px;"));
   const panel = css.split('html[data-theme="magical-academy"] .daily-panel {')[1].split("}")[0];
   const heading = css.split('html[data-theme="magical-academy"] .daily-heading h2 {')[1].split("}")[0];
   const stats = css.split('html[data-theme="magical-academy"] .daily-stat strong {')[1].split("}")[0];
+  assert.ok(heading.includes("font-size: var(--type-card-title)"));
   for (const block of [panel, heading, stats]) {
     assert.ok(block.includes("font-family: var(--font-display);"));
   }
