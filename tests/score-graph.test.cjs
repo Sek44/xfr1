@@ -386,11 +386,13 @@ test("history cards use the same background and only highlight while pressed", (
     path.join(__dirname, "../styles/themes/magical-academy/classic.css"),
     "utf8",
   );
-  assert.doesNotMatch(css, /#history [^\\n]*tr:nth-child\\(even\\)/);
-  assert.doesNotMatch(css, /#history [^\\n]*tr:hover/);
-  assert.match(css, /#history [^\\n]*tr.holding td:not\\(\\.history-score-value\\)/);
-  assert.match(css, /#history [^\\n]*tr.holding \\{/);
-  assert.match(css, /-webkit-user-select: none/);
+  assert.equal(css.includes("#history .history-table tbody tr:nth-child(even)"), false);
+  assert.equal(css.includes("#history .history-table tbody tr:hover"), false);
+  assert.ok(
+    css.includes("#history .history-table tbody tr.holding td:not(.history-score-value)"),
+  );
+  assert.ok(css.includes("#history .history-table tbody tr.holding {"));
+  assert.ok(css.includes("-webkit-user-select: none;"));
 
   const f = setup([{ tab: "math", score: 8, total: 10 }]);
   f.render("math");
