@@ -3,7 +3,7 @@ window.DailyExercises = (() => {
   // Shared across GitHub Pages projects hosted on the same origin.
   const KEY = "entrainement_daily_exercises_v1";
   const VERSION = 1;
-  const MINUTES_PER_POINT = 5;
+  const MINUTES_PER_POINT = 3;
 
   function today() {
     const date = new Date();
