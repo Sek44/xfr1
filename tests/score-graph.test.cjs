@@ -198,3 +198,9 @@ test("shaded chart uses dates, keeps the last twelve points and does not truncat
   assert.equal(f.stored, original);
   assert.equal(f.writes, 0);
 });
+
+test("scores page renders the graph frame before the complete list", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../scores.html"), "utf8");
+  assert.ok(html.indexOf('id="score-chart"') < html.indexOf('id="history"'));
+  assert.match(html, /document\.getElementById\("score-chart"\)/);
+});
