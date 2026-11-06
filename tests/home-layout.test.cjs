@@ -55,7 +55,7 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=progress-finetune-20261106"));
+  assert.ok(html.includes("home-v3.css?v=progress-finetune2-20261106"));
 });
 
 test("daily progress has symmetric horizontal and vertical spacing", () => {
@@ -107,7 +107,7 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
 
 test("progress groups shift inward without moving dividers or changing text size", () => {
   assert.ok(css.includes("--daily-title-shift-x: -6px;"));
-  assert.ok(css.includes("--daily-title-shift-y: 4px;"));
+  assert.ok(css.includes("--daily-title-shift-y: 5px;"));
   assert.ok(css.includes("--daily-stat-inset: 6px;"));
   assert.ok(css.includes("--daily-stat-inset: 3px;"));
   assert.ok(css.includes(".daily-heading > :is(.daily-trophy, h2) {"));
@@ -115,9 +115,9 @@ test("progress groups shift inward without moving dividers or changing text size
     css.includes("transform: translate(var(--daily-title-shift-x), var(--daily-title-shift-y));"),
   );
   assert.ok(css.includes(".daily-stat:first-child > * {"));
-  assert.ok(css.includes("transform: translate(var(--daily-stat-inset), -1px);"));
+  assert.ok(css.includes("transform: translate(var(--daily-stat-inset), -2px);"));
   assert.ok(css.includes(".daily-stat:last-child > * {"));
-  assert.ok(css.includes("transform: translate(calc(-1 * var(--daily-stat-inset)), -1px);"));
+  assert.ok(css.includes("transform: translate(calc(-1 * var(--daily-stat-inset)), -2px);"));
   assert.ok(css.includes("--daily-icon-size: 40px;"));
   assert.ok(css.includes("font-size: var(--type-card-title);"));
 });
