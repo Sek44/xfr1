@@ -195,8 +195,8 @@ test("shaded chart includes all scores and keeps the full history", () => {
   assert.equal(tags(f.chart, "path").length, 1);
   assert.equal(tags(f.chart, "polyline").length, 1);
   assert.equal(tags(f.chart, "text").some((node) => node.textContent === "25/10"), true);
-  assert.equal(tags(f.chart, "svg")[0].attributes.class, "score-chart-wide");
-  assert.equal(f.chart.children[1].className, "score-chart-scroll");
+  assert.equal(tags(f.chart, "svg")[0].attributes.class, "score-chart-mobile-dense");
+  assert.equal(f.chart.children[1].tagName, "svg");
   assert.equal(f.chart.children.length, 2); // Title and graph, no explanatory line.
   assert.equal(tags(f.root, "tbody")[0].children.length, 15);
   assert.equal(f.stored, original);
@@ -306,10 +306,12 @@ test("a large history plots every valid score without changing saved data", () =
   const fixture = setup(rows), original = fixture.stored;
   fixture.render("math");
   const svg = tags(fixture.chart, "svg")[0];
-  assert.equal(tags(svg, "circle").length, 245);
-  assert.equal(svg.attributes.class, "score-chart-wide");
-  assert.ok(Number(svg.attributes.width) > 10000);
-  assert.ok(tags(svg, "text").filter((node) => node.textContent === "18/10").length > 20);
+  assert.equal(tags(svg, "circle").length, 0); // Dense curves omit dots.
+  assert.equal(svg.attributes.class, "score-chart-mobile-dense");
+  assert.equal(svg.attributes.viewBox, "0 0 600 320");
+  const line = tags(svg, "polyline")[0];
+  assert.equal(line.attributes.points.trim().split(/\\s+/).length, 245);
+  assert.ok(tags(svg, "text").filter((node) => node.textContent === "18/10").length <= 4);
   assert.equal(tags(fixture.root, "tbody")[0].children.length, 245);
   assert.equal(fixture.chart.children.length, 2);
   assert.equal(fixture.stored, original);
@@ -335,8 +337,41 @@ test("score history provides styled entries and a mobile-friendly CSS layout", (
     path.join(__dirname, "../styles/themes/magical-academy/classic.css"),
     "utf8",
   );
-  assert.match(css, /\.score-chart-scroll \{/);
-  assert.match(css, /\.score-chart-wide \{/);
+  assert.equal(css.includes(".score-chart-scroll"), false);
+  assert.match(css, /\.score-chart-mobile-dense \.score-dot \{/);
   assert.match(css, /#history \.history-table tbody tr \{/);
   assert.match(css, /grid-template-columns: minmax\(0, 1fr\) auto minmax\(72px, auto\)/);
+});
+
+test("medium curves keep all points but hide close markers on mobile", () => {
+  const records = Array.from({ length: 20 }, (_, index) => ({
+    tab: "math",
+    score: index % 11,
+    total: 10,
+    date: "2026-10-18",
+  }));
+  const f = setup(records);
+  f.render("math");
+  const svg = tags(f.chart, "svg")[0];
+  assert.equal(svg.attributes.viewBox, "0 0 600 320");
+  assert.equal(svg.attributes.class, "score-chart-mobile-dense");
+  assert.equal(tags(svg, "circle").length, 20);
+  assert.equal(tags(svg, "polyline")[0].attributes.points.trim().split(/\s+/).length, 20);
+  assert.equal(f.chart.children[1].tagName, "svg");
+  assert.equal(f.chart.children.length, 2);
+  assert.equal(f.writes, 0);
+});
+
+test("short curves retain visible markers and no scroll wrapper", () => {
+  const f = setup(Array.from({ length: 10 }, (_, index) => ({
+    tab: "math",
+    score: index,
+    total: 10,
+  })));
+  f.render("math");
+  const svg = tags(f.chart, "svg")[0];
+  assert.equal(svg.attributes.class, "score-chart-compact");
+  assert.equal(tags(svg, "circle").length, 10);
+  assert.equal(svg.attributes.viewBox, "0 0 600 320");
+  assert.equal(f.chart.children[1].tagName, "svg");
 });
