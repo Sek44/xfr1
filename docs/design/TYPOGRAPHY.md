@@ -64,7 +64,8 @@ Son titre utilise `--type-card-title`, comme les noms d'exercices sur
 l'accueil ; ses compteurs utilisent `--type-stat`, limités au minimum
 `--text-sm` sur téléphone pour éviter le débordement. Dans `home-v3.css`, le titre et les compteurs utilisent la même taille
 de boîte pour leurs icônes et la variable `--daily-divider-gap` garantit
-un écart égal entre chaque rangée et la ligne de séparation. Les compteurs
-s'alignent respectivement sur les marges gauche et droite du cadre,
-avec un padding extérieur symétrique, adapté aux écrans étroits.
-Le cadre décoratif reste inchangé.
+un écart égal entre chaque rangée et la ligne de séparation. Le cadre est légèrement moins large et centré. Le groupe coupe et titre est
+décalé légèrement vers la gauche et vers le bas, sans déplacer la séparation ;
+les groupes cible/exercices et sablier/minutes sont décalés vers l'intérieur
+par des translations opposées, réduites sur les écrans très étroits. Le cadre
+décoratif conserve ses coins et ses proportions.
