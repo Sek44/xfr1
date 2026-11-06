@@ -284,3 +284,11 @@ test("stored score category distinguishes future mission types without rewriting
   assert.equal(tags(f.chart, "circle").length, 1);
   assert.equal(f.stored, original);
 });
+
+test("score tabs are visually separated by category without visible section headings", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../scores.html"), "utf8");
+  assert.equal((html.match(/class="score-tab-group"/g) || []).length, 2);
+  assert.equal(html.includes('class="score-tab-group-label"'), false);
+  assert.ok(html.includes('class="score-tab-group" aria-label="Exercices"'));
+  assert.ok(html.includes('class="score-tab-group" aria-label="Missions"'));
+});
