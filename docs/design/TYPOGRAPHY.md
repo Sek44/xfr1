@@ -59,5 +59,9 @@ et Mission Magique réutilisent la même échelle et les mêmes graisses, tout
 en conservant leurs positions et tailles de HUD propres au jeu.
 
 Le cadre « Mes progrès aujourd'hui » de l'accueil utilise Georgia
-(`--font-display`) pour son titre, ses valeurs et les libellés de progression,
-tout en conservant les tailles typographiques sémantiques partagées.
+(`--font-display`) pour son titre, ses valeurs et les libellés de progression.
+Son titre utilise `--type-card-title`, comme les noms d'exercices sur
+l'accueil ; ses compteurs utilisent `--type-stat`, limités au minimum
+`--text-sm` sur téléphone pour éviter le débordement. Les espacements
+internes et les tailles d'icônes s'adaptent à la largeur disponible
+dans `home-v3.css` sans modifier les dimensions du cadre décoratif.
