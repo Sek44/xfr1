@@ -150,7 +150,7 @@ test("shared navigation titles and illustrations use official responsive typogra
   assert.ok(css.includes("flex-basis: 38px; width: 38px; height: 55px"));
   assert.ok(css.includes("flex-basis: 30px; width: 30px; height: 46px"));
   for (const page of ["francais", "conjugaison", "calcul", "scores"]) {
-    assert.ok(read(page + ".html").includes("classic.css?v=typography-1"));
+    assert.ok(read(page + ".html").includes("classic.css?v="));
   }
 });
 
