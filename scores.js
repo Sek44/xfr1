@@ -2,6 +2,15 @@
 window.ExerciseScores = (() => {
   const KEY = "exercices_francais_scores";
   const origins = new WeakMap();
+  // Do not reuse the existing "category" field: it names exercise levels.
+  // Legacy records are classified on read without changing stored history.
+  function scoreCategory(record) {
+    if (record.tab === "space" || record.tab === "magic" || record.mode === "arcade")
+      return "mission";
+    if (["g", "c", "math", "conjugaison"].includes(record.tab))
+      return "exercise";
+    return record.scoreCategory === "mission" ? "mission" : "exercise";
+  }
   const encouragements = {
     perfect: [
       "Incroyable ! Un sans-faute, tu es une vraie star !",
@@ -63,6 +72,7 @@ window.ExerciseScores = (() => {
         JSON.stringify([
           {
             ...record,
+            scoreCategory: scoreCategory(record),
             date: now.toISOString(),
             time: now.toLocaleTimeString("fr-FR", {
               hour: "2-digit",
@@ -126,15 +136,36 @@ window.ExerciseScores = (() => {
     // Only the twelve most recent sessions are plotted; the history stays complete.
     // Stored records are newest first. Plot a reversed copy, never change localStorage.
     const sessions = records.slice(0, 12).reverse();
-    const points = sessions.flatMap((record, index) =>
-      record.score !== null &&
-      record.score !== undefined &&
-      String(record.score).trim() !== "" &&
-      Number.isFinite(Number(record.score)) &&
-      Number(record.score) >= 0
-        ? [{ record, index, value: Number(record.score) }]
-        : [],
-    );
+    const points = sessions.flatMap((record, index) => {
+      if (
+        record.score == null ||
+        String(record.score).trim() === "" ||
+        !Number.isFinite(Number(record.score)) ||
+        Number(record.score) < 0
+      )
+        return [];
+      const score = Number(record.score);
+      // The "Tous" chart compares only exercises, with their results on /10.
+      // Missing/invalid denominators cannot be normalized reliably.
+      const total = Number(record.total);
+      if (
+        game === null &&
+        (record.total == null ||
+          String(record.total).trim() === "" ||
+          !Number.isFinite(total) ||
+          total <= 0 ||
+          score > total)
+      )
+        return [];
+      return [
+        {
+          record,
+          index,
+          value: game === null ? (score / total) * 10 : score,
+          score,
+        },
+      ];
+    });
     if (!points.length) {
       const empty = document.createElement("p");
       empty.textContent = "Pas encore de score à afficher sur le graphique.";
@@ -147,11 +178,14 @@ window.ExerciseScores = (() => {
       right = 24,
       top = 24,
       bottom = 52;
-    const maximum = Math.max(
-      game === "space" || game === "magic" ? 1 : 10,
-      ...points.map((point) => point.value),
-    );
-    const step = Math.max(1, Math.ceil(maximum / 5)),
+    const maximum =
+      game === null
+        ? 10
+        : Math.max(
+            game === "space" || game === "magic" ? 1 : 10,
+            ...points.map((point) => point.value),
+          );
+    const step = game === null ? 2 : Math.max(1, Math.ceil(maximum / 5)),
       ceiling = step * 5,
       left = Math.max(56, 20 + String(ceiling).length * 12);
     const x = (index) =>
@@ -175,6 +209,35 @@ window.ExerciseScores = (() => {
         points.length +
         " résultat(s), du plus ancien au plus récent, en points.",
     });
+
+    const defs = svgNode("defs");
+    const gradient = svgNode("linearGradient", {
+      id: "score-area-gradient",
+      gradientUnits: "userSpaceOnUse",
+      x1: 0,
+      y1: top,
+      x2: 0,
+      y2: height - bottom,
+    });
+    gradient.append(
+      svgNode("stop", {
+        offset: "0%",
+        "stop-color": "#70b8fa",
+        "stop-opacity": 0.76,
+      }),
+      svgNode("stop", {
+        offset: "60%",
+        "stop-color": "#90cbfb",
+        "stop-opacity": 0.43,
+      }),
+      svgNode("stop", {
+        offset: "100%",
+        "stop-color": "#acdfff",
+        "stop-opacity": 0.10,
+      }),
+    );
+    defs.append(gradient);
+    svg.append(defs);
 
     for (let tick = 0; tick <= 5; tick++) {
       const value = tick * step,
@@ -283,8 +346,16 @@ window.ExerciseScores = (() => {
             " · " +
             label(point.record) +
             " · " +
-            point.value +
-            " points",
+            (game === null
+              ? point.value.toLocaleString("fr-FR", {
+                  maximumFractionDigits: 1,
+                }) +
+                " / 10 (" +
+                point.score +
+                " / " +
+                point.record.total +
+                ")"
+              : point.value + " points"),
         ),
       );
       svg.append(dot);
@@ -329,12 +400,15 @@ window.ExerciseScores = (() => {
     }
     if (points.length < sessions.length) {
       const note = document.createElement("p");
-      note.textContent = "Les résultats sans score ne sont pas tracés.";
+      note.textContent =
+        game === null
+          ? "Les résultats sans score ou total valide ne sont pas tracés."
+          : "Les résultats sans score ne sont pas tracés.";
       container.append(note);
     }
     if (game === null) {
       const note = document.createElement("p");
-      note.textContent = "Les barèmes de points varient selon les jeux.";
+      note.textContent = "Scores des exercices ramenés sur 10.";
       container.append(note);
     }
   }
@@ -342,7 +416,7 @@ window.ExerciseScores = (() => {
     container.replaceChildren();
     const records = read().filter(
       (r) =>
-        game === null ||
+        (game === null && scoreCategory(r) === "exercise") ||
         (game === "conjugaison"
           ? r.tab === "conjugaison"
           : game === "math"
@@ -356,7 +430,7 @@ window.ExerciseScores = (() => {
     const title = document.createElement("h2");
     title.textContent =
       game === null
-        ? "Tous mes résultats"
+        ? "Tous mes exercices"
         : game === "conjugaison"
           ? "Mes résultats en conjugaison"
           : game === "math"
@@ -377,7 +451,7 @@ window.ExerciseScores = (() => {
     summary.className = "history-summary";
     const exercises = records.filter(
       (r) =>
-        r.mode !== "arcade" &&
+        scoreCategory(r) === "exercise" &&
         Number.isFinite(Number(r.score)) &&
         Number(r.total) > 0,
     );
@@ -481,7 +555,7 @@ window.ExerciseScores = (() => {
         label(r),
         r.score == null
           ? "—"
-          : r.mode === "arcade"
+          : scoreCategory(r) === "mission"
             ? r.score + " points"
             : String(r.score),
       ]) {
