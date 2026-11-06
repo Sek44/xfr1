@@ -133,9 +133,9 @@ window.ExerciseScores = (() => {
     heading.textContent = "Évolution du score";
     container.append(heading);
 
-    // Only the twelve most recent sessions are plotted; the history stays complete.
-    // Stored records are newest first. Plot a reversed copy, never change localStorage.
-    const sessions = records.slice(0, 12).reverse();
+    // Every saved session is represented, including gaps for missing scores.
+    // Newest records are stored first; reverse a copy without changing history.
+    const sessions = records.slice().reverse();
     const points = sessions.flatMap((record, index) => {
       if (
         record.score == null ||
@@ -176,8 +176,7 @@ window.ExerciseScores = (() => {
       return;
     }
 
-    const width = 600,
-      height = 320,
+    const height = 320,
       right = 24,
       top = 24,
       bottom = 52;
@@ -190,7 +189,13 @@ window.ExerciseScores = (() => {
           );
     const step = game === null ? 2 : Math.max(1, Math.ceil(maximum / 5)),
       ceiling = step * 5,
-      left = Math.max(56, 20 + String(ceiling).length * 12);
+      left = Math.max(56, 20 + String(ceiling).length * 12),
+      // Keep dots legible in long histories instead of compressing hundreds
+      // of scores into one tiny SVG. The viewport scrolls horizontally.
+      wide = sessions.length > 12,
+      width = wide
+        ? left + right + (sessions.length - 1) * 44
+        : 600;
     const x = (index) =>
       sessions.length === 1
         ? (left + width - right) / 2
@@ -206,6 +211,9 @@ window.ExerciseScores = (() => {
     }
     const svg = svgNode("svg", {
       viewBox: "0 0 " + width + " " + height,
+      width,
+      height,
+      class: wide ? "score-chart-wide" : "score-chart-compact",
       role: "img",
       "aria-label":
         "Évolution des scores, " +
@@ -365,13 +373,14 @@ window.ExerciseScores = (() => {
       svg.append(dot);
     }
 
-    // Show dates rather than session indices, with at most four labels for mobile.
-    const ticks = new Set([
-      0,
-      Math.round((sessions.length - 1) / 3),
-      Math.round(((sessions.length - 1) * 2) / 3),
-      sessions.length - 1,
-    ]);
+    // Long histories repeat date labels along the scrollable axis.
+    const labelEvery = wide
+      ? 4
+      : Math.max(1, Math.ceil((sessions.length - 1) / 3));
+    const ticks = new Set();
+    for (let index = 0; index < sessions.length; index += labelEvery)
+      ticks.add(index);
+    ticks.add(sessions.length - 1);
     for (const index of ticks) {
       const date =
         typeof sessions[index].date === "string"
@@ -395,26 +404,15 @@ window.ExerciseScores = (() => {
         ),
       );
     }
-    container.append(svg);
-
-    if (records.length > sessions.length) {
-      const note = document.createElement("p");
-      note.textContent = "Les 12 dernières parties sont affichées sur la courbe.";
-      container.append(note);
-    }
-    if (points.length < sessions.length) {
-      const note = document.createElement("p");
-      note.textContent =
-        game === null
-          ? "Les résultats sans score ou total valide ne sont pas tracés."
-          : "Les résultats sans score ne sont pas tracés.";
-      container.append(note);
-    }
-    if (game === null) {
-      const note = document.createElement("p");
-      note.textContent = "Scores des exercices ramenés sur 10.";
-      container.append(note);
-    }
+    const viewport = document.createElement("div");
+    viewport.className = "score-chart-scroll";
+    viewport.setAttribute("tabindex", "0");
+    viewport.setAttribute("role", "region");
+    viewport.setAttribute("aria-label", "Graphique des scores" + (wide ? ", défilement horizontal" : ""));
+    viewport.append(svg);
+    container.append(viewport);
+    // Reveal the newest results first; all older results remain reachable.
+    if (wide) viewport.scrollLeft = viewport.scrollWidth;
   }
   function render(container, game = null, chartContainer = null) {
     container.replaceChildren();
@@ -552,8 +550,10 @@ window.ExerciseScores = (() => {
     const body = document.createElement("tbody");
     for (const r of records) {
       const tr = document.createElement("tr");
-      const date = new Date(r.date);
-      for (const value of [
+      tr.className = "history-entry";
+      const date =
+        typeof r.date === "string" ? new Date(r.date) : new Date(NaN);
+      const values = [
         Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString("fr-FR"),
         time(r),
         label(r),
@@ -562,9 +562,16 @@ window.ExerciseScores = (() => {
           : scoreCategory(r) === "mission"
             ? r.score + " points"
             : String(r.score),
-      ]) {
+      ];
+      for (const [index, value] of values.entries()) {
         const td = document.createElement("td");
         td.textContent = value;
+        td.setAttribute("data-label", ["Date", "Heure", "Exercice", "Score"][index]);
+        if (index === 3) {
+          td.className = "history-score-value";
+          if (scoreCategory(r) === "mission")
+            td.className += " history-score-mission";
+        }
         tr.append(td);
       }
       longPress(tr, r);
