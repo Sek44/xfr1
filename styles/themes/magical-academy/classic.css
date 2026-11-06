@@ -530,7 +530,7 @@ html[data-theme="magical-academy"] body.academy-page .score-chart-scroll:focus-v
 html[data-theme="magical-academy"] body.academy-page .score-chart-scroll .score-chart-wide {
   width: auto;
   max-width: none;
-  margin: 0;
+  margin: 0 auto;
 }
 html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-grid {
   stroke: #d6d5d0;
