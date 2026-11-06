@@ -478,6 +478,68 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
   box-shadow: inset 0 0 0 3px #fff5e1d9, 0 6px 16px #06152f67;
 }
 
+/* Scores: a separate parchment card above the full history list. */
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel {
+  margin: 14px 0 17px;
+  padding: 17px clamp(12px, 2.5vw, 25px) 12px;
+  min-width: 0;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel h2 {
+  margin: 0 0 8px;
+  text-align: center;
+  color: #24365c;
+  font: var(--weight-bold) var(--type-section-title)/1.2 var(--font-display);
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel svg {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+  fill: #283a60;
+  font-family: var(--font-ui);
+  font-size: 17px;
+  font-weight: var(--weight-medium);
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-grid {
+  stroke: #d6d5d0;
+  stroke-width: 1;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-area {
+  fill: #8dc8f8;
+  fill-opacity: .55;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-line {
+  fill: none;
+  stroke: #1264d8;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-dot {
+  fill: #fffaf0;
+  stroke: #1264d8;
+  stroke-width: 3.5;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-date {
+  font-weight: var(--weight-bold);
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel p {
+  margin: 6px 0 0;
+  text-align: center;
+  color: #56647c;
+  font-size: var(--text-xs);
+}
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.academy-page .score-chart-panel {
+    padding: 13px 7px 11px;
+  }
+  html[data-theme="magical-academy"] body.academy-page .score-chart-panel svg {
+    font-size: 20px;
+  }
+}
+
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.academy-page { padding: 3px max(4px, env(safe-area-inset-right)) 9px max(4px, env(safe-area-inset-left)); }
   html[data-theme="magical-academy"] body.academy-page main {
