@@ -310,7 +310,7 @@ test("a large history plots every valid score without changing saved data", () =
   assert.equal(svg.attributes.class, "score-chart-mobile-dense");
   assert.equal(svg.attributes.viewBox, "0 0 600 320");
   const line = tags(svg, "polyline")[0];
-  assert.equal(line.attributes.points.trim().split(/\\s+/).length, 245);
+  assert.equal(line.attributes.points.trim().split(/\s+/).length, 245);
   assert.ok(tags(svg, "text").filter((node) => node.textContent === "18/10").length <= 4);
   assert.equal(tags(fixture.root, "tbody")[0].children.length, 245);
   assert.equal(fixture.chart.children.length, 2);
