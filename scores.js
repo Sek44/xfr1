@@ -263,7 +263,10 @@ window.ExerciseScores = (() => {
         r: 6,
         class: "score-dot",
       });
-      const date = new Date(point.record.date),
+      const date =
+          typeof point.record.date === "string"
+            ? new Date(point.record.date)
+            : new Date(NaN),
         dateLabel = Number.isNaN(date.getTime())
           ? "—"
           : date.toLocaleDateString("fr-FR");
@@ -295,7 +298,10 @@ window.ExerciseScores = (() => {
       sessions.length - 1,
     ]);
     for (const index of ticks) {
-      const date = new Date(sessions[index].date);
+      const date =
+        typeof sessions[index].date === "string"
+          ? new Date(sessions[index].date)
+          : new Date(NaN);
       svg.append(
         svgNode(
           "text",
