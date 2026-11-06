@@ -114,7 +114,7 @@ test("separate graphs precede the table, filter records and plot oldest first wi
   assert.equal(f.writes, 0);
   f.render(null);
   assert.equal(tags(f.chart, "svg").length, 1);
-  assert.equal(tags(f.chart, "circle").length, 4);
+  assert.equal(tags(f.chart, "circle").length, 3);
 });
 test("score history shows points without denominators, preserving saved totals", () => {
   const records = [
@@ -127,8 +127,10 @@ test("score history shows points without denominators, preserving saved totals",
   const original = f.stored;
   f.render(null);
   const body = tags(f.root, "tbody")[0];
-  assert.deepEqual(body.children.map(row => row.children[3].textContent),
-    ["7", "3", "40 points", "—"]);
+  assert.deepEqual(
+    body.children.map((row) => row.children[3].textContent),
+    ["7", "3", "—"],
+  );
   assert.equal(f.stored, original);
   assert.equal(f.writes, 0);
 });
@@ -203,4 +205,74 @@ test("scores page renders the graph frame before the complete list", () => {
   const html = fs.readFileSync(path.join(__dirname, "../scores.html"), "utf8");
   assert.ok(html.indexOf('id="score-chart"') < html.indexOf('id="history"'));
   assert.match(html, /document\.getElementById\("score-chart"\)/);
+});
+
+test("Tous uses exercise scores normalized to ten and excludes missions from both panels", () => {
+  const rows = [
+    { tab: "space", score: 500, mode: "arcade", date: "2026-11-06" },
+    { tab: "math", score: 15, total: 20, date: "2026-11-05", category: "Additions" },
+    { tab: "magic", score: 240, mode: "arcade", date: "2026-11-04" },
+    { tab: "g", score: 4, total: 5, date: "2026-11-03" },
+    { tab: "conjugaison", score: 9, total: 10, date: "2026-11-02" },
+  ];
+  const f = setup(rows), original = f.stored;
+  f.render(null);
+  assert.equal(f.root.children[0].textContent, "Tous mes exercices");
+  const body = tags(f.root, "tbody")[0];
+  assert.equal(body.children.length, 3);
+  assert.deepEqual(
+    body.children.map((row) => row.children[3].textContent),
+    ["15", "4", "9"],
+  );
+  const dots = tags(f.chart, "circle");
+  assert.equal(dots.length, 3);
+  assert.deepEqual(
+    dots.map((dot) => Number(dot.children[0].textContent.match(/ · (\\d+(?:[,.]\\d+)?) \\/ 10/)[1].replace(",", "."))),
+    [9, 8, 7.5],
+  );
+  const svg = tags(f.chart, "svg")[0];
+  assert.equal(
+    tags(svg, "text").filter((node) => node.textContent === "10").length,
+    1,
+  );
+  assert.ok(tags(svg, "linearGradient").length === 1);
+  assert.equal(tags(svg, "stop").length, 3);
+  assert.equal(tags(svg, "stop")[0].attributes["stop-opacity"], "0.76");
+  assert.equal(f.stored, original);
+  assert.equal(f.writes, 0);
+  f.render("space");
+  assert.equal(tags(f.chart, "circle").length, 1);
+  assert.equal(tags(f.chart, "text").some((node) => node.textContent === "500"), true);
+  assert.equal(tags(f.root, "tbody")[0].children.length, 1);
+  f.render("magic");
+  assert.equal(tags(f.chart, "text").some((node) => node.textContent === "240"), true);
+});
+
+test("unknown exercise totals create gaps in Tous but preserve raw scores in their tabs", () => {
+  const f = setup([
+    { tab: "math", score: 5, total: 10 },
+    { tab: "g", score: 3 },
+    { tab: "g", score: 6, total: 10 },
+  ]);
+  f.render(null);
+  assert.equal(tags(f.root, "tbody")[0].children.length, 3);
+  assert.equal(tags(f.chart, "circle").length, 2);
+  assert.equal(tags(f.chart, "polyline").length, 0);
+  assert.equal(tags(f.chart, "path").length, 0);
+  assert.match(f.chart.children.at(-2).textContent, /sans score ou total valide/);
+  f.render("francais");
+  assert.equal(tags(f.chart, "circle").length, 2);
+  assert.equal(f.writes, 0);
+});
+
+test("stored score category distinguishes future mission types without rewriting history", () => {
+  const f = setup([
+    { tab: "future-mission", score: 900, scoreCategory: "mission" },
+    { tab: "math", score: 9, total: 10, custom: "unchanged" },
+  ]);
+  const original = f.stored;
+  f.render(null);
+  assert.equal(tags(f.root, "tbody")[0].children.length, 1);
+  assert.equal(tags(f.chart, "circle").length, 1);
+  assert.equal(f.stored, original);
 });
