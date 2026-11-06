@@ -181,7 +181,7 @@ test("confirmed score deletion refreshes the graph and preserves other game reco
   assert.equal(f.writes, 1);
 });
 
-test("shaded chart uses dates, keeps the last twelve points and does not truncate history", () => {
+test("shaded chart includes all scores and keeps the full history", () => {
   const rows = Array.from({ length: 15 }, (_, i) => ({
     tab: "g",
     score: i % 11,
@@ -191,12 +191,14 @@ test("shaded chart uses dates, keeps the last twelve points and does not truncat
   }));
   const f = setup(rows), original = f.stored;
   f.render("francais");
-  assert.equal(tags(f.chart, "circle").length, 12);
+  assert.equal(tags(f.chart, "circle").length, 15);
   assert.equal(tags(f.chart, "path").length, 1);
   assert.equal(tags(f.chart, "polyline").length, 1);
-  assert.equal(tags(f.chart, "text").some((node) => node.textContent === "14/10"), true);
+  assert.equal(tags(f.chart, "text").some((node) => node.textContent === "25/10"), true);
+  assert.equal(tags(f.chart, "svg")[0].attributes.class, "score-chart-wide");
+  assert.equal(f.chart.children[1].className, "score-chart-scroll");
+  assert.equal(f.chart.children.length, 2); // Title and graph, no explanatory line.
   assert.equal(tags(f.root, "tbody")[0].children.length, 15);
-  assert.match(f.chart.children.at(-1).textContent, /12 dernières parties/);
   assert.equal(f.stored, original);
   assert.equal(f.writes, 0);
 });
@@ -267,7 +269,7 @@ test("unknown exercise totals create gaps in Tous but preserve raw scores in the
   assert.equal(tags(f.chart, "circle").length, 2);
   assert.equal(tags(f.chart, "polyline").length, 0);
   assert.equal(tags(f.chart, "path").length, 0);
-  assert.match(f.chart.children.at(-2).textContent, /sans score ou total valide/);
+  assert.equal(f.chart.children.length, 2); // No explanatory note below the chart.
   f.render("francais");
   assert.equal(tags(f.chart, "circle").length, 2);
   assert.equal(f.writes, 0);
@@ -291,4 +293,50 @@ test("score tabs are visually separated by category without visible section head
   assert.equal(html.includes('class="score-tab-group-label"'), false);
   assert.ok(html.includes('class="score-tab-group" aria-label="Exercices"'));
   assert.ok(html.includes('class="score-tab-group" aria-label="Missions"'));
+});
+
+test("a large history plots every valid score without changing saved data", () => {
+  const rows = Array.from({ length: 245 }, (_, index) => ({
+    tab: "math",
+    score: index % 11,
+    total: 10,
+    date: "2026-10-18",
+    extra: { untouched: index },
+  }));
+  const fixture = setup(rows), original = fixture.stored;
+  fixture.render("math");
+  const svg = tags(fixture.chart, "svg")[0];
+  assert.equal(tags(svg, "circle").length, 245);
+  assert.equal(svg.attributes.class, "score-chart-wide");
+  assert.ok(Number(svg.attributes.width) > 10000);
+  assert.ok(tags(svg, "text").filter((node) => node.textContent === "18/10").length > 20);
+  assert.equal(tags(fixture.root, "tbody")[0].children.length, 245);
+  assert.equal(fixture.chart.children.length, 2);
+  assert.equal(fixture.stored, original);
+  assert.equal(fixture.writes, 0);
+});
+
+test("score history provides styled entries and a mobile-friendly CSS layout", () => {
+  const fixture = setup([
+    { tab: "math", score: 8, total: 10, date: "2026-10-18" },
+    { tab: "magic", score: 42, mode: "arcade", date: "2026-10-17" },
+  ]);
+  fixture.render("math");
+  const exercise = tags(fixture.root, "tbody")[0].children[0];
+  assert.equal(exercise.className, "history-entry");
+  assert.equal(exercise.children[3].className, "history-score-value");
+  assert.equal(exercise.children[3].attributes["data-label"], "Score");
+  assert.equal(exercise.children[3].textContent, "8");
+  fixture.render("magic");
+  const mission = tags(fixture.root, "tbody")[0].children[0];
+  assert.match(mission.children[3].className, /history-score-mission/);
+  assert.equal(mission.children[3].textContent, "42 points");
+  const css = fs.readFileSync(
+    path.join(__dirname, "../styles/themes/magical-academy/classic.css"),
+    "utf8",
+  );
+  assert.match(css, /\.score-chart-scroll \{/);
+  assert.match(css, /\.score-chart-wide \{/);
+  assert.match(css, /#history \.history-table tbody tr \{/);
+  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) auto minmax\(72px, auto\)/);
 });
