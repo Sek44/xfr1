@@ -175,7 +175,8 @@ test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () 
   }
   assert.equal(conjugaison.includes("body.conjugaison-page .tabs"), false);
   assert.ok(french.includes('class="tabs academy-tabs"'));
-  assert.ok(conjugaisonPage.includes('class="tab-current academy-tab"'));
+  assert.ok(conjugaisonPage.includes('id="conjugaison-tabs"'));
+  assert.ok(read("conjugaison.js").includes("GameUI.tabs("));
   assert.ok(scores.includes('class="filter academy-tabs academy-score-tabs"'));
   assert.equal((scores.match(/class="academy-tab" href=/g) || []).length, 6);
   assert.ok(scores.includes('link.classList.add("active")'));

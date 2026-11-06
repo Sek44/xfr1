@@ -109,3 +109,49 @@ test("weighted tracking persists separately and does not modify French counts", 
   assert.equal(reloaded.counts[key], 2);
   assert.equal(reloaded.failures[key], 1);
 });
+
+test("second-group present conjugates all grammatical persons and filters its questions", () => {
+  const { context } = load(["conjugaison-data.js", "exercise-weighting.js"]);
+  const data = context.ConjugaisonData;
+  const expected = {
+    je: "finis", tu: "finis", il: "finit", elle: "finit", on: "finit",
+    nous: "finissons", vous: "finissez", ils: "finissent", elles: "finissent",
+  };
+  assert.equal(data.groups.ir.length, 22);
+  for (const [person, form] of Object.entries(expected))
+    assert.equal(data.conjugate("ir", "finir", person), form);
+  assert.equal(data.conjugate("ir", "choisir", "nous"), "choisissons");
+  assert.equal(data.conjugate("ir", "réfléchir", "vous"), "réfléchissez");
+  assert.equal(data.conjugate("ir", "agir", "ils"), "agissent");
+  assert.equal(data.conjugate("ir", "réagir", "tu"), "réagis");
+  assert.equal(data.prefix("Je", "agis"), "J’");
+  assert.equal(data.conjugate("ir", "partir", "nous"), null);
+
+  const pool = data.possibleQuestions("present-2");
+  assert.equal(pool.size, 22 * 9);
+  assert.equal(data.possibleQuestions().size, 6 * 6 * 9);
+  for (const variants of pool.values()) {
+    for (const q of variants) {
+      assert.equal(q.type, "ir");
+      assert.equal(data.valid(q), true);
+      assert.equal(data.matchesAnswer(q, q.answer.toUpperCase()), true);
+      assert.equal(data.matchesAnswer(q, " " + q.answer + " "), true);
+    }
+  }
+  const tracker = context.ExerciseWeighting.create({
+    appearancesKey: "ir-counts", errorsKey: "ir-errors",
+  });
+  const selected = tracker.choose(pool, 10, () => 0);
+  assert.equal(selected.length, 10);
+  assert.equal(new Set(selected.map(data.key)).size, 10);
+});
+
+test("conjugaison uses the shared tab component for both present groups", () => {
+  const html = fs.readFileSync(path.join(__dirname, "..", "conjugaison.html"), "utf8");
+  const controller = fs.readFileSync(path.join(__dirname, "..", "conjugaison.js"), "utf8");
+  assert.match(html, /id="conjugaison-tabs"[^>]*role="tablist"/);
+  assert.match(controller, /GameUI\.tabs\(/);
+  assert.match(controller, /"present-1": "Présent de l’indicatif · 1er groupe"/);
+  assert.match(controller, /"present-2": "Présent de l’indicatif · 2e groupe"/);
+  assert.match(controller, /stored\.save\(\{ mode, questions/);
+});

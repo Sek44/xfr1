@@ -50,6 +50,30 @@ window.ConjugaisonData = (() => {
       ["promener", "le chien."],
       ["geler", "dans le froid."],
     ],
+    ir: [
+      ["finir", "mes devoirs."],
+      ["choisir", "un livre."],
+      ["réussir", "cet exercice."],
+      ["grandir", "chaque année."],
+      ["rougir", "de timidité."],
+      ["remplir", "un verre d’eau."],
+      ["réfléchir", "à la réponse."],
+      ["obéir", "aux consignes."],
+      ["applaudir", "les artistes."],
+      ["ralentir", "avant le virage."],
+      ["bondir", "de joie."],
+      ["bâtir", "une cabane."],
+      ["avertir", "les voisins."],
+      ["réunir", "le groupe."],
+      ["atterrir", "en douceur."],
+      ["agir", "avec prudence."],
+      ["réagir", "rapidement."],
+      ["saisir", "une occasion."],
+      ["salir", "le tapis."],
+      ["guérir", "rapidement."],
+      ["nourrir", "les oiseaux."],
+      ["franchir", "la ligne d’arrivée."],
+    ],
   };
   // Personal pronouns and equivalent explicit subjects; never infer a 1st-person
   // singular from a nominal subject, since that is not grammatical French.
@@ -69,10 +93,15 @@ window.ConjugaisonData = (() => {
     nous: "ons", vous: "ez", ils: "ent", elles: "ent",
   };
 
+  const secondGroupEndings = {
+    je: "is", tu: "is", il: "it", elle: "it", on: "it",
+    nous: "issons", vous: "issez", ils: "issent", elles: "issent",
+  };
   function conjugate(type, verb, person) {
     if (!Object.hasOwn(groups, type) ||
         !groups[type].some((entry) => entry[0] === verb) ||
         !Object.hasOwn(personEndings, person)) return null;
+    if (type === "ir") return verb.slice(0, -2) + secondGroupEndings[person];
     let stem = verb.slice(0, -2);
     if (person === "nous" && type === "ger") stem += "e";
     if (person === "nous" && type === "cer") stem = stem.slice(0, -1) + "ç";
@@ -99,9 +128,10 @@ window.ConjugaisonData = (() => {
       ? "J’"
       : subject + " ";
   }
-  function possibleQuestions() {
+  function possibleQuestions(mode = "present-1") {
     const grouped = new Map();
-    for (const [type, entries] of Object.entries(groups))
+    for (const [type, entries] of Object.entries(groups)) {
+      if ((type === "ir") !== (mode === "present-2")) continue;
       for (const [verb, complement] of entries)
         for (const [person, variants] of Object.entries(subjects)) {
           const answer = conjugate(type, verb, person);
@@ -110,6 +140,7 @@ window.ConjugaisonData = (() => {
           }));
           grouped.set(key(questions[0]), questions);
         }
+    }
     return grouped;
   }
   function valid(question) {

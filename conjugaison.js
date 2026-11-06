@@ -1,12 +1,20 @@
 "use strict";
 (() => {
   const SESSION_SIZE = 10;
+  const MODES = {
+    "present-1": "Présent de l’indicatif · 1er groupe",
+    "present-2": "Présent de l’indicatif · 2e groupe",
+  };
+  const TABS = [
+    ["present-1", "Présent · 1er groupe"],
+    ["present-2", "Présent · 2e groupe"],
+  ];
   const tracker = ExerciseWeighting.create({
     appearancesKey: "entrainement_conjugaison_counts_v1",
     errorsKey: "entrainement_conjugaison_errors_v1",
   });
   const stored = GameState.create("conjugaison");
-  const possible = ConjugaisonData.possibleQuestions();
+  let mode = "present-1";
   let questions = [], answer = "", lastIndex = 0, countedThrough = -1;
   // A persistent live region announces feedback without occupying any layout space.
   const feedbackStatus = GameUI.element("div", "conjugaison-feedback-live");
@@ -33,7 +41,7 @@
       stored.clear();
       ExerciseScores.save({
         tab: "conjugaison",
-        category: "Présent de l’indicatif · 1er groupe",
+        category: MODES[mode],
         score, total,
       });
       window.DailyExercises?.award("conjugaison");
@@ -44,18 +52,21 @@
       stored.clear();
       return;
     }
-    stored.save({ mode: "present-1", questions, answer, countedThrough, progress: game.snapshot() });
+    stored.save({ mode, questions, answer, countedThrough, progress: game.snapshot() });
   }
   function restore() {
     const state = stored.load();
-    if (!state || state.mode !== "present-1" ||
+    if (!state || !Object.hasOwn(MODES, state.mode) ||
         !Array.isArray(state.questions) ||
         state.questions.length !== SESSION_SIZE ||
-        !state.questions.every((q) => ConjugaisonData.valid(q)) ||
+        !state.questions.every((q) =>
+          ConjugaisonData.valid(q) &&
+          (q.type === "ir") === (state.mode === "present-2")) ||
         new Set(state.questions.map(ConjugaisonData.key)).size !== SESSION_SIZE ||
         typeof state.answer !== "string" ||
         !/^[a-zàâäéèêëîïôöùûüÿçœæ ]{0,24}$/i.test(state.answer) ||
         state.progress?.total !== SESSION_SIZE) return false;
+    mode = state.mode;
     questions = state.questions;
     answer = state.answer;
     lastIndex = state.progress.index;
@@ -68,8 +79,14 @@
     answer = "";
     lastIndex = 0;
     countedThrough = -1;
-    questions = tracker.choose(possible, SESSION_SIZE);
+    questions = tracker.choose(ConjugaisonData.possibleQuestions(mode), SESSION_SIZE);
     game.reset(SESSION_SIZE);
+  }
+  function switchMode(nextMode) {
+    if (!Object.hasOwn(MODES, nextMode) || nextMode === mode) return;
+    mode = nextMode;
+    GameUI.tabs(document.getElementById("conjugaison-tabs"), TABS, mode, switchMode);
+    restart();
   }
   function edit(command) {
     if (game.correct) return;
@@ -204,6 +221,7 @@
   function ScoreViewOpen() { return scoreView?.open; }
   document.getElementById("restart-series").onclick = game.restartButton(restart).onclick;
   if (!restore()) restart();
+  GameUI.tabs(document.getElementById("conjugaison-tabs"), TABS, mode, switchMode);
   scoreView = ScoreView.bind({
     suspend: () => { game.suspend(); persist(); },
     resume: () => game.resume(),
