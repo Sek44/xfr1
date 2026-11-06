@@ -194,7 +194,7 @@ window.ExerciseScores = (() => {
       // of scores into one tiny SVG. The viewport scrolls horizontally.
       wide = sessions.length > 12,
       width = wide
-        ? left + right + (sessions.length - 1) * 44
+        ? Math.max(760, left + right + (sessions.length - 1) * 44)
         : 600;
     const x = (index) =>
       sessions.length === 1
