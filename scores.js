@@ -118,13 +118,14 @@ window.ExerciseScores = (() => {
     return choices[Math.floor(Math.random() * choices.length)];
   }
   function renderGraph(container, records, game) {
-    const section = document.createElement("section");
-    section.className = "score-evolution";
-    const heading = document.createElement("h3");
-    heading.textContent = "Évolution des scores";
-    section.append(heading);
-    // Saved history is newest first. Reverse a copy; never modify stored records.
-    const sessions = records.slice().reverse();
+    container.replaceChildren();
+    const heading = document.createElement("h2");
+    heading.textContent = "Évolution du score";
+    container.append(heading);
+
+    // Only the twelve most recent sessions are plotted; the history stays complete.
+    // Stored records are newest first. Plot a reversed copy, never change localStorage.
+    const sessions = records.slice(0, 12).reverse();
     const points = sessions.flatMap((record, index) =>
       record.score !== null &&
       record.score !== undefined &&
@@ -137,16 +138,16 @@ window.ExerciseScores = (() => {
     if (!points.length) {
       const empty = document.createElement("p");
       empty.textContent = "Pas encore de score à afficher sur le graphique.";
-      section.append(empty);
-      container.append(section);
+      container.append(empty);
       return;
     }
-    const width = 640,
-      height = 260,
-      left = 64,
-      right = 20,
+
+    const width = 600,
+      height = 320,
+      left = 56,
+      right = 24,
       top = 24,
-      bottom = 46;
+      bottom = 52;
     const maximum = Math.max(
       game === "space" || game === "magic" ? 1 : 10,
       ...points.map((point) => point.value),
@@ -167,13 +168,14 @@ window.ExerciseScores = (() => {
       return node;
     }
     const svg = svgNode("svg", {
-      viewBox: `0 0 ${width} ${height}`,
+      viewBox: "0 0 " + width + " " + height,
       role: "img",
       "aria-label":
-        "Évolution des scores : " +
+        "Évolution des scores, " +
         points.length +
-        " résultat(s), du plus ancien au plus récent. Scores en points.",
+        " résultat(s), du plus ancien au plus récent, en points.",
     });
+
     for (let tick = 0; tick <= 5; tick++) {
       const value = tick * step,
         position = y(value);
@@ -187,36 +189,61 @@ window.ExerciseScores = (() => {
         }),
         svgNode(
           "text",
-          { x: left - 10, y: position + 4, "text-anchor": "end" },
+          { x: left - 12, y: position + 5, "text-anchor": "end" },
           value,
         ),
       );
     }
-    svg.append(svgNode("text", { x: left, y: 14 }, "Score"));
-    // Leave a gap for legacy records without a usable score instead of inventing zeroes.
-    let segment = [],
-      previousIndex = -1;
-    function drawSegment() {
-      if (segment.length > 1)
-        svg.append(
-          svgNode("polyline", {
-            points: segment.join(" "),
-            class: "score-line",
-          }),
-        );
-      segment = [];
-    }
+
+    // Draw the translucent blue area and lines independently for each sequence
+    // of valid scores, so missing legacy values never become invented zeroes.
+    const segments = [];
+    let segment = [];
+    let previousIndex = -1;
     for (const point of points) {
-      if (point.index !== previousIndex + 1) drawSegment();
-      segment.push(`${x(point.index)},${y(point.value)}`);
+      if (point.index !== previousIndex + 1 && segment.length) {
+        segments.push(segment);
+        segment = [];
+      }
+      segment.push(point);
       previousIndex = point.index;
     }
-    drawSegment();
+    if (segment.length) segments.push(segment);
+    for (const part of segments) {
+      if (part.length < 2) continue;
+      const coordinates = part.map(
+        (point) => x(point.index) + "," + y(point.value),
+      );
+      const first = part[0],
+        last = part[part.length - 1];
+      svg.append(
+        svgNode("path", {
+          d:
+            "M " +
+            x(first.index) +
+            "," +
+            y(0) +
+            " L " +
+            coordinates.join(" L ") +
+            " L " +
+            x(last.index) +
+            "," +
+            y(0) +
+            " Z",
+          class: "score-area",
+        }),
+        svgNode("polyline", {
+          points: coordinates.join(" "),
+          class: "score-line",
+        }),
+      );
+    }
+
     for (const point of points) {
       const dot = svgNode("circle", {
         cx: x(point.index),
         cy: y(point.value),
-        r: 4,
+        r: 6,
         class: "score-dot",
       });
       const date = new Date(point.record.date),
@@ -227,45 +254,68 @@ window.ExerciseScores = (() => {
         svgNode(
           "title",
           {},
-          `Partie ${point.index + 1} · ${dateLabel} ${time(point.record)} · ${label(point.record)} · ${point.value} points`,
+          "Partie " +
+            (records.length - sessions.length + point.index + 1) +
+            " · " +
+            dateLabel +
+            " " +
+            time(point.record) +
+            " · " +
+            label(point.record) +
+            " · " +
+            point.value +
+            " points",
         ),
       );
       svg.append(dot);
     }
+
+    // Show dates rather than session indices, with at most four labels for mobile.
     const ticks = new Set([
       0,
-      Math.floor((sessions.length - 1) / 2),
+      Math.round((sessions.length - 1) / 3),
+      Math.round(((sessions.length - 1) * 2) / 3),
       sessions.length - 1,
     ]);
-    for (const index of ticks)
+    for (const index of ticks) {
+      const date = new Date(sessions[index].date);
       svg.append(
         svgNode(
           "text",
-          { x: x(index), y: height - bottom + 22, "text-anchor": "middle" },
-          index + 1,
+          {
+            x: x(index),
+            y: height - 16,
+            "text-anchor": "middle",
+            class: "score-date",
+          },
+          Number.isNaN(date.getTime())
+            ? "n° " + (records.length - sessions.length + index + 1)
+            : date.toLocaleDateString("fr-FR", {
+                day: "2-digit",
+                month: "2-digit",
+              }),
         ),
       );
-    svg.append(
-      svgNode(
-        "text",
-        {
-          x: (left + width - right) / 2,
-          y: height - 4,
-          "text-anchor": "middle",
-        },
-        "Parties · de la plus ancienne à la plus récente",
-      ),
-    );
-    section.append(svg);
+    }
+    container.append(svg);
+
+    if (records.length > sessions.length) {
+      const note = document.createElement("p");
+      note.textContent = "Les 12 dernières parties sont affichées sur la courbe.";
+      container.append(note);
+    }
     if (points.length < sessions.length) {
       const note = document.createElement("p");
-      note.textContent =
-        "Les résultats sans score renseigné ne sont pas tracés.";
-      section.append(note);
+      note.textContent = "Les résultats sans score ne sont pas tracés.";
+      container.append(note);
     }
-    container.append(section);
+    if (game === null) {
+      const note = document.createElement("p");
+      note.textContent = "Les barèmes de points varient selon les jeux.";
+      container.append(note);
+    }
   }
-  function render(container, game = null) {
+  function render(container, game = null, chartContainer = null) {
     container.replaceChildren();
     const records = read().filter(
       (r) =>
@@ -278,6 +328,8 @@ window.ExerciseScores = (() => {
             ? r.tab === game
             : r.tab === "g" || r.tab === "c"),
     );
+    if (chartContainer) renderGraph(chartContainer, records, game);
+    else renderGraph(container, records, game);
     const title = document.createElement("h2");
     title.textContent =
       game === null
@@ -296,7 +348,6 @@ window.ExerciseScores = (() => {
       const p = document.createElement("p");
       p.textContent = "Aucun exercice terminé pour le moment.";
       container.append(p);
-      if (game !== null) renderGraph(container, records, game);
       return;
     }
     const summary = document.createElement("p");
@@ -336,7 +387,7 @@ window.ExerciseScores = (() => {
       });
       if (!confirmed) return;
       const removed = remove(record);
-      render(container, game);
+      render(container, game, chartContainer);
       if (!removed) {
         const error = document.createElement("p");
         error.className = "history-error";
@@ -421,7 +472,6 @@ window.ExerciseScores = (() => {
     table.append(body);
     scroll.append(table);
     container.append(scroll);
-    if (game !== null) renderGraph(container, records, game);
   }
   return { read, save, render, encourage, time, remove };
 })();
