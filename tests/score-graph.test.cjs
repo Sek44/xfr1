@@ -9,7 +9,12 @@ class Element {
     this.children = [];
     this.attributes = {};
     this.listeners = {};
-    this.classList = { remove() {}, add() {} };
+    const classes = new Set();
+    this.classList = {
+      remove: (name) => classes.delete(name),
+      add: (name) => classes.add(name),
+      contains: (name) => classes.has(name),
+    };
   }
   append(...children) {
     this.children.push(...children);
@@ -374,4 +379,31 @@ test("short curves retain visible markers and no scroll wrapper", () => {
   assert.equal(tags(svg, "circle").length, 10);
   assert.equal(svg.attributes.viewBox, "0 0 600 320");
   assert.equal(f.chart.children[1].tagName, "svg");
+});
+
+test("history cards use the same background and only highlight while pressed", () => {
+  const css = fs.readFileSync(
+    path.join(__dirname, "../styles/themes/magical-academy/classic.css"),
+    "utf8",
+  );
+  assert.doesNotMatch(css, /#history [^\\n]*tr:nth-child\\(even\\)/);
+  assert.doesNotMatch(css, /#history [^\\n]*tr:hover/);
+  assert.match(css, /#history [^\\n]*tr.holding td:not\\(\\.history-score-value\\)/);
+  assert.match(css, /#history [^\\n]*tr.holding \\{/);
+  assert.match(css, /-webkit-user-select: none/);
+
+  const f = setup([{ tab: "math", score: 8, total: 10 }]);
+  f.render("math");
+  const row = tags(f.root, "tbody")[0].children[0];
+  const pointer = { button: 0, isPrimary: true, clientX: 50, clientY: 60 };
+  for (const end of ["pointerup", "pointercancel", "pointerleave"]) {
+    row.listeners.pointerdown(pointer);
+    assert.equal(row.classList.contains("holding"), true);
+    row.listeners[end]();
+    assert.equal(row.classList.contains("holding"), false);
+  }
+  row.listeners.pointerdown(pointer);
+  row.listeners.pointermove({ clientX: 65, clientY: 60 });
+  assert.equal(row.classList.contains("holding"), false);
+  assert.equal(f.writes, 0);
 });
