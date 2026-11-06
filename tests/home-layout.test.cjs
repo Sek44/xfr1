@@ -55,7 +55,7 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=progress-symmetric-20261106"));
+  assert.ok(html.includes("home-v3.css?v=progress-position-20261106"));
 });
 
 test("daily progress has symmetric horizontal and vertical spacing", () => {
@@ -76,8 +76,8 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
 
   // Equal panel padding on opposing sides, for both desktop and phone.
   assert.match(panel, /padding: 16px 24px;/);
-  assert.ok(css.includes("padding: 14px 22px;"));
-  assert.ok(css.includes("padding-inline: 18px;"));
+  assert.ok(css.includes("padding: 14px 18px;"));
+  assert.ok(css.includes("padding-inline: 14px;"));
   // One variable gives the same distance above and below the separator.
   assert.ok(heading.includes("padding: 0 0 var(--daily-divider-gap);"));
   assert.ok(stats.includes("margin-top: var(--daily-divider-gap);"));
@@ -93,6 +93,9 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
   assert.match(firstStat, /align-items: center;/);
   // The outside edges align to equal padding, not centered independently.
   assert.match(firstStat, /justify-content: flex-start;/);
+  assert.ok(css.includes("width: min(calc(100% - 28px), 680px);"));
+  assert.ok(css.includes("width: calc(100% - 12px);"));
+  assert.ok(css.includes("margin: 0 auto 24px;"));
   assert.ok(css.includes(".daily-stat:last-child { justify-content: flex-end; }"));
   assert.match(firstStat, /padding: 0;/);
   assert.ok(headingText.includes("font-size: var(--type-card-title);"));
@@ -100,4 +103,21 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
   for (const rule of [panel, headingText, statText]) {
     assert.ok(rule.includes("font-family: var(--font-display);"));
   }
+});
+
+test("progress groups shift inward without moving dividers or changing text size", () => {
+  assert.ok(css.includes("--daily-title-shift-x: -6px;"));
+  assert.ok(css.includes("--daily-title-shift-y: 3px;"));
+  assert.ok(css.includes("--daily-stat-inset: 6px;"));
+  assert.ok(css.includes("--daily-stat-inset: 3px;"));
+  assert.ok(css.includes(".daily-heading > :is(.daily-trophy, h2) {"));
+  assert.ok(
+    css.includes("transform: translate(var(--daily-title-shift-x), var(--daily-title-shift-y));"),
+  );
+  assert.ok(css.includes(".daily-stat:first-child > * {"));
+  assert.ok(css.includes("transform: translateX(var(--daily-stat-inset));"));
+  assert.ok(css.includes(".daily-stat:last-child > * {"));
+  assert.ok(css.includes("transform: translateX(calc(-1 * var(--daily-stat-inset)));"));
+  assert.ok(css.includes("--daily-icon-size: 40px;"));
+  assert.ok(css.includes("font-size: var(--type-card-title);"));
 });
