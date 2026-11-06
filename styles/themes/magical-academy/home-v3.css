@@ -177,7 +177,11 @@ html[data-theme="magical-academy"] .daily-panel {
   min-height: 0;
   --daily-icon-size: 46px;
   --daily-divider-gap: 12px;
-  margin: 0 13px 27px;
+  --daily-title-shift-x: -6px;
+  --daily-title-shift-y: 3px;
+  --daily-stat-inset: 6px;
+  width: min(calc(100% - 28px), 680px);
+  margin: 0 auto 27px;
   padding: 16px 24px;
   border: 0;
   font-family: var(--font-display);
@@ -224,6 +228,10 @@ html[data-theme="magical-academy"] .daily-heading {
   padding: 0 0 var(--daily-divider-gap);
   border-bottom: 1px solid #dfc392;
 }
+/* Shift the cup and heading together, keeping the separator centered. */
+html[data-theme="magical-academy"] .daily-heading > :is(.daily-trophy, h2) {
+  transform: translate(var(--daily-title-shift-x), var(--daily-title-shift-y));
+}
 html[data-theme="magical-academy"] .daily-heading h2 {
   margin: 0;
   color: #1e2d50;
@@ -256,6 +264,13 @@ html[data-theme="magical-academy"] .daily-stat {
   padding: 0;
 }
 html[data-theme="magical-academy"] .daily-stat:last-child { justify-content: flex-end; }
+/* Move both counter groups inward, without moving the central divider. */
+html[data-theme="magical-academy"] .daily-stat:first-child > * {
+  transform: translateX(var(--daily-stat-inset));
+}
+html[data-theme="magical-academy"] .daily-stat:last-child > * {
+  transform: translateX(calc(-1 * var(--daily-stat-inset)));
+}
 html[data-theme="magical-academy"] .daily-stat + .daily-stat { border-left: 1px solid #d4ba89; }
 html[data-theme="magical-academy"] .daily-stat-icon {
   flex: 0 0 var(--daily-icon-size);
@@ -313,8 +328,8 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
   html[data-theme="magical-academy"] .daily-panel {
     --daily-icon-size: 40px;
     --daily-divider-gap: 11px;
-    margin: 0 7px 24px;
-    padding: 14px 22px;
+    margin: 0 auto 24px;
+    padding: 14px 18px;
   }
   html[data-theme="magical-academy"] .daily-heading { gap: 8px; }
   html[data-theme="magical-academy"] .daily-heading h2 { font-size: var(--type-card-title); }
@@ -331,7 +346,9 @@ html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73p
   html[data-theme="magical-academy"] .daily-panel {
     --daily-icon-size: 34px;
     --daily-divider-gap: 10px;
-    padding-inline: 18px;
+    --daily-stat-inset: 3px;
+    width: calc(100% - 12px);
+    padding-inline: 14px;
   }
   html[data-theme="magical-academy"] .daily-heading { gap: 6px; }
   html[data-theme="magical-academy"] .daily-heading h2 { font-size: var(--type-card-title); }
