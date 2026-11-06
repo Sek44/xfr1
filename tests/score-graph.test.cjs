@@ -46,10 +46,12 @@ function setup(records) {
     fs.readFileSync(path.join(__dirname, "../scores.js"), "utf8"),
     context,
   );
-  const root = new Element("div");
+  const root = new Element("div"),
+    chart = new Element("section");
   return {
     root,
-    render: (game) => context.window.ExerciseScores.render(root, game),
+    chart,
+    render: (game) => context.window.ExerciseScores.render(root, game, chart),
     get stored() {
       return stored;
     },
@@ -65,7 +67,7 @@ function find(root, predicate) {
   ]);
 }
 const tags = (root, tag) => find(root, (node) => node.tagName === tag);
-test("per-game graphs follow the table, filter records and plot oldest first without writing storage", () => {
+test("separate graphs precede the table, filter records and plot oldest first without writing storage", () => {
   const rows = [
     {
       tab: "math",
@@ -86,11 +88,11 @@ test("per-game graphs follow the table, filter records and plot oldest first wit
     ["francais", [7]],
   ]) {
     f.render(game);
-    assert.equal(f.root.children.at(-1).className, "score-evolution");
+    assert.equal(f.chart.children[0].textContent, "Évolution du score");
     assert.ok(
       f.root.children.some((node) => node.className === "history-scroll"),
     );
-    const svg = tags(f.root, "svg");
+    const svg = tags(f.chart, "svg");
     assert.equal(svg.length, 1);
     const dots = tags(svg[0], "circle");
     assert.equal(dots.length, expected.length);
@@ -111,7 +113,8 @@ test("per-game graphs follow the table, filter records and plot oldest first wit
   assert.equal(f.stored, before);
   assert.equal(f.writes, 0);
   f.render(null);
-  assert.equal(tags(f.root, "svg").length, 0);
+  assert.equal(tags(f.chart, "svg").length, 1);
+  assert.equal(tags(f.chart, "circle").length, 4);
 });
 test("score history shows points without denominators, preserving saved totals", () => {
   const records = [
@@ -137,20 +140,20 @@ test("missing legacy scores create gaps, placeholders, and never invented zeroes
     { tab: "math", score: 0 },
   ]);
   f.render("math");
-  assert.equal(tags(f.root, "circle").length, 2);
-  assert.equal(tags(f.root, "polyline").length, 0);
-  assert.match(tags(f.root, "circle")[0].children[0].textContent, /00:00/);
+  assert.equal(tags(f.chart, "circle").length, 2);
+  assert.equal(tags(f.chart, "polyline").length, 0);
+  assert.equal(tags(f.chart, "path").length, 0);
+  assert.match(tags(f.chart, "circle")[0].children[0].textContent, /00:00/);
   assert.equal(f.writes, 0);
 });
-test("empty game history has an empty-state graph; combined history never has a graph", () => {
+test("empty filtered and combined histories both show a separate empty-state chart", () => {
   const f = setup([]);
-  f.render("space");
-  assert.equal(f.root.children.at(-1).className, "score-evolution");
-  assert.equal(tags(f.root, "svg").length, 0);
-  f.render(null);
-  assert.ok(
-    !f.root.children.some((node) => node.className === "score-evolution"),
-  );
+  for (const game of ["space", null]) {
+    f.render(game);
+    assert.equal(f.chart.children[0].textContent, "Évolution du score");
+    assert.equal(tags(f.chart, "svg").length, 0);
+    assert.match(f.chart.children[1].textContent, /Pas encore de score/);
+  }
 });
 test("confirmed score deletion refreshes the graph and preserves other game records", async () => {
   const f = setup([
@@ -164,9 +167,9 @@ test("confirmed score deletion refreshes the graph and preserves other game reco
     preventDefault() {},
   });
   await new Promise((resolve) => setImmediate(resolve));
-  assert.equal(tags(f.root, "circle").length, 1);
+  assert.equal(tags(f.chart, "circle").length, 1);
   assert.match(
-    tags(f.root, "circle")[0].children[0].textContent,
+    tags(f.chart, "circle")[0].children[0].textContent,
     / · 3 points$/,
   );
   assert.deepEqual(JSON.parse(f.stored), [
@@ -174,4 +177,24 @@ test("confirmed score deletion refreshes the graph and preserves other game reco
     { tab: "math", score: 3, total: 10 },
   ]);
   assert.equal(f.writes, 1);
+});
+
+test("shaded chart uses dates, keeps the last twelve points and does not truncate history", () => {
+  const rows = Array.from({ length: 15 }, (_, i) => ({
+    tab: "g",
+    score: i % 11,
+    total: 10,
+    date: "2026-10-" + String(25 - i).padStart(2, "0"),
+    extra: { preserve: i },
+  }));
+  const f = setup(rows), original = f.stored;
+  f.render("francais");
+  assert.equal(tags(f.chart, "circle").length, 12);
+  assert.equal(tags(f.chart, "path").length, 1);
+  assert.equal(tags(f.chart, "polyline").length, 1);
+  assert.equal(tags(f.chart, "text").some((node) => node.textContent === "14/10"), true);
+  assert.equal(tags(f.root, "tbody")[0].children.length, 15);
+  assert.match(f.chart.children.at(-1).textContent, /12 dernières parties/);
+  assert.equal(f.stored, original);
+  assert.equal(f.writes, 0);
 });
