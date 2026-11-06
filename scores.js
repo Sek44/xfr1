@@ -328,7 +328,7 @@ window.ExerciseScores = (() => {
       );
     }
 
-    if (!hideDots) for (const point of points) {
+    for (const point of hideDots ? [] : points) {
       const dot = svgNode("circle", {
         cx: x(point.index),
         cy: y(point.value),
