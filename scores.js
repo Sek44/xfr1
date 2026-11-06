@@ -195,6 +195,23 @@ window.ExerciseScores = (() => {
       );
     }
 
+    svg.append(
+      svgNode("line", {
+        x1: left,
+        x2: left,
+        y1: top,
+        y2: height - bottom,
+        class: "score-axis",
+      }),
+      svgNode("line", {
+        x1: left,
+        x2: width - right,
+        y1: height - bottom,
+        y2: height - bottom,
+        class: "score-axis",
+      }),
+    );
+
     // Draw the translucent blue area and lines independently for each sequence
     // of valid scores, so missing legacy values never become invented zeroes.
     const segments = [];
