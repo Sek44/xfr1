@@ -49,30 +49,55 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("font-size: var(--type-stat)"));
   assert.ok(tokens.includes("--type-card-title: var(--text-md)"));
   assert.ok(tokens.includes("--type-stat: var(--text-md)"));
-  assert.ok(css.includes("width: 42px; height: 42px; flex-basis: 42px;"));
-  assert.ok(css.includes("flex-basis: clamp(34px, 10vw, 42px)"));
+  assert.ok(css.includes("--daily-icon-size: 40px;"));
+  assert.ok(css.includes("--daily-icon-size: 34px;"));
+  assert.ok(css.includes("width: var(--daily-icon-size);"));
+  assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=progress-balance-20261106"));
+  assert.ok(html.includes("home-v3.css?v=progress-symmetric-20261106"));
 });
 
-test("daily card uses even padding, compact title and aligned counter spacing", () => {
-  assert.ok(css.includes("padding: 14px 22px 15px;"));
-  assert.ok(css.includes("padding: 12px 18px 13px;"));
-  assert.ok(css.includes("margin-top: 8px;"));
-  assert.ok(css.includes("padding: 2px 3px 8px;"));
-  assert.ok(css.includes("width: 50px;"));
-  assert.ok(css.includes("flex: 0 0 46px;"));
-  assert.ok(css.includes("width: 42px; height: 42px; flex-basis: 42px;"));
-  assert.ok(css.includes("flex-basis: clamp(34px, 10vw, 42px)"));
-  assert.ok(css.includes("width: 38px; height: 38px; flex-basis: 38px;"));
-  assert.ok(css.includes("flex-basis: 34px; width: 34px; height: 34px;"));
-  assert.ok(css.includes("gap: 10px;"));
-  const panel = css.split('html[data-theme="magical-academy"] .daily-panel {')[1].split("}")[0];
-  const heading = css.split('html[data-theme="magical-academy"] .daily-heading h2 {')[1].split("}")[0];
-  const stats = css.split('html[data-theme="magical-academy"] .daily-stat strong {')[1].split("}")[0];
-  assert.ok(heading.includes("font-size: var(--type-card-title)"));
-  for (const block of [panel, heading, stats]) {
-    assert.ok(block.includes("font-family: var(--font-display);"));
+test("daily progress has symmetric horizontal and vertical spacing", () => {
+  const block = (selector) => {
+    const start = css.indexOf(selector + " {");
+    assert.ok(start !== -1, selector);
+    return css.slice(start + selector.length + 2).split("}")[0];
+  };
+  const prefix = 'html[data-theme="magical-academy"] ';
+  const panel = block(prefix + ".daily-panel");
+  const heading = block(prefix + ".daily-heading");
+  const stats = block(prefix + ".daily-stats");
+  const firstStat = block(prefix + ".daily-stat");
+  const trophy = block(prefix + ".daily-trophy");
+  const icon = block(prefix + ".daily-stat-icon");
+  const headingText = block(prefix + ".daily-heading h2");
+  const statText = block(prefix + ".daily-stat strong");
+
+  // Equal panel padding on opposing sides, for both desktop and phone.
+  assert.match(panel, /padding: 16px 24px;/);
+  assert.ok(css.includes("padding: 14px 22px;"));
+  assert.ok(css.includes("padding-inline: 18px;"));
+  // One variable gives the same distance above and below the separator.
+  assert.match(heading, /padding: 0 0 var\\(--daily-divider-gap\\);/);
+  assert.match(stats, /margin-top: var\\(--daily-divider-gap\\);/);
+  assert.ok(css.includes("--daily-divider-gap: 12px;"));
+  assert.ok(css.includes("--daily-divider-gap: 11px;"));
+  assert.ok(css.includes("--daily-divider-gap: 10px;"));
+  // Both rows have identical icon geometry: text is vertically centered.
+  for (const rule of [trophy, icon]) {
+    assert.match(rule, /width: var\\(--daily-icon-size\\);/);
+    assert.match(rule, /height: var\\(--daily-icon-size\\);/);
+  }
+  assert.match(heading, /align-items: center;/);
+  assert.match(firstStat, /align-items: center;/);
+  // The outside edges align to equal padding, not centered independently.
+  assert.match(firstStat, /justify-content: flex-start;/);
+  assert.ok(css.includes(".daily-stat:last-child { justify-content: flex-end; }"));
+  assert.match(firstStat, /padding: 0;/);
+  assert.match(headingText, /font-size: var\\(--type-card-title\\);/);
+  assert.match(statText, /font-size: var\\(--type-stat\\);/);
+  for (const rule of [panel, headingText, statText]) {
+    assert.match(rule, /font-family: var\\(--font-display\\);/);
   }
 });
