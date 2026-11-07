@@ -4,7 +4,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-l
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  align-items: baseline;
+  align-items: center;
   align-content: center;
   justify-content: center;
   gap: clamp(5px, 1.5vw, 10px);
@@ -27,13 +27,14 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-c
   font-family: var(--font-ui);
   font-size: clamp(var(--text-sm), 3.3vw, var(--text-md));
   font-weight: var(--weight-bold);
+  line-height: 1.15;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
   color: #182f56;
   font-family: var(--font-ui);
-  font-size: clamp(var(--text-lg), 4.3vw, var(--text-xl));
+  font-size: clamp(var(--text-md), 3.8vw, var(--text-lg));
   font-weight: var(--weight-heavy);
-  line-height: 1.13;
+  line-height: 1.15;
   white-space: nowrap;
   overflow-wrap: normal;
 }
@@ -147,7 +148,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .feedback {
     font-weight: var(--weight-bold);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
-    font-size: clamp(var(--text-lg), 4.35vw, var(--text-xl));
+    font-size: clamp(var(--text-md), 3.8vw, var(--text-lg));
     font-weight: var(--weight-heavy);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
