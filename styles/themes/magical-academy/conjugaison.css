@@ -178,7 +178,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .feedback {
   }
 }
 
-/* Larger, readable editing controls with explicit internal side gutters.
+/* Larger editing controls; Backspace now sits beside the last letter row.
    Only Conjugaison changes: the shared AZERTY component stays reusable. */
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls {
   grid-template-columns: minmax(0, 1.48fr) minmax(0, 2.7fr) minmax(0, 1.22fr);
@@ -203,7 +203,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
   font-size: clamp(var(--text-md), 4.35vw, var(--text-lg));
   font-weight: var(--weight-heavy);
 }
-html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--erase {
+html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--lower .keyboard-key--erase {
   display: grid;
   place-items: center;
   padding: 0 6px;
@@ -222,7 +222,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--space {
     font-size: var(--text-md);
   }
-  html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--erase {
+  html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--lower .keyboard-key--erase {
     font-size: var(--text-xl);
   }
 }

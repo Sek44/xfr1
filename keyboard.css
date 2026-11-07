@@ -19,14 +19,13 @@
   gap: var(--keyboard-gap);
   width: 100%;
 }
-.azerty-keyboard .keyboard-row--accents {
-  /* Keep accents visually separate from the three standard AZERTY rows. */
+.azerty-keyboard :is(.keyboard-row--accents, .keyboard-row--numbers) {
+  /* Separate accents or numbers from the three rows below. */
   margin-bottom: clamp(5px, 0.9vw, 9px);
 }
 .azerty-keyboard .keyboard-row--lower {
-  /* Six letters occupy six of the ten key positions, centered as on AZERTY. */
-  width: 60%;
-  margin-inline: auto;
+  /* Shift + six letters + Backspace, or seven symbols + Backspace. */
+  grid-template-columns: minmax(0, 1.4fr) repeat(6, minmax(0, 1fr)) minmax(0, 1.4fr);
 }
 .azerty-keyboard .keyboard-row--controls {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr) minmax(0, 1.2fr);
@@ -46,11 +45,30 @@
   background: #f9fbff;
   border-color: #dae5f2;
 }
+.azerty-keyboard .keyboard-row--lower .keyboard-key--shift,
+.azerty-keyboard .keyboard-row--lower .keyboard-key--erase {
+  display: grid;
+  place-items: center;
+  background: #e1eafa;
+}
+.azerty-keyboard .keyboard-key--shift svg {
+  width: clamp(22px, 4.5vw, 30px);
+  height: clamp(22px, 4.5vw, 30px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.azerty-keyboard .keyboard-row--lower .keyboard-key--shift[aria-pressed="true"] {
+  background: #bdd6f8;
+  border-color: #507ab3;
+}
 .azerty-keyboard .keyboard-row--controls .keyboard-key {
   font-size: clamp(var(--text-xs), 2.5vw, var(--text-md));
   background: white;
 }
-.azerty-keyboard .keyboard-key--space {
+.azerty-keyboard .keyboard-row--controls .keyboard-key--space {
   background: #dfeafc;
 }
 .azerty-keyboard .keyboard-key:active {

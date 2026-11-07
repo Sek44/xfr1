@@ -64,7 +64,7 @@
           (q.type === "ir") === (state.mode === "present-2")) ||
         new Set(state.questions.map(ConjugaisonData.key)).size !== SESSION_SIZE ||
         typeof state.answer !== "string" ||
-        !/^[a-zàâäéèêëîïôöùûüÿçœæ ]{0,24}$/i.test(state.answer) ||
+        !GameUI.validWordAnswer(state.answer, 24) ||
         state.progress?.total !== SESSION_SIZE) return false;
     mode = state.mode;
     questions = state.questions;
@@ -216,9 +216,9 @@
       event.preventDefault();
       edit("space");
     } else if (event.key.length === 1) {
-      if (/^[a-zàâäéèêëîïôöùûüÿçœæ]$/i.test(event.key)) {
+      if (GameUI.validWordAnswer(event.key, 1)) {
         event.preventDefault();
-        edit(event.key.toLocaleLowerCase("fr"));
+        edit(event.key);
       }
     }
   });
