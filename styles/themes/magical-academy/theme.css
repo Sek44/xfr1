@@ -77,6 +77,15 @@ html[data-theme="magical-academy"] body {
     background-repeat: no-repeat;
   }
 }
+/* Subtle, uniform blue tint over the scene (no vertical fade). */
+html[data-theme="magical-academy"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(6, 21, 48, .25);
+}
 html[data-theme="magical-academy"] main { position: relative; z-index: 1; }
 
 /* Homepage geometry is the standard for the outer frame on all classic pages.
@@ -86,13 +95,23 @@ html[data-theme="magical-academy"] :is(body:not(.school-page), body.academy-page
   margin: 0;
   padding: var(--academy-frame-gutter);
 }
+/* One reusable frame for home, exercises and scores (missions excluded).
+   Both its geometry and its translucent fill are defined only here. */
 html[data-theme="magical-academy"] main.academy-global-frame {
+  --academy-content-x: 7px;
+  --academy-content-top: 6px;
   box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
   width: 100%;
   max-width: 780px;
+  min-height: calc(100vh - 2 * var(--academy-frame-gutter));
+  min-height: calc(100dvh - 2 * var(--academy-frame-gutter));
   margin: 0 auto;
+  padding: var(--academy-content-top) var(--academy-content-x) 17px;
   border: 3px solid #e8d4a2;
   border-radius: 34px;
+  background: rgba(6, 23, 58, .58);
   box-shadow: inset 0 0 0 2px #4c3e5b, 0 12px 30px #03142d80;
 }
 @media (max-width: 600px) {
@@ -568,3 +587,12 @@ html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-
   }
 }
 
+
+/* Shared compact frame spacing for the smallest screens. */
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] main.academy-global-frame {
+    --academy-content-x: 4px;
+    --academy-content-top: 4px;
+    padding-bottom: 12px;
+  }
+}
