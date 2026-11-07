@@ -26,7 +26,7 @@
   --school-shadow: var(--shadow-panel);
 
   /* Illustrations belong to the design package; controls remain real HTML. */
-  --art-scene: url("../../../docs/design/background-scene.webp");
+  --art-scene: url("./assets/background-scene-landscape.webp");
   --art-french: url("../../../docs/design/icon-french.webp");
   --art-conjugation: url("../../../docs/design/icon-conjugation.webp");
   --art-calculation: url("../../../docs/design/icon-calculation.webp");
