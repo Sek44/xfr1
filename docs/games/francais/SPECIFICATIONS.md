@@ -18,7 +18,7 @@ Les mots peu rencontrés sont privilégiés ; une erreur de premier essai augmen
 
 ## Navigation, stockage et scores
 
-L'onglet peut être changé pour choisir une famille et repartir sur une série correspondante. La question, les choix, l'état de correction, la progression et le délai restant sont sauvegardés pour la reprise. La consultation des scores suspend la session et permet de revenir sans perdre son état.
+Un clic sur l’onglet déjà actif ne modifie rien. Changer de famille commence une nouvelle série : si le joueur a déjà sélectionné une réponse, validé une question ou avancé dans la série, une confirmation demande d’abord l’autorisation d’abandonner la progression. Annuler conserve le choix, le score, la question et le délai éventuel ; confirmer abandonne uniquement la série en cours, sans enregistrer de résultat ni attribuer de crédit quotidien. Si aucune question n’a encore été commencée, ou si la série est terminée, le changement est immédiat. La question, les choix, l'état de correction, la progression et le délai restant sont sauvegardés pour la reprise. La consultation des scores suspend la session et permet de revenir sans perdre son état.
 
 Les résultats alimentent l'historique commun (catégories `g` et `c`), consultable sans supprimer les autres sessions, avec une courbe d'évolution sur la page de scores Français.
 
