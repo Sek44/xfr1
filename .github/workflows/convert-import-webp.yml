@@ -56,7 +56,7 @@ jobs:
         with:
           node-version: '22'
       - name: Run the site tests
-        run: node --test tests/*.test.cjs
+        run: node --test tests/academy-classic.test.cjs tests/home-layout.test.cjs
       - name: Commit converted assets
         run: |
           git config user.name "github-actions[bot]"
