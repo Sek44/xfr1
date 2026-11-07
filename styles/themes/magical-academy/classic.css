@@ -49,7 +49,7 @@ html[data-theme="magical-academy"] body.academy-page .academy-title-art {
   background-repeat: no-repeat;
   filter: drop-shadow(0 2px 2px #06152b55);
 }
-html[data-theme="magical-academy"] .academy-title-art--conjugaison { background-image: url("./assets/parchment.webp"); }
+html[data-theme="magical-academy"] .academy-title-art--conjugaison { background-image: url("./assets/home-parchment.webp"); }
 html[data-theme="magical-academy"] .academy-title-art--francais { background-image: url("./assets/home-book.webp"); }
 html[data-theme="magical-academy"] .academy-title-art--calcul { background-image: url("./assets/home-calcul.webp"); }
 html[data-theme="magical-academy"] .academy-title-art--scores { background-image: url("./assets/nav-scores.webp"); }
@@ -74,7 +74,7 @@ html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.a
   transition: filter .16s ease, transform .16s ease;
 }
 /* Each button combines the transparent symbol with the same reusable frame.
-   This specificity outranks the legacy theme background shorthand. */
+   Both image layers share the same size and alignment. */
 html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-back {
   background: transparent;
   background-image: url("./assets/nav-back.webp"), url("./assets/nav-background.webp");

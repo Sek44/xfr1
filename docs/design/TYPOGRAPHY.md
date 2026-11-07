@@ -1,71 +1,29 @@
-# Typographie officielle — Entraînement
+# Typographie — état actuel
 
-Source de vérité : [`styles/typography.css`](../../styles/typography.css).
-Cette spécification décrit les styles actuellement appliqués. L'apparence
-des composants de l'Académie magique est conservée dans
-[`classic.css`](../../styles/themes/magical-academy/classic.css).
+Source de vérité : [`styles/typography.css`](../../styles/typography.css). Les composants visuels se trouvent dans [`classic.css`](../../styles/themes/magical-academy/classic.css) et [`home-v3.css`](../../styles/themes/magical-academy/home-v3.css).
 
-## Deux familles
+## Familles
 
-- `--font-ui` : police système, utilisée par les contrôles, onglets, compteurs,
-  étiquettes, pavés numériques et textes courants.
-- `--font-display` : Georgia (avec repli serif), réservée aux grands titres
-  décoratifs et au texte principal des questions classiques.
+- `--font-ui` : police système, contrôles, onglets, claviers, compteurs et texte courant.
+- `--font-display` : Georgia (repli serif), grands titres, questions classiques et titre/valeurs de « Mes progrès ».
 
-Les polices de l'interface ne nécessitent aucun téléchargement de police externe.
+Aucune police externe n'est téléchargée.
 
-## Échelle commune
+## Échelle
 
-| Variable | Taille pour un `rem` à 16px | Usage |
-| --- | --- | --- |
-| `--text-xs` | 14px | Informations secondaires, onglets compacts |
-| `--text-sm` | 16px | Texte courant |
-| `--text-md` | 18px | Onglets, libellés |
-| `--text-lg` | 22px | Actions principales, cartes |
-| `--text-xl` | 28px | Titres de sections, nombres |
-| `--text-2xl` | 36px | Titres des pages, questions |
-| `--text-3xl` | 44px | Grand titre d'accueil |
-| `--text-4xl` | 52px | Score final |
+| Token | Taille pour une base de 16 px |
+| --- | --- |
+| `--text-xs` | 14 px |
+| `--text-sm` | 16 px |
+| `--text-md` | 18 px |
+| `--text-lg` | 22 px |
+| `--text-xl` | 28 px |
+| `--text-2xl` | 36 px |
+| `--text-3xl` | 44 px |
+| `--text-4xl` | 52 px |
 
-Les unités `rem` suivent la taille de police préférée du navigateur.
-Les `clamp()` utilisent ces niveaux comme bornes pour les textes fluides.
-Quelques dimensions contextuelles sont conservées pour les décorations,
-graphiques et HUD des jeux d'arcade.
+Graisses : `--weight-normal` (400), `--weight-medium` (600), `--weight-bold` (700) et `--weight-heavy` (800).
 
-## Quatre graisses
+Préférer les rôles `--type-*` (`home-title`, `page-title`, `card-title`, `question`, `tab`, `score-tab`, `stat`, etc.) à de nouvelles tailles arbitraires. Les rôles communs s'adaptent à 520 px et 360 px. Les missions conservent leurs propres placements de HUD.
 
-- `--weight-normal` : 400
-- `--weight-medium` : 600
-- `--weight-bold` : 700
-- `--weight-heavy` : 800
-
-Éviter les valeurs intermédiaires non officielles comme 650, 750 et 850.
-
-## Rôles sémantiques
-
-Utiliser les variables `--type-*` plutôt que de choisir une taille arbitraire
-pour les composants réutilisables : `home-title`, `page-title`,
-`section-title`, `card-title`, `question`, `action`, `tab`,
-`score-tab`, `progress-label`, `score-number`, `result-score` et `stat`.
-
-Les rôles changent à 520px et à 360px pour protéger l'espace disponible
-sur les petits écrans. Les composants de navigation, onglets, progression,
-boutons et résultats sont stylés dans `classic.css` pour Français,
-Conjugaison, Calcul et Scores. Les CSS propres aux jeux ne doivent pas
-redéfinir ces composants communs.
-
-La page d'accueil utilise les mêmes rôles dans `home-v3.css`. Mission Calcul
-et Mission Magique réutilisent la même échelle et les mêmes graisses, tout
-en conservant leurs positions et tailles de HUD propres au jeu.
-
-Le cadre « Mes progrès aujourd'hui » de l'accueil utilise Georgia
-(`--font-display`) pour son titre, ses valeurs et les libellés de progression.
-Son titre utilise `--type-card-title`, comme les noms d'exercices sur
-l'accueil ; ses compteurs utilisent `--type-stat`, limités au minimum
-`--text-sm` sur téléphone pour éviter le débordement. Dans `home-v3.css`, le titre et les compteurs utilisent la même taille
-de boîte pour leurs icônes et la variable `--daily-divider-gap` garantit
-un écart égal entre chaque rangée et la ligne de séparation. Le cadre est légèrement moins large et centré. Le groupe coupe et titre est
-décalé légèrement vers la gauche et vers le bas, sans déplacer la séparation ;
-les groupes cible/exercices et sablier/minutes sont décalés vers l'intérieur
-par des translations opposées, réduites sur les écrans très étroits. Le cadre
-décoratif conserve ses coins et ses proportions.
+Sur l'accueil, « Mes progrès » partage `--type-card-title`, `--type-stat`, `--daily-icon-size` et `--daily-divider-gap` pour équilibrer titres, icônes et espacements. Les ajustements de mise en page restent dans `home-v3.css`.

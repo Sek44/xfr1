@@ -20,6 +20,8 @@ Utiliser la clé `entrainement_daily_exercises_v1` : `version`, `date` locale (`
 
 Les lectures externes doivent vérifier la date ; un navigateur fermé ne peut pas effectuer une écriture à minuit. Les jeux GitHub Pages sur `https://sek44.github.io/` peuvent partager la clé si leurs pages ont le même protocole, domaine et port, même dans des dépôts différents.
 
+**Note de portée historique :** les 10 minutes ci-dessus correspondent au ratio initial. Le ratio actuel est de **3 minutes par point**, configuré dans `daily-exercises.js` et décrit dans l'[architecture active](../ARCHITECTURE.md). Le contrat de stockage reste identique.
+
 ## Conséquences
 
 - Pas de compte, pas de serveur, pas de synchronisation entre appareils ni entre origines différentes.

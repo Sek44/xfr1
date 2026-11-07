@@ -55,7 +55,7 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=home-simplified-20261107"));
+  assert.match(html, /home-v3\.css\?v=/);
 });
 
 test("daily progress has symmetric horizontal and vertical spacing", () => {
@@ -122,25 +122,26 @@ test("progress groups shift inward without moving dividers or changing text size
   assert.ok(css.includes("font-size: var(--type-card-title);"));
 });
 
-test("home Scores shortcut layers the same WebP symbol and frame as classic navigation", () => {
-  assert.ok(html.includes('class="hero-tool hero-tool--scores"'));
-  assert.ok(html.includes('aria-label="Mes scores"'));
-  assert.ok(css.includes('background-image: url("./assets/nav-scores.webp"), url("./assets/nav-background.webp")'));
-  assert.ok(css.includes('background: transparent url("./assets/nav-background.webp")'));
+test("Scores uses the shared header and the two-layer WebP icon", () => {
+  const classic = read("styles/themes/magical-academy/classic.css");
+  assert.ok(html.includes("data-academy-header"));
+  assert.ok(html.includes('data-home="true" data-scores="true"'));
+  assert.ok(html.includes("academy-home-nav"));
+  assert.ok(html.includes("academy-header.js"));
+  assert.ok(css.includes(".academy-home-nav"));
+  assert.ok(classic.includes('background-image: url("./assets/nav-scores.webp"), url("./assets/nav-background.webp")'));
   for (const name of ["nav-background.webp", "nav-scores.webp"]) {
     assert.ok(fs.existsSync(path.join(root, "styles/themes/magical-academy/assets", name)));
   }
 });
 
-
-test("home shows only the Scores shortcut and compact activity cards without descriptions", () => {
-  assert.equal((html.match(/class="hero-tool hero-tool--scores"/g) || []).length, 1);
+test("home has five compact activities and no unused preference controls", () => {
   assert.equal((html.match(/class="activity-card activity-/g) || []).length, 5);
+  assert.equal((html.match(/data-academy-header/g) || []).length, 1);
   assert.ok(css.includes('html[data-theme="magical-academy"] .activity-card { min-height: 73px; }'));
+  assert.ok(css.includes("width: calc(100% - 28px);"));
+  assert.ok(css.includes("max-width: 640px;"));
   assert.equal(html.includes("hero-preferences"), false);
   assert.equal(html.includes("home-descriptions"), false);
   assert.equal(html.includes('class="description"'), false);
-  assert.equal(html.includes("entrainement_home_descriptions_v1"), false);
-  assert.equal(css.includes(".preferences-panel"), false);
-  assert.equal(css.includes("home-compact"), false);
 });

@@ -1,47 +1,19 @@
-# Magical Academy V3 — image assets (concept extraction)
+# Thème et ressources graphiques actuels
 
-This package includes text-free illustrative crops from the generated reference sheet.
-They are **concept assets**, not production-ready scalable components.
+Les fichiers de référence sont [`theme.css`](../../styles/themes/magical-academy/theme.css) (palette, fond, cadre standard), [`classic.css`](../../styles/themes/magical-academy/classic.css) (navigation et exercices), [`home-v3.css`](../../styles/themes/magical-academy/home-v3.css) (accueil) et [`conjugaison.css`](../../styles/themes/magical-academy/conjugaison.css) (saisie de Conjugaison).
 
-- background-scene.webp: scene/banner artwork
-- icon-*.webp: activity illustrations (with their decorative tile backgrounds)
-- parchment-ornament.webp: blank decorative plaque
-- *-decoration.webp: additional illustrative props
+Les images utilisées en production résident uniquement dans [`styles/themes/magical-academy/assets/`](../../styles/themes/magical-academy/assets/) :
 
-All interactive controls, labels, charts, forms and dialogs should be implemented with HTML/CSS/SVG and shared semantic theme tokens, not cropped from the reference image.
-The original reference sheet is included for implementation guidance only and contains example text.
+| Images | Utilisation |
+| --- | --- |
+| `background-scene-landscape.webp`, `background-scene-vertical.webp` | Arrière-plan selon l'orientation, sans variation liée à la hauteur du contenu |
+| `home-book.webp` | Livre de l'accueil et icône Orthographe |
+| `home-parchment.webp`, `home-calcul.webp`, `home-rocket.webp`, `home-magical-hat.webp` | Icônes d'activités et, pour certaines, de titres |
+| `home-cup.webp`, `home-archery-target.webp`, `home-hourglass.webp` | Indicateurs « Mes progrès » |
+| `nav-background.webp`, `nav-back.webp`, `nav-reset.webp`, `nav-scores.webp` | Navigation en deux calques alignés ; Scores utilise aussi le symbole sans cadre dans son titre |
+| `question-frame-filled-9slice.webp` | Cadres Question et « Mes progrès » (`border-image-slice: 100 110 100 110 fill`) |
+| `verifier-wand.webp`, `verifier-retry.webp`, `verifier-success.webp` | États des boutons de validation |
 
-## Cadres 9-slice utilisés sur les pages classiques
+Les calques WebP sont des fichiers **de production**, déjà optimisés et versionnés. Aucun dossier d'import, workflow de conversion ou maquette de référence n'est requis pour construire le site. Les volutes du livre, les onglets, les flèches et le cadre global sont dessinés en CSS/SVG ; les contrôles et leurs libellés restent de vrais éléments HTML accessibles.
 
-Les cadres avec parchemin intégré sont les seules variantes 9-slice conservées dans `styles/themes/magical-academy/assets/` :
-
-- `title-frame-filled-9slice.webp` (1200 × 230 px) : ressource décorative conservée, **non utilisée pour les onglets** depuis leur passage au CSS pur (`border-image-slice: 55 110 55 110 fill` pour un éventuel cadre illustré).
-- `question-frame-filled-9slice.webp` (1000 × 495 px), pour les questions : `border-image-slice: 100 110 100 110 fill`.
-
-Ces images contiennent la bordure dorée et le centre parchemin ; seules les zones externes irrégulières restent transparentes. Le rendu `border-image` conserve les proportions des coins. Les anciennes images à centre transparent et la plume illustrée inutilisée ont été retirées.
-
-## Illustrations du bandeau Conjugaison — 3 novembre 2026
-
-La plume et les trois boutons illustrés sont des images WebP RGBA recadrées, sans fond opaque extérieur, dans `styles/themes/magical-academy/assets/` :
-
-- `parchment.webp`, décoration du titre Conjugaison.
-- `nav-back-academy.webp` (320 × 320), flèche retour sur bouton bleu nuit et or.
-- `nav-restart-academy.webp` (320 × 320), relancer la série.
-- `nav-scores-academy.webp` (320 × 320), accès aux scores.
-
-Le bandeau et ces assets sont désormais partagés par **Conjugaison, Français, Calcul et Scores** : `academy-header.js` crée les éléments de navigation accessibles, et `styles/themes/magical-academy/classic.css` applique les illustrations, la typographie, les marges et les états interactifs. `conjugaison-nav-art.css` a été supprimé pour éviter les doublons. Le bouton de redémarrage garde l’identifiant `restart-series`, et la navigation de Scores garde `scores-back` pour le retour au jeu.
-
-## Icônes d'action Conjugaison — Vérifier, Réessaie, Réussite
-
-Trois WebP transparents optimisés (320 × 320, alpha préservé), issus des images générées le 3 novembre 2026, sont stockés dans `styles/themes/magical-academy/assets/` :
-`verifier-wand.webp` (bleu « Vérifier »), `verifier-retry.webp` (rouge « Incorrect · Réessaie ») et `verifier-success.webp` (vert « Bravo ! Suivant » ou « Bien corrigé ! Suivant »). Les icônes sont intégrées par `::before` CSS, sans changer les libellés HTML, le clavier, la logique de correction, le score ni la hauteur fixe du bouton. Les glyphes décoratifs précédents ont été retirés. L'image reste visible lorsque le bouton initial est désactivé.
-
-## Onglets communs (CSS uniquement)
-
-Les onglets de Français, Conjugaison et les filtres de Scores utilisent maintenant les classes `academy-tabs` et `academy-tab`, définies dans `styles/themes/magical-academy/classic.css`. Leur style bleu saphir, aux rectangles symétriques légèrement arrondis et contour doré sobre, avec sélection bleue lumineuse, est entièrement réalisé en CSS. Aucun liseré intérieur ni décoration de coins n'est nécessaire. **Aucun cadre WebP n’est utilisé pour les onglets** : les images 9-slice restent réservées aux cadres de questions et aux autres éléments illustrés qui les nécessitent.
-
-## Navigation en deux calques WebP (7 novembre 2026)
-
-Les sources `nav-background.png`, `nav-back.png`, `nav-reset.png` et `nav-scores.png` restent dans `docs/design/import/`. Le workflow `.github/workflows/convert-import-webp.yml` produit les WebP RGBA optimisés à **320 × 320** dans `styles/themes/magical-academy/assets/` : `nav-background.webp`, `nav-back.webp`, `nav-reset.webp` et `nav-scores.webp`.
-
-Chaque bouton des bandeaux classiques superpose deux images CSS : le pictogramme transparent au premier plan (retour, réinitialisation ou scores), puis le même cadre `nav-background.webp` à l’arrière-plan. Leurs deux zones de rendu sont alignées et utilisent `background-size: contain`. Cela remplace les anciennes illustrations monolithiques `nav-*-academy.webp` pour l’affichage. Le raccourci Scores de l’accueil utilise la même paire ; le bouton Paramètres a été retiré. Le titre de la page Scores utilise les trois barres sans le cadre. Les cartes d’activités de l’accueil présentent leur catégorie et leur titre sans description secondaire.
+Lorsqu'une ressource est remplacée, préserver son chemin ou mettre à jour tous ses consommateurs. Le test `tests/repository-integrity.test.cjs` détecte les références locales manquantes ; un contrôle visuel reste nécessaire en portrait et en paysage. Voir le [guide typographique](TYPOGRAPHY.md).

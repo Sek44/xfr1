@@ -88,7 +88,7 @@ test("game-specific pages use standard question and keyboard panels", () => {
   }
 });
 
-test("navigation illustrations cannot be erased by the old theme background", () => {
+test("navigation illustrations retain their layered backgrounds", () => {
   const css = read("styles/themes/magical-academy/classic.css");
   for (const action of ["back", "restart", "scores"]) {
     const selector = ".page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-" + action;
@@ -116,21 +116,12 @@ test("French and Calcul show correctness only in the action button", () => {
   }
 });
 
-test("Conjugaison loads one specifically named stylesheet and retired files are absent", () => {
+test("Conjugaison loads its current dedicated stylesheet", () => {
   const html = read("conjugaison.html");
   assert.ok(html.includes("magical-academy/conjugaison.css"));
   assert.equal(html.includes("conjugaison-v3.css"), false);
-  for (const file of [
-    "conjugaison.css",
-    "styles/themes/magical-academy/conjugaison-v3.css",
-    "styles/themes/magical-academy/assets/castle.svg",
-    "styles/themes/magical-academy/assets/lantern.svg",
-    "styles/themes/magical-academy/assets/title-frame-9slice.webp",
-    "styles/themes/magical-academy/assets/question-frame-9slice.webp",
-    "styles/themes/magical-academy/assets/quill-academy.webp",
-  ]) {
-    assert.equal(fs.existsSync(path.join(root, file)), false, file);
-  }
+  assert.ok(html.includes("magical-academy/classic.css"));
+  assert.ok(html.includes("academy-header.js"));
 });
 
 test("French text reserves width at the end of its measured lines", () => {

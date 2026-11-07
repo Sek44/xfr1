@@ -1,4 +1,4 @@
-/* Magical Academy V3 homepage composition.
+/* Magical Academy homepage composition.
    A dedicated layout sheet keeps exercise-specific theme components unchanged. */
 html[data-theme="magical-academy"] body:not(.school-page) {
   background-color: #091d43;
@@ -258,7 +258,7 @@ html[data-theme="magical-academy"] .daily-stat strong {
 }
 html[data-theme="magical-academy"] .daily-error { margin: 7px 0 0; color: #8a2d30; font-size: var(--text-xs); text-align: center; }
 html[data-theme="magical-academy"] .daily-error[hidden] { display: none; }
-/* Descriptions were removed permanently; keep the compact card height. */
+/* Compact activity cards. */
 html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
 
 @media (max-width: 600px) {
