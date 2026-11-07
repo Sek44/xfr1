@@ -2,11 +2,11 @@
 
 ## Fichiers et responsabilités
 
-- `francais.html` : structure de la page et liens vers les composants standards ; `francais.css` : styles spécifiques aux choix et aux phrases. Le bandeau provient de `academy-header.js` ; les panneaux et boutons de `styles/themes/magical-academy/classic.css`.
+- `francais.html` : structure de la page et liens vers les composants standards ; `francais.css` : styles spécifiques aux choix et aux phrases. Le bandeau provient de `academy-header.js` ; les panneaux et boutons de `styles/themes/magical-academy/components.css`.
 - `francais.js` : banque interne de phrases, découpage en préfixe / choix / suffixe, clés par mot et migration des anciennes statistiques. Une phrase de référence invisible est composée avec la graphie la plus longue du mot. Le navigateur en détermine les retours à la ligne, puis `francais.js` reconstruit des lignes de largeur fixe (`.sentence-line`) : le texte est aligné à gauche à l’intérieur de chaque ligne centrée. La graphie choisie garde sa largeur naturelle, immédiatement accolée aux autres lettres ; l'espace inutilisé se retrouve à la fin de la ligne, sans modifier les retours à la ligne lors d'un choix. Les lignes sont recalculées à chaque question, au changement de largeur et après le chargement des fontes. Seule la phrase visible est exposée aux lecteurs d'écran.
 - `exercise-weighting.js` : pondération, tirage et suivi des apparitions/erreurs du français, avec ses clés historiques inchangées.
 - `game-common.js` (`ExerciseGame`) : machine de session (index, premier échec, réussite, score), temporisateur de 3 secondes, instantané et reprise.
-- `GameUI.tabs()` génère les quatre onglets accessibles (dont « Tout ») (style CSS partagé avec Conjugaison et Scores), et les choix portent la classe partagée `.academy-key` ; `ExerciseGame.progress()` affiche `Question x/10` et `Score x` comme Conjugaison. `classic.css` conserve seul le design commun.
+- `GameUI.tabs()` génère les quatre onglets accessibles (dont « Tout ») (style CSS partagé avec Conjugaison et Scores), et les choix portent la classe partagée `.academy-key` ; `ExerciseGame.progress()` affiche `Question x/10` et `Score x` comme Conjugaison. `components.css` conserve seul le design commun.
 - `game-ui.js`, `scores.js`, `game-state.js`, `score-view.js` : interface, historique, session et suspension/réouverture des scores.
 
 Tous les chemins source ci-dessus sont relatifs à la **racine** du dépôt, pas à ce dossier documentaire.

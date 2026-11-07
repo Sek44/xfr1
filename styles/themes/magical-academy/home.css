@@ -380,7 +380,7 @@ html[data-theme="magical-academy"] .activity-magic .activity-icon {
 }
 
 /* The home navigation is the shared header positioned over the hero.
-   Its grid and button sizes come entirely from classic.css. */
+   Its grid and button sizes come entirely from components.css. */
 html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner.academy-home-nav {
   /* Match the specificity of the shared relative-position nav rule. */
   position: absolute;

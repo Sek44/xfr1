@@ -11,6 +11,8 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 - `scores.html` : deux rangées distinctes d’onglets (exercices puis missions), sans titres visibles ; « Tous » regroupe uniquement les exercices. Deux cadres indépendants présentent la courbe de scores puis le tableau des résultats de la sélection (complet, sans limite de lignes). Les deux missions ont chacune leur propre graphique et leur propre échelle.
 - Chaque page de jeu charge ses modules communs puis son contrôleur propre. Les fichiers des jeux restent dans la racine du dépôt ; leurs documents sont dans `docs/games/<id>/`.
 
+La répartition détaillée des feuilles CSS et leur ordre de priorité sont décrits dans le [guide du thème](design/README.md). Les noms `*-base.css` désignent des styles de base ; les ressources `styles/themes/magical-academy/` définissent l’apparence active.
+
 ## Modules réutilisables
 
 | Fichier | API / responsabilité |

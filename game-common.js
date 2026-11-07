@@ -130,7 +130,7 @@ window.ExerciseGame = (() => {
       container.append(left, right);
     }
     // One final-result card across Français, Calcul and Conjugaison.
-    // The ornate parchment and button appearance live in classic.css.
+    // The ornate parchment and button appearance live in components.css.
     function finish(container, restart) {
       container.replaceChildren();
 

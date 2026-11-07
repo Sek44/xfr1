@@ -5,7 +5,7 @@ body { background: var(--school-bg); color: var(--school-ink); }
 .page-header .page-title { color: #163b69; font-weight: var(--weight-heavy); letter-spacing: -.035em; }
 .page-header .nav-icon { background: #fff; border: 1px solid #cbd9ed; color: #285a9c; border-radius: 12px; box-shadow: 0 2px 8px #1e3d6810; }
 .page-header .nav-icon:hover, .page-header .nav-icon:focus-visible { background: #e8f1ff; border-color: #9bbbe6; }
-/* Score filters now use the shared .academy-tabs/.academy-tab in classic.css. */
+/* Score filters now use the shared .academy-tabs/.academy-tab in components.css. */
 .history-panel { background: #fff; border: 1px solid var(--school-border); border-radius: 19px; box-shadow: 0 4px 14px #1f42600b; }
 .history-panel h2, .history-panel h3 { color: #163b69; letter-spacing: -.02em; }
 .history-table th { background: #f1f6fd; color: #395b80; }

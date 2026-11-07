@@ -36,3 +36,13 @@ test("all local CSS assets exist", () => {
     for (const [, , reference] of css.matchAll(/url\(\s*(["\x27]?)(.*?)\1\s*\)/g)) check(file, reference);
   }
 });
+
+test("legacy stylesheet paths have been removed", () => {
+  for (const filename of [
+    "home.css", "shared.css", "school-common.css",
+    "exercise-theme.css", "exercise-restart.css",
+    "scores-theme.css", "score-view.css",
+    "styles/themes/magical-academy/home-v3.css",
+    "styles/themes/magical-academy/classic.css",
+  ]) assert.equal(fs.existsSync(path.join(root, filename)), false, filename);
+});
