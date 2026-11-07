@@ -58,10 +58,11 @@ html[data-theme="magical-academy"] .hero-plaque h1 {
   white-space: nowrap;
 }
 
-/* The existing transparent WebP sits just over the upper frame edge. */
+/* The existing transparent WebP overlaps the upper frame edge.
+   Lower the book so its bottom visually rests inside the gold title plaque. */
 html[data-theme="magical-academy"] .hero-book {
   position: absolute;
-  top: -92px;
+  top: -72px;
   left: 50%;
   z-index: 3;
   width: clamp(122px, 17vw, 145px);
@@ -78,7 +79,8 @@ html[data-theme="magical-academy"] .hero-book {
    Nothing encloses the book or obscures the title. */
 html[data-theme="magical-academy"] .hero-book-flourish {
   position: absolute;
-  top: -12px;
+  /* Scrolls float above the top border instead of crossing the plaque. */
+  top: -29px;
   z-index: 2;
   width: clamp(46px, 8vw, 67px);
   height: 23px;
@@ -272,12 +274,12 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
     font-size: var(--type-home-title);
   }
   html[data-theme="magical-academy"] .hero-book {
-    top: -80px;
+    top: -63px;
     width: 115px;
     height: 93px;
   }
   html[data-theme="magical-academy"] .hero-book-flourish {
-    top: -10px;
+    top: -25px;
     width: 44px;
     height: 19px;
   }
@@ -308,7 +310,7 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
   }
 }
 @media (max-width: 350px) {
-  html[data-theme="magical-academy"] .hero-book { width: 106px; height: 88px; top: -76px; }
+  html[data-theme="magical-academy"] .hero-book { width: 106px; height: 88px; top: -60px; }
   html[data-theme="magical-academy"] .hero-plaque { width: 94%; padding-inline: 18px; }
   html[data-theme="magical-academy"] .hero-book-flourish { width: 38px; }
   html[data-theme="magical-academy"] .daily-panel {
