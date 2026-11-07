@@ -1,11 +1,10 @@
 /* Conjugaison — uniquement la disposition du verbe et du clavier AZERTY.
    Les onglets ornés, pastilles et touches parchemin sont dans classic.css. */
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
-  align-content: center;
   justify-content: center;
   gap: clamp(5px, 1.5vw, 10px);
   min-height: 46px;
