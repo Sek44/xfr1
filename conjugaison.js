@@ -205,25 +205,11 @@
     panel.append(keyboardPanel);
   }
   document.addEventListener("keydown", (event) => {
-    if (event.ctrlKey || event.metaKey || event.altKey || ScoreViewOpen()) return;
-    const target = event.target;
-    if (target?.closest?.("input, textarea, select, button, a")) return;
-    if (event.key === "Enter") {
-      event.preventDefault();
-      if (game.correct) game.next();
-      else verify();
-    } else if (event.key === "Backspace") {
-      event.preventDefault();
-      edit("erase");
-    } else if (event.key === " ") {
-      event.preventDefault();
-      edit("space");
-    } else if (event.key.length === 1) {
-      if (GameUI.validWordAnswer(event.key, 1)) {
-        event.preventDefault();
-        edit(event.key);
-      }
-    }
+    if (ScoreViewOpen() || !document.querySelector("#panel .azerty-keyboard")) return;
+    GameUI.handlePhysicalKeyboard(event, game.correct ? null : edit, {
+      layout: "word",
+      onEnter: () => game.correct ? game.next() : verify(),
+    });
   });
   let scoreView = null;
   function ScoreViewOpen() { return scoreView?.open; }

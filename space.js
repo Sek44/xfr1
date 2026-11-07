@@ -254,17 +254,8 @@
       pause();
       return;
     }
-    if (!running || paused || game.over) return;
-    if (/^\d$/.test(e.key)) {
-      e.preventDefault();
-      edit(e.key);
-    } else if (e.key === "Backspace") {
-      e.preventDefault();
-      edit("erase");
-    } else if (e.key === "Delete") {
-      e.preventDefault();
-      edit("clear");
-    }
+    if (!running || paused || game.over || viewingScores) return;
+    GameUI.handlePhysicalKeyboard(e, edit);
   });
   // SVG and CSS render without a canvas context or resize-dependent backing buffer.
 

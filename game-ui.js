@@ -235,5 +235,41 @@ window.GameUI = (() => {
     return container;
   }
 
-  return { element, tabs, editNumber, keypad, editWord, validWordAnswer, azertyKeyboard };
+  // Physical typing follows the same input handlers as the on-screen keys.
+  // Each game controls when its keyboard is active and whether Enter advances.
+  function handlePhysicalKeyboard(event, onInput, { layout = "number", onEnter } = {}) {
+    if (event.defaultPrevented || event.isComposing || event.metaKey ||
+        ((event.ctrlKey || event.altKey) && !event.getModifierState?.("AltGraph")) ||
+        document.querySelector(".scores-view, .app-confirm[open]")) return false;
+    const target = event.target;
+    if (target?.closest?.('input, textarea, select, a, [contenteditable="true"]')) return false;
+
+    if (event.key === "Enter") {
+      // Enter/Space must still activate focused buttons through normal keyboard navigation.
+      if (!onEnter || event.repeat || target?.closest?.("button")) return false;
+      event.preventDefault();
+      onEnter();
+      return true;
+    }
+
+    if (!onInput) return false;
+    if (event.key === " " && target?.closest?.("button")?.matches?.(":focus-visible"))
+      return false;
+    let command = null;
+    if (event.key === "Backspace") command = "erase";
+    else if (event.key === "Delete") command = "clear";
+    else if (layout === "word") {
+      if (event.key === " ") command = "space";
+      else if (event.key.length === 1 && validWordAnswer(event.key, 1))
+        command = event.key;
+    } else if (/^\d$/.test(event.key)) {
+      command = event.key;
+    }
+    if (command === null) return false;
+    event.preventDefault();
+    onInput(command);
+    return true;
+  }
+
+  return { element, tabs, editNumber, keypad, editWord, validWordAnswer, azertyKeyboard, handlePhysicalKeyboard };
 })();
