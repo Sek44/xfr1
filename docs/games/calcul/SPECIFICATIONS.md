@@ -14,6 +14,8 @@ Le joueur résout des **additions** en saisissant le résultat avec le pavé num
 
 Chaque session comporte au maximum **10 calculs**, sans répéter une même paire d'opérandes. Le résultat ne doit jamais dépasser la borne supérieure de la catégorie choisie. Lorsque la combinaison catégorie/difficulté est impossible, un message demande de choisir une autre combinaison ; aucune question n'est proposée.
 
+Choisir à nouveau la catégorie ou la difficulté déjà active ne fait rien. Changer l’un de ces paramètres ouvre une confirmation si le joueur a commencé à saisir, valider ou avancer dans la série. Pendant la confirmation, les listes conservent visuellement leurs valeurs d’origine. Annuler garde la réponse, le score, la question et le délai automatique ; confirmer recommence avec le nouveau paramètre, sans enregistrer ni créditer la série abandonnée. Si le joueur n’a encore rien commencé, ou si la série est terminée, le changement est immédiat.
+
 ## Score et progression
 
 Le joueur saisit, efface et valide la réponse. Une erreur peut être corrigée mais **ne donne plus de point pour ce calcul**. Seule la réussite au premier essai ajoute un point. Après réussite, l'exercice suivant apparaît automatiquement au bout d'environ **3 secondes**, ou dès l'action d'avancement.
