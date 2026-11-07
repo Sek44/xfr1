@@ -20,9 +20,9 @@ html[data-theme="magical-academy"] .academy-hero {
   margin-bottom: 15px;
   padding: 16px 10px 18px;
   border-radius: 26px 26px 12px 12px;
-  background:
-    radial-gradient(ellipse at 50% 45%, #2674b857 0, transparent 64%),
-    linear-gradient(180deg, #0825514d 0%, #10244b28 55%, #0b1b45b3 100%);
+  /* The illustrated page background should remain visible behind the book
+     and title; only the title plaque has its own background. */
+  background: transparent;
 }
 html[data-theme="magical-academy"] .hero-tools {
   position: absolute;
