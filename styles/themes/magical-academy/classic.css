@@ -82,7 +82,7 @@ html[data-theme="magical-academy"] body.academy-page .academy-title-art {
 html[data-theme="magical-academy"] .academy-title-art--conjugaison { background-image: url("./assets/parchment.webp"); }
 html[data-theme="magical-academy"] .academy-title-art--francais { background-image: url("./assets/home-book.webp"); }
 html[data-theme="magical-academy"] .academy-title-art--calcul { background-image: url("./assets/home-calcul.webp"); }
-html[data-theme="magical-academy"] .academy-title-art--scores { background-image: url("./assets/home-cup.webp"); }
+html[data-theme="magical-academy"] .academy-title-art--scores { background-image: url("./assets/nav-scores.webp"); }
 html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button {
   display: grid;
   place-items: center;
@@ -103,17 +103,28 @@ html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.a
   cursor: pointer;
   transition: filter .16s ease, transform .16s ease;
 }
-/* This selector must outrank theme.css's older
-   .school-page .page-header.school-banner .nav-icon background shorthand;
-   otherwise its parchment gradient erases the illustrated background-image. */
+/* Each button combines the transparent symbol with the same reusable frame.
+   This specificity outranks the legacy theme background shorthand. */
 html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-back {
-  background: transparent url("./assets/nav-back-academy.webp") center / contain no-repeat;
+  background: transparent;
+  background-image: url("./assets/nav-back.webp"), url("./assets/nav-background.webp");
+  background-position: center, center;
+  background-size: contain, contain;
+  background-repeat: no-repeat, no-repeat;
 }
 html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-restart {
-  background: transparent url("./assets/nav-restart-academy.webp") center / contain no-repeat;
+  background: transparent;
+  background-image: url("./assets/nav-reset.webp"), url("./assets/nav-background.webp");
+  background-position: center, center;
+  background-size: contain, contain;
+  background-repeat: no-repeat, no-repeat;
 }
 html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-scores {
-  background: transparent url("./assets/nav-scores-academy.webp") center / contain no-repeat;
+  background: transparent;
+  background-image: url("./assets/nav-scores.webp"), url("./assets/nav-background.webp");
+  background-position: center, center;
+  background-size: contain, contain;
+  background-repeat: no-repeat, no-repeat;
 }
 html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button:hover,
 html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button:focus-visible {
