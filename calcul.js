@@ -161,7 +161,11 @@
         select.append(opt);
       }
       select.value = current;
-      select.onchange = () => onChange(select.value);
+      select.onchange = () => {
+        const requested = select.value;
+        select.value = current;
+        if (requested !== current) onChange(requested);
+      };
       wrap.append(label, select);
       cats.append(wrap);
     }
@@ -170,8 +174,13 @@
       Object.keys(ranges).map((x) => [x, x]),
       range,
       (v) => {
-        range = v;
-        newSession();
+        void game.changeSettings(
+          game.index > 0 || game.failed || game.correct || answer.length > 0,
+          () => {
+            range = v;
+            newSession();
+          },
+        );
       },
     );
     selector(
@@ -179,8 +188,13 @@
       Object.entries(levels).map(([k, v]) => [k, v.label]),
       category,
       (v) => {
-        category = v;
-        newSession();
+        void game.changeSettings(
+          game.index > 0 || game.failed || game.correct || answer.length > 0,
+          () => {
+            category = v;
+            newSession();
+          },
+        );
       },
     );
     const sc = el("score");

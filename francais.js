@@ -425,13 +425,23 @@
     }
     return weighting.choose(sentencesByWord, SESSION_SIZE);
   }
-  function switchTab(t) {
-    tab = t;
+  function restart() {
     selected = null;
     showRetry = false;
+    lastQuestionIndex = 0;
     countedThrough = -1;
-    questions = shuffleSession(t);
+    questions = shuffleSession(tab);
     game.reset(questions.length);
+  }
+  function switchTab(t) {
+    if (!Object.hasOwn(sets, t) || t === tab) return;
+    void game.changeSettings(
+      game.index > 0 || game.failed || game.correct || selected !== null,
+      () => {
+        tab = t;
+        restart();
+      },
+    );
   }
   function select(v) {
     if (!game.correct) {
@@ -472,7 +482,7 @@
       total = questions.length;
     game.progress(scoreCard, "Phrase");
     if (game.index === total) {
-      game.finish(panel, () => switchTab(tab));
+      game.finish(panel, restart);
       return;
     }
     const [before, after] = questions[game.index];
@@ -596,7 +606,7 @@
     }
     reference.replaceWith(sentence);
   }
-  document.getElementById("restart-series").onclick = game.restartButton(() => switchTab(tab)).onclick;
+  document.getElementById("restart-series").onclick = game.restartButton(restart).onclick;
   if (!restore()) game.reset(questions.length);
 
   ScoreView.bind({

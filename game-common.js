@@ -219,6 +219,34 @@ window.ExerciseGame = (() => {
       };
       return button;
     }
+    // Changing settings discards work only after an explicit confirmation.
+    // Keep any automatic advancement frozen while the dialog is open.
+    let settingsChangePending = false;
+    async function changeSettings(hasProgress, onAccept) {
+      if (settingsChangePending) return false;
+      if (!hasProgress || index >= total) {
+        onAccept();
+        return true;
+      }
+      settingsChangePending = true;
+      suspend();
+      try {
+        const accepted = await AppConfirm.ask({
+          title: "Changer les paramètres ?",
+          message: "La progression et le score de cette série seront perdus. Aucun résultat ne sera enregistré.",
+          confirmText: "Changer",
+          cancelText: "Annuler",
+        });
+        if (accepted) onAccept();
+        else resume();
+        return accepted;
+      } catch (error) {
+        resume();
+        throw error;
+      } finally {
+        settingsChangePending = false;
+      }
+    }
     function actionButton() {
       // Keep the same DOM button when validation changes its appearance.
       // Replacing the pressed element can swallow a rapid second tap on
@@ -249,6 +277,7 @@ window.ExerciseGame = (() => {
       feedback,
       actionButton,
       restartButton,
+      changeSettings,
       get index() {
         return index;
       },

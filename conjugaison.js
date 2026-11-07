@@ -84,9 +84,14 @@
   }
   function switchMode(nextMode) {
     if (!Object.hasOwn(MODES, nextMode) || nextMode === mode) return;
-    mode = nextMode;
-    GameUI.tabs(document.getElementById("conjugaison-tabs"), TABS, mode, switchMode);
-    restart();
+    void game.changeSettings(
+      game.index > 0 || game.failed || game.correct || answer.length > 0,
+      () => {
+        mode = nextMode;
+        GameUI.tabs(document.getElementById("conjugaison-tabs"), TABS, mode, switchMode);
+        restart();
+      },
+    );
   }
   function edit(command) {
     if (game.correct) return;
