@@ -69,8 +69,8 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
   for (const q of sets.s.items) {
     assert.equal(categoryFor(q), "s");
     assert.equal(isValidQuestion("s", q), true);
-    const before = q[0].match(/[\\p{L}]$/u)?.[0] || "";
-    const after = q[1].match(/^[\\p{L}]/u)?.[0] || "";
+    const before = q[0].match(/[\p{L}]$/u)?.[0] || "";
+    const after = q[1].match(/^[\p{L}]/u)?.[0] || "";
     if (q[0] === "") atSentenceStart++;
     if (q[1] === ".") atSentenceEnd++;
     if (!before) atWordStart++;
