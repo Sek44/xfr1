@@ -190,8 +190,7 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
   justify-content: center;
   gap: 1px;
   padding: 5px 8px;
-  font-size: clamp(var(--text-sm), 4.1vw, var(--text-lg));
-  font-weight: var(--weight-heavy);
+  /* Inherit the exact font family, size and weight from the ?123 key. */
   line-height: 1.04;
 }
 html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-key--clear span {
@@ -216,7 +215,6 @@ html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keybo
     grid-template-columns: minmax(0, 1.54fr) minmax(0, 2.56fr) minmax(0, 1.16fr);
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--clear {
-    font-size: var(--text-sm);
     padding-inline: 6px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .azerty-keyboard .keyboard-row--controls .keyboard-key--space {
