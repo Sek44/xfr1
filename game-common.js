@@ -232,7 +232,7 @@ window.ExerciseGame = (() => {
       suspend();
       try {
         const accepted = await AppConfirm.ask({
-          title: "Changer les paramètres ?",
+          title: "Changer d’exercice ?",
           message: "La progression et le score de cette série seront perdus. Aucun résultat ne sera enregistré.",
           confirmText: "Changer",
           cancelText: "Annuler",
