@@ -9,28 +9,13 @@
     <link rel="stylesheet" href="./home.css?v=typography-1" />
     <link rel="stylesheet" href="./school-common.css?v=typography-1" />
     <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=typography-1" />
-    <link rel="stylesheet" href="./styles/themes/magical-academy/home-v3.css?v=nav-layers-20261107" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/home-v3.css?v=home-simplified-20261107" />
   </head>
   <body>
     <main>
       <header class="academy-hero">
         <nav class="hero-tools" aria-label="Raccourcis de l’accueil">
           <a class="hero-tool hero-tool--scores" href="./scores.html" aria-label="Mes scores" title="Mes scores"></a>
-          <details class="hero-preferences">
-            <summary class="hero-tool" aria-label="Paramètres d’affichage" title="Paramètres d’affichage">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M10 2h4l.6 2.5 2.1.9 2.2-1.4 2.8 2.8-1.4 2.2.9 2.1L23 12v4l-2.5.6-.9 2.1 1.4 2.2-2.8 2.8-2.2-1.4-2.1.9L14 25h-4l-.6-2.5-2.1-.9-2.2 1.4-2.8-2.8 1.4-2.2-.9-2.1L1 16v-4l2.5-.6.9-2.1L3 7.1l2.8-2.8L8 5.7l2.1-.9z" transform="translate(0 -2)" />
-                <circle cx="12" cy="12" r="3.5" />
-              </svg>
-            </summary>
-            <div class="preferences-panel">
-              <h2>Affichage</h2>
-              <label for="home-descriptions">
-                <input id="home-descriptions" type="checkbox" checked />
-                Afficher les descriptions des activités
-              </label>
-            </div>
-          </details>
         </nav>
         <span class="hero-book" aria-hidden="true"></span>
         <div class="hero-plaque">
@@ -84,27 +69,27 @@
       <nav class="activity-grid" aria-label="Activités éducatives">
         <a class="activity-card activity-french" href="./francais.html">
           <span class="activity-icon" aria-hidden="true">Aa</span>
-          <span class="activity-body"><span class="subject">FRANÇAIS</span><strong>Orthographe</strong><span class="description">Complète les mots avec g, gu, ge, c ou ç.</span></span>
+          <span class="activity-body"><span class="subject">FRANÇAIS</span><strong>Orthographe</strong></span>
           <span class="activity-arrow" aria-hidden="true">→</span>
         </a>
         <a class="activity-card activity-conjugation" href="./conjugaison.html">
           <span class="activity-icon" aria-hidden="true">Je</span>
-          <span class="activity-body"><span class="subject">FRANÇAIS</span><strong>Conjugaison</strong><span class="description">Conjugue les verbes du 1er groupe au présent.</span></span>
+          <span class="activity-body"><span class="subject">FRANÇAIS</span><strong>Conjugaison</strong></span>
           <span class="activity-arrow" aria-hidden="true">→</span>
         </a>
         <a class="activity-card activity-math" href="./calcul.html">
           <span class="activity-icon" aria-hidden="true">+</span>
-          <span class="activity-body"><span class="subject">MATHÉMATIQUES</span><strong>Calcul</strong><span class="description">Entraîne-toi aux additions, à ton niveau.</span></span>
+          <span class="activity-body"><span class="subject">MATHÉMATIQUES</span><strong>Calcul</strong></span>
           <span class="activity-arrow" aria-hidden="true">→</span>
         </a>
         <a class="activity-card activity-space" href="./space.html">
           <span class="activity-icon" aria-hidden="true">✦</span>
-          <span class="activity-body"><span class="subject">MISSION</span><strong>Mission calcul</strong><span class="description">Résous des additions pour repousser les aliens.</span></span>
+          <span class="activity-body"><span class="subject">MISSION</span><strong>Mission calcul</strong></span>
           <span class="activity-arrow" aria-hidden="true">→</span>
         </a>
         <a class="activity-card activity-magic" href="./magic.html">
           <span class="activity-icon" aria-hidden="true">✧</span>
-          <span class="activity-body"><span class="subject">MISSION</span><strong>Mission magique</strong><span class="description">Utilise les calculs pour lancer des sorts dans la forêt.</span></span>
+          <span class="activity-body"><span class="subject">MISSION</span><strong>Mission magique</strong></span>
           <span class="activity-arrow" aria-hidden="true">→</span>
         </a>
       </nav>
@@ -117,25 +102,7 @@
         document.getElementById("daily-minutes"),
         document.getElementById("daily-error")
       );
-      (() => {
-        const preference = document.getElementById("home-descriptions");
-        const key = "entrainement_home_descriptions_v1";
-        try {
-          preference.checked = localStorage.getItem(key) !== "0";
-        } catch {
-          // The preference is optional; the exercises continue without storage.
-        }
-        const apply = () => document.documentElement.classList.toggle("home-compact", !preference.checked);
-        preference.addEventListener("change", () => {
-          apply();
-          try {
-            localStorage.setItem(key, preference.checked ? "1" : "0");
-          } catch {
-            // An unavailable localStorage must not prevent changing the display.
-          }
-        });
-        apply();
-      })();
+
     </script>
   </body>
 </html>
