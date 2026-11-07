@@ -150,10 +150,12 @@ html[data-theme="magical-academy"] body.conjugaison-page .feedback {
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-caption {
     font-size: clamp(var(--text-sm), 3.5vw, var(--text-md));
     font-weight: var(--weight-bold);
+    top: 6px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label strong {
     font-size: clamp(1.25rem, 4vw, var(--text-lg));
     font-weight: var(--weight-heavy);
+    top: 6px;
   }
   html[data-theme="magical-academy"] body.conjugaison-page .question-frame .conjugaison-sentence {
     min-height: 0;
