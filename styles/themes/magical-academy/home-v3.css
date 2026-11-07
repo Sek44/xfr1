@@ -3,6 +3,12 @@
 html[data-theme="magical-academy"] body:not(.school-page) {
   background-color: #091d43;
 }
+/* Both visible gaps use one value. The title plaque sits 8px above the
+   bottom of the hero's layout box, so subtract this inset from that margin. */
+html[data-theme="magical-academy"] body.academy-home-page {
+  --home-block-gap: 24px;
+  --home-plaque-bottom: 8px;
+}
 /* The book crowns the plaque rather than sitting inside a separate frame.
    The central composition leaves both upper navigation corners clear. */
 html[data-theme="magical-academy"] .academy-hero {
@@ -11,14 +17,14 @@ html[data-theme="magical-academy"] .academy-hero {
   z-index: 2;
   /* Reclaim the space below the raised plaque without moving the plaque itself. */
   height: calc(clamp(184px, 24vw, 210px) - 32px);
-  margin-bottom: 14px;
+  margin-bottom: calc(var(--home-block-gap) - var(--home-plaque-bottom));
 }
 
 /* Symmetric engraved midnight-blue plaque, with space for decorative scrolls. */
 html[data-theme="magical-academy"] .hero-plaque {
   position: absolute;
   /* Offset the reduced hero height to preserve the title's screen position. */
-  bottom: 8px;
+  bottom: var(--home-plaque-bottom);
   left: 50%;
   z-index: 1;
   display: grid;
@@ -156,7 +162,7 @@ html[data-theme="magical-academy"] .daily-panel {
   --daily-title-shift-x: -6px;
   --daily-title-shift-y: 5px;
   width: min(calc(100% - 28px), 680px);
-  margin: 0 auto 27px;
+  margin: 0 auto var(--home-block-gap);
   padding: 16px 24px;
   border: 0;
   font-family: var(--font-display);
@@ -258,10 +264,10 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
 @media (max-width: 600px) {
   html[data-theme="magical-academy"] .academy-hero {
     height: calc(clamp(170px, 43vw, 194px) - 24px);
-    margin-bottom: 11px;
+    margin-bottom: calc(var(--home-block-gap) - var(--home-plaque-bottom));
   }
   html[data-theme="magical-academy"] .hero-plaque {
-    bottom: 8px;
+    bottom: var(--home-plaque-bottom);
     width: min(92%, 490px);
     min-height: 72px;
     padding: 14px 24px;
@@ -300,7 +306,7 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
   html[data-theme="magical-academy"] .daily-panel {
     --daily-icon-size: 40px;
     --daily-divider-gap: 11px;
-    margin: 0 auto 24px;
+    margin: 0 auto var(--home-block-gap);
     padding: 14px 18px;
   }
   html[data-theme="magical-academy"] .daily-heading { gap: 8px; }
