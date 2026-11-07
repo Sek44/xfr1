@@ -169,9 +169,6 @@ html[data-theme="magical-academy"] .daily-error[hidden] { display: none; }
 html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
 
 @media (max-width: 600px) {
-  html[data-theme="magical-academy"] body:not(.school-page) main {
-    padding: 7px 7px 24px;
-  }
   html[data-theme="magical-academy"] .academy-hero {
     height: clamp(170px, 43vw, 205px);
     padding: 11px 3px 16px;
