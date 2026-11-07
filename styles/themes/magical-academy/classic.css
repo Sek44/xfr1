@@ -7,14 +7,6 @@ html[data-theme="magical-academy"] body.academy-page,
 html[data-theme="magical-academy"] body.academy-page *,
 html[data-theme="magical-academy"] body.academy-page *::before,
 html[data-theme="magical-academy"] body.academy-page *::after { box-sizing: border-box; }
-html[data-theme="magical-academy"] body.academy-page main {
-  position: relative;
-  isolation: isolate;
-  min-height: calc(100vh - var(--academy-frame-gutter) - var(--academy-frame-gutter));
-  min-height: calc(100dvh - var(--academy-frame-gutter) - var(--academy-frame-gutter));
-  padding: 6px 7px 17px;
-  background: rgba(6, 23, 58, .58);
-}
 /* Navigation — same four-column geometry and illustrated assets everywhere. */
 html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner {
   position: relative;
@@ -721,9 +713,6 @@ html[data-theme="magical-academy"] body.academy-page #history .history-table tbo
 }
 
 @media (max-width: 520px) {
-  html[data-theme="magical-academy"] body.academy-page main {
-    padding: 4px 4px 12px;
-  }
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner {
     grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
     min-height: 52px;
