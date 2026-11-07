@@ -1,5 +1,5 @@
 /* Conjugaison — uniquement la disposition du verbe et du clavier AZERTY.
-   Les onglets ornés, pastilles et touches parchemin sont dans classic.css. */
+   Les onglets ornés, pastilles et touches parchemin sont dans components.css. */
 html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-label {
   display: flex;
   flex-direction: row;

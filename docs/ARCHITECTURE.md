@@ -62,7 +62,7 @@ Les sessions temporaires sont distinctes des scores. Une navigation vers les sco
 
 ## Qualité, livraison et limites
 
-Les tests Node intégrés au dépôt (`node --test tests/*.test.cjs`) couvrent les moteurs, contrôleurs, API partagées et chemins des ressources. GitHub Actions les lance sur `main` et les pull requests. Prettier 3.6.2 sert au formatage HTML/JS/CSS. Le site n'a pas de build obligatoire.
+Les tests Node intégrés au dépôt (`node --test tests/*.test.cjs`) couvrent les moteurs, contrôleurs, API partagées, chemins des ressources et liens de la documentation. GitHub Actions les lance sur `main` et les pull requests. Prettier 3.6.2 sert au formatage HTML/JS/CSS. Le site n'a pas de build obligatoire.
 
 La validation visuelle/tactile sur mobile et tablette, le comportement selon l'orientation et l'intégration réelle du navigateur nécessitent des vérifications supplémentaires : voir [backlog transversal](BACKLOG.md). L'architecture propre à chaque jeu est documentée dans `docs/games/<id>/ARCHITECTURE.md`.
 

@@ -1,4 +1,3 @@
-# No-op update to verify the GitHub Pages deployment trigger.
 name: Deploy static site to GitHub Pages
 
 on:

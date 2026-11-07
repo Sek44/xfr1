@@ -46,3 +46,29 @@ test("legacy stylesheet paths have been removed", () => {
     "styles/themes/magical-academy/classic.css",
   ]) assert.equal(fs.existsSync(path.join(root, filename)), false, filename);
 });
+
+test("local Markdown documentation links resolve", () => {
+  const documents = [
+    path.join(root, "AGENTS.md"),
+    path.join(root, "README.md"),
+    ...walk(path.join(root, "docs")).filter((file) => file.endsWith(".md")),
+  ];
+  for (const file of documents) {
+    const markdown = fs.readFileSync(file, "utf8");
+    for (const [, reference] of markdown.matchAll(/!?\[[^\]\n]*\]\(\s*(<[^>]+>|[^\s)]+)(?:\s+["'][^"']*["'])?\s*\)/g)) {
+      check(file, reference.startsWith("<") ? reference.slice(1, -1) : reference);
+    }
+  }
+});
+
+test("each page imports each JavaScript and CSS file only once", () => {
+  for (const page of fs.readdirSync(root).filter((name) => name.endsWith(".html"))) {
+    const html = fs.readFileSync(path.join(root, page), "utf8");
+    const imports = [...html.matchAll(/<(?:script|link)\b[^>]*>/g)]
+      .map(([tag]) => tag.match(/\b(?:src|href)=(["'])([^"']+)\1/))
+      .filter((match) => match && /\.(?:js|css)(?:[?#]|$)/.test(match[2]))
+      .map((match) => match[2].split(/[?#]/, 1)[0]);
+    assert.equal(new Set(imports).size, imports.length,
+      page + ": duplicate script or stylesheet import");
+  }
+});
