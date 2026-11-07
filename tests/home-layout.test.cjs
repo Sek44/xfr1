@@ -55,7 +55,7 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=nav-layers-20261107"));
+  assert.ok(html.includes("home-v3.css?v=home-simplified-20261107"));
 });
 
 test("daily progress has symmetric horizontal and vertical spacing", () => {
@@ -127,8 +127,20 @@ test("home Scores shortcut layers the same WebP symbol and frame as classic navi
   assert.ok(html.includes('aria-label="Mes scores"'));
   assert.ok(css.includes('background-image: url("./assets/nav-scores.webp"), url("./assets/nav-background.webp")'));
   assert.ok(css.includes('background: transparent url("./assets/nav-background.webp")'));
-  assert.ok(css.includes(".hero-tool svg"));
   for (const name of ["nav-background.webp", "nav-scores.webp"]) {
     assert.ok(fs.existsSync(path.join(root, "styles/themes/magical-academy/assets", name)));
   }
+});
+
+
+test("home shows only the Scores shortcut and compact activity cards without descriptions", () => {
+  assert.equal((html.match(/class="hero-tool hero-tool--scores"/g) || []).length, 1);
+  assert.equal((html.match(/class="activity-card activity-/g) || []).length, 5);
+  assert.ok(css.includes('html[data-theme="magical-academy"] .activity-card { min-height: 73px; }'));
+  assert.equal(html.includes("hero-preferences"), false);
+  assert.equal(html.includes("home-descriptions"), false);
+  assert.equal(html.includes('class="description"'), false);
+  assert.equal(html.includes("entrainement_home_descriptions_v1"), false);
+  assert.equal(css.includes(".preferences-panel"), false);
+  assert.equal(css.includes("home-compact"), false);
 });
