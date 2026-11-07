@@ -93,8 +93,16 @@ test("navigation illustrations cannot be erased by the old theme background", ()
   for (const action of ["back", "restart", "scores"]) {
     const selector = ".page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-" + action;
     assert.ok(css.includes(selector), selector);
-    assert.ok(css.includes('url("./assets/nav-' + action + '-academy.webp")'));
+    const symbol = action === "restart" ? "reset" : action;
+    assert.ok(css.includes('background-image: url("./assets/nav-' + symbol + '.webp"), url("./assets/nav-background.webp")'));
+    assert.ok(fs.existsSync(path.join(root, "styles/themes/magical-academy/assets", "nav-" + symbol + ".webp")));
   }
+});
+
+test("shared frame and score title symbol are available in the theme assets", () => {
+  const css = read("styles/themes/magical-academy/classic.css");
+  assert.ok(fs.existsSync(path.join(root, "styles/themes/magical-academy/assets/nav-background.webp")));
+  assert.ok(css.includes('.academy-title-art--scores { background-image: url("./assets/nav-scores.webp")'));
 });
 
 test("French and Calcul show correctness only in the action button", () => {
