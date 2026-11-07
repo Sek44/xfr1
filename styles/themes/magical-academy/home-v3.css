@@ -435,15 +435,19 @@ html[data-theme="magical-academy"] .activity-card:hover .activity-arrow svg {
   }
 }
 
-/* Landscape-only inner content widths; keep the standard outer frame
-   unchanged and allow both sections to shrink on narrow viewports. */
+/* Keep all homepage activity buttons inset symmetrically from the
+   shared outer frame on portrait and landscape layouts. */
+html[data-theme="magical-academy"] .activity-grid {
+  width: calc(100% - 28px);
+  margin-inline: auto;
+}
+
+/* Landscape-only content limits; preserve the common outer frame. */
 @media (orientation: landscape) {
   html[data-theme="magical-academy"] .daily-panel {
     max-width: 590px;
   }
   html[data-theme="magical-academy"] .activity-grid {
-    width: 100%;
     max-width: 640px;
-    margin-inline: auto;
   }
 }
