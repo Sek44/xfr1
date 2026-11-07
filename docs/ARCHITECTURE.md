@@ -4,7 +4,7 @@
 
 Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépendance d'exécution. Publication GitHub Pages sous `/xfr1/`. Les chemins des pages sont relatifs et les jeux fonctionnent sur téléphone, tablette et ordinateur.
 
-- `index.html` : accueil avec cinq liens vers `francais.html`, `conjugaison.html`, `calcul.html`, `space.html` et `magic.html`.
+- `index.html` : accueil avec cinq liens vers `francais.html`, `conjugaison.html`, `calcul.html`, `space.html` et `magic.html`. Les cinq cartes affichent uniquement la catégorie et le nom de l’activité (sans description secondaire). Le bandeau ne présente que le raccourci Scores ; aucun réglage d’affichage des descriptions n’est proposé.
 - `styles/typography.css` : **source de vérité des deux familles, huit tailles, quatre graisses et rôles typographiques responsives**, chargée en premier sur les sept pages (voir le [guide](design/TYPOGRAPHY.md)).
 - `styles/themes/magical-academy/classic.css` : **source de vérité des composants visuels communs** à Français, Conjugaison, Calcul et Scores (cadre extérieur, navigation, typographies, cartes Question/Score, cadres parchemin 9-slice, boutons, contrôles et responsive). Les fichiers `francais.css`, `calcul.css` et `styles/themes/magical-academy/conjugaison.css` ne gèrent que les particularités de leur page ; `theme.css` contient la palette et les fonds.
 - `scores.html` : deux rangées distinctes d’onglets (exercices puis missions), sans titres visibles ; « Tous » regroupe uniquement les exercices. Deux cadres indépendants présentent la courbe de scores puis le tableau des résultats de la sélection (complet, sans limite de lignes). Les deux missions ont chacune leur propre graphique et leur propre échelle.
