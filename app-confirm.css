@@ -70,24 +70,3 @@
   color: #062d2c;
   border-color: #6ee7c7;
 }
-.history-table tbody tr {
-  touch-action: pan-y;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-.history-table tbody tr:focus-visible {
-  outline: 2px solid #2064c7;
-  outline-offset: -2px;
-}
-.history-table tbody tr.holding {
-  background: #edf3fc;
-}
-.history-hint {
-  color: #637188;
-  font-size: var(--text-xs);
-}
-.history-error {
-  color: #a32938;
-  font-weight: var(--weight-medium);
-}

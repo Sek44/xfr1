@@ -29,7 +29,10 @@ La répartition détaillée des feuilles CSS et leur ordre de priorité sont dé
 | `academy-header.js` (`AcademyHeader`) | Bandeau commun des quatre pages classiques, généré via les attributs du `<nav data-academy-header>` ; préserve `restart-series`, `scores-back`, liens, libellés accessibles et navigation Scores en iframe |
 | `styles/typography.css` | Échelle de huit tailles, quatre graisses, deux familles et rôles responsives communs à toutes les pages |
 | `styles/themes/magical-academy/components.css` | Styles réutilisables de l'identité Académie magique : panneaux, progressions, boutons, navigation, typographie et adaptations mobiles |
-| `shared-components.css`, `keyboard.css`, `scores-overlay.css`, `app-confirm.css` | Base historique partagée, clavier AZERTY, affichage des scores et confirmations ; `keyboard.css` apporte aussi aux deux missions le tracé SVG du retour arrière de leur pavé numérique |
+| `shared-components.css` | Navigation et progression de base des exercices classiques, conteneur plein écran pour la consultation des scores en iframe |
+| `styles/themes/magical-academy/scores.css` | Tous les styles propres à Scores : courbes, tableau d’historique, interaction tactile et adaptation mobile |
+| `keyboard.css` | Clavier AZERTY et symbole SVG partagé de suppression des touches numériques, y compris dans les deux missions |
+| `app-confirm.css` | Dialogues de confirmation uniquement, sans règles pour le tableau des scores |
 
 `francais.js`, `calcul.js` et `conjugaison.js` utilisent `ExerciseGame`. Français et Conjugaison partagent également `ExerciseWeighting` ; leurs statistiques et questions restent distinctes. Les jeux d'arcade délèguent leurs règles à des moteurs isolables (`space-engine.js` et `magic-engine.js`) tandis que leurs contrôleurs gèrent interface, événements, rendu et persistance. Voir leurs architectures dédiées.
 

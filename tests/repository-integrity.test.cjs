@@ -43,6 +43,7 @@ test("legacy stylesheet paths have been removed", () => {
     "exercise-theme.css", "exercise-restart.css",
     "scores-theme.css", "score-view.css",
     "exercise-header.css", "scores-base.css",
+    "scores-overlay.css",
     "styles/themes/magical-academy/home-v3.css",
     "styles/themes/magical-academy/classic.css",
   ]) assert.equal(fs.existsSync(path.join(root, filename)), false, filename);
@@ -85,4 +86,26 @@ test("classic pages load navigation and score styles only from the active theme"
   assert.match(components, /\.academy-banner \.nav-icon\.academy-nav-button/);
   assert.match(scores, /\.history-panel :is\(h2, h3\)/);
   assert.match(scores, /letter-spacing: -\.02em/);
+});
+
+test("score-only CSS stays in Scores, and the shared scores iframe retains its styling", () => {
+  const shared = fs.readFileSync(path.join(root, "shared-components.css"), "utf8");
+  const confirmation = fs.readFileSync(path.join(root, "app-confirm.css"), "utf8");
+  const scores = fs.readFileSync(path.join(root, "styles/themes/magical-academy/scores.css"), "utf8");
+  const overlay = shared.match(/\.scores-view\s*\{([^}]+)\}/);
+  assert.ok(overlay, "shared scores overlay style should exist");
+  for (const rule of ["position: fixed", "inset: 0", "z-index: 1000"]) {
+    assert.ok(overlay[1].includes(rule), "missing scores overlay rule: " + rule);
+  }
+  for (const selector of [".history-table", ".history-scroll", ".score-evolution"]) {
+    assert.equal(shared.includes(selector), false, selector + " is score-only");
+    assert.ok(scores.includes(selector), selector + " belongs to scores.css");
+  }
+  for (const selector of [".history-hint", ".history-error", ".history-table tbody tr.holding"]) {
+    assert.equal(confirmation.includes(selector), false, selector + " is not a dialog rule");
+    assert.ok(scores.includes(selector), selector + " belongs to scores.css");
+  }
+  for (const page of ["francais", "conjugaison", "calcul"]) {
+    assert.equal(fs.readFileSync(path.join(root, page + ".html"), "utf8").includes("scores-overlay.css"), false, page);
+  }
 });
