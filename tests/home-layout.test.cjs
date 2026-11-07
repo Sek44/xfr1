@@ -13,10 +13,10 @@ test("homepage title plaque and book form a compact, centered composition", () =
   assert.ok(html.includes('class="hero-book"'));
   assert.ok(html.includes('class="hero-plaque"'));
   assert.ok(html.includes('<h1 id="welcome-title">Entraînement</h1>'));
-  assert.ok(css.includes("height: clamp(170px, 43vw, 205px)"));
-  assert.ok(css.includes("bottom: 77px;"));
-  assert.ok(css.includes("width: 80%;"));
-  assert.ok(css.includes("transform: none;"));
+  assert.ok(css.includes("height: calc(clamp(184px, 24vw, 210px) - 32px)"));
+  assert.ok(css.includes("bottom: var(--home-plaque-bottom);"));
+  assert.ok(css.includes("width: min(88%, 620px);"));
+  assert.ok(css.includes("transform: translateX(-50%);"));
   assert.ok(css.includes('background-image: url("./assets/home-book.webp")'));
 });
 
@@ -91,12 +91,12 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
   }
   assert.match(heading, /align-items: center;/);
   assert.match(firstStat, /align-items: center;/);
-  // The outside edges align to equal padding, not centered independently.
-  assert.match(firstStat, /justify-content: flex-start;/);
+  // Each stat is centered within one equal-width column.
+  assert.match(firstStat, /justify-content: center;/);
   assert.ok(css.includes("width: min(calc(100% - 28px), 680px);"));
   assert.ok(css.includes("width: calc(100% - 12px);"));
-  assert.ok(css.includes("margin: 0 auto 24px;"));
-  assert.ok(css.includes(".daily-stat:last-child { justify-content: flex-end; }"));
+  assert.ok(css.includes("margin: 0 auto var(--home-block-gap);"));
+  assert.ok(css.includes("grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);"));
   assert.match(firstStat, /padding: 0;/);
   assert.ok(headingText.includes("font-size: var(--type-card-title);"));
   assert.ok(statText.includes("font-size: var(--type-stat);"));
@@ -108,16 +108,13 @@ test("daily progress has symmetric horizontal and vertical spacing", () => {
 test("progress groups shift inward without moving dividers or changing text size", () => {
   assert.ok(css.includes("--daily-title-shift-x: -6px;"));
   assert.ok(css.includes("--daily-title-shift-y: 5px;"));
-  assert.ok(css.includes("--daily-stat-inset: 6px;"));
-  assert.ok(css.includes("--daily-stat-inset: 3px;"));
+  assert.ok(css.includes("justify-content: center;"));
   assert.ok(css.includes(".daily-heading > :is(.daily-trophy, h2) {"));
   assert.ok(
     css.includes("transform: translate(var(--daily-title-shift-x), var(--daily-title-shift-y));"),
   );
-  assert.ok(css.includes(".daily-stat:first-child > * {"));
-  assert.ok(css.includes("transform: translate(var(--daily-stat-inset), -2px);"));
-  assert.ok(css.includes(".daily-stat:last-child > * {"));
-  assert.ok(css.includes("transform: translate(calc(-1 * var(--daily-stat-inset)), -2px);"));
+  assert.ok(css.includes(".daily-stat > * {"));
+  assert.ok(css.includes("transform: translateY(-2px);"));
   assert.ok(css.includes("--daily-icon-size: 40px;"));
   assert.ok(css.includes("font-size: var(--type-card-title);"));
 });

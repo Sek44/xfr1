@@ -46,6 +46,8 @@ function setup(records) {
       },
     },
     AppConfirm: { ask: async () => true },
+    setTimeout: () => 1,
+    clearTimeout: () => {},
   };
   vm.runInNewContext(
     fs.readFileSync(path.join(__dirname, "../scores.js"), "utf8"),

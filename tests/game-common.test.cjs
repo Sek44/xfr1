@@ -482,14 +482,14 @@ test("Additions controller uses the shared keypad and retains typed input over s
   keypad.children[0].onclick();
   keypad.children[1].onclick();
   const display = findByClass(panel, "answer-display");
-  assert.equal(display.textContent, "12");
+  assert.equal(findByClass(display, "answer-visible").textContent, "12");
   f.context.visit.suspend();
   f.advance(10000);
   f.context.visit.resume();
   assert.equal(display.textContent, "12");
   assert.equal(game.index, 0);
   keypad.children[9].onclick();
-  assert.equal(display.textContent.trim(), "");
+  assert.equal(findByClass(display, "answer-visible").textContent.trim(), "");
   // Answer each generated equation through the real controls.
   for (let i = 0; i < game.total; i++) {
     const equation = findByClass(panel, "question").textContent;
@@ -513,7 +513,7 @@ test("French controller uses shared tabs, choice keys and resumable session", ()
   assert.equal(game.total, 10);
   assert.equal(findByClass(panel, "feedback"), null);
   const tabs = f.elements.get("tabs");
-  assert.equal(tabs.children.length, 2);
+  assert.equal(tabs.children.length, 4); // g, c, s, Tout
   assert.ok(tabs.children.every((tab) => tab.className.includes("academy-tab")));
   const options = findByClass(panel, "choices");
   assert.ok(options.children.every((button) => button.className.includes("academy-key")));
@@ -754,7 +754,7 @@ test("game checkpoints remain independent across all game pages", () => {
 test("French bank keeps a pronounced u visible and tests the g only", () => {
   const source = fs.readFileSync(path.join(__dirname, "..", "francais.js"), "utf8");
   const begin = source.indexOf("  const sets = ") + "  const sets = ".length;
-  const end = source.indexOf("\n  const SESSION_SIZE", begin);
+  const end = source.indexOf("\n  const TABS", begin);
   assert.ok(begin > 20 && end > begin);
   const sets = vm.runInNewContext("(" + source.slice(begin, end).trim().replace(/;$/, "") + ")");
   for (const [before, after, answer] of sets.g.items) {
@@ -794,7 +794,8 @@ test("French migration resets only corrected word weights, not scores", () => {
     assert.equal(counts[key], undefined);
     assert.equal(errors[key], undefined);
   }
-  assert.equal(counts[other], 9);
+  // The first random question may be this word, incrementing its count once.
+  assert.ok(counts[other] === 8 || counts[other] === 9);
   assert.equal(errors[other], 2);
   assert.equal(storage.get(resetKey), "1");
   assert.equal(storage.get("exercices_francais_scores"), history);
@@ -860,7 +861,7 @@ test("conjugation keeps its checkpoint and scores only first-try successes", () 
   assert.equal(JSON.parse(first.storage.get(key)).session.answer, firstAnswer);
   findByClass(first.elements.get("panel"), "exercise-actions").children[0].onclick();
   assert.equal(game.score, 1);
-  first.visit.suspend();
+  first.context.visit.suspend();
   const pending = JSON.parse(first.storage.get(key)).session.progress.remaining;
 
   const restored = setup(files, first.storage);
@@ -868,7 +869,7 @@ test("conjugation keeps its checkpoint and scores only first-try successes", () 
   assert.equal(restored.sessions[0].score, 1);
   assert.equal(restored.sessions[0].correct, true);
   assert.equal(JSON.parse(restored.storage.get(key)).session.progress.remaining, pending);
-  restored.visit.resume();
+  restored.context.visit.resume();
 
   for (let n = 0; n < 10; n++) {
     if (!restored.sessions[0].correct) {
@@ -936,14 +937,14 @@ test("French tabs do not reset on reselect and confirm only after interaction", 
   const progress = f.storage.get(savedKey);
   tabs()[0].onclick();
   await Promise.resolve();
-  await Promise.resolve();
+  await new Promise(setImmediate);
   assert.equal(prompts, 1);
   assert.equal(tabs()[1].attributes["aria-selected"], "true");
   assert.equal(f.storage.get(savedKey), progress);
   accepts = true;
   tabs()[0].onclick();
   await Promise.resolve();
-  await Promise.resolve();
+  await new Promise(setImmediate);
   assert.equal(tabs()[0].attributes["aria-selected"], "true");
   assert.equal(f.sessions[0].score, 0);
 });
@@ -964,14 +965,14 @@ test("Conjugaison tabs preserve typed answers after cancelling", async () => {
   const progress = f.storage.get(savedKey);
   tabs()[0].onclick();
   await Promise.resolve();
-  await Promise.resolve();
+  await new Promise(setImmediate);
   assert.equal(prompts, 1);
   assert.equal(f.storage.get(savedKey), progress);
   assert.equal(tabs()[1].attributes["aria-selected"], "true");
   accepts = true;
   tabs()[0].onclick();
   await Promise.resolve();
-  await Promise.resolve();
+  await new Promise(setImmediate);
   assert.equal(tabs()[0].attributes["aria-selected"], "true");
   assert.equal(f.sessions[0].score, 0);
 });
@@ -997,7 +998,7 @@ test("Calcul keeps selects unchanged until a started series confirms a change", 
   select(1).onchange();
   assert.equal(select(1).value, "1");
   await Promise.resolve();
-  await Promise.resolve();
+  await new Promise(setImmediate);
   assert.equal(prompts, 1);
   assert.equal(state().answer, "1");
   assert.equal(state().category, "1");
@@ -1005,7 +1006,7 @@ test("Calcul keeps selects unchanged until a started series confirms a change", 
   select(1).value = "2";
   select(1).onchange();
   await Promise.resolve();
-  await Promise.resolve();
+  await new Promise(setImmediate);
   assert.equal(state().category, "2");
   assert.equal(state().answer, "");
   assert.equal(select(1).value, "2");

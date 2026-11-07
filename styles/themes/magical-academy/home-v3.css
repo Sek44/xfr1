@@ -337,8 +337,7 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
   html[data-theme="magical-academy"] .academy-hero *::after { transition: none; animation: none; }
 }
 
-/* Homepage illustrations imported from docs/design/import as original WebP blobs.
-   Keep the original semantic HTML; CSS supplies visual artwork only. */
+/* Production artwork stays in the shared theme assets directory. */
 html[data-theme="magical-academy"] .hero-book {
   background-image: url("./assets/home-book.webp");
 }

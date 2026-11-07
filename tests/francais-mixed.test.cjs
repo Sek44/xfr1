@@ -49,9 +49,13 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
   })();`, context);
   const questions = shuffleSession("all");
   assert.equal(questions.length, 10);
-  assert.ok(questions.some((q) => categoryFor(q) === "g"));
-  assert.ok(questions.some((q) => categoryFor(q) === "c"));
-  assert.ok(questions.some((q) => categoryFor(q) === "s"));
+  // A weighted random draw need not contain every family in ten questions.
+  assert.ok(questions.every((q) => ["g", "c", "s"].includes(categoryFor(q))));
+  for (const category of ["g", "c", "s"]) {
+    const singleFamily = shuffleSession(category);
+    assert.equal(singleFamily.length, 10);
+    assert.ok(singleFamily.every((q) => categoryFor(q) === category));
+  }
   assert.equal(new Set(questions.map((q) => wordKey(categoryFor(q), q))).size, 10);
   for (const q of questions)
     assert.ok(sets[categoryFor(q)].options.includes(q[2]));

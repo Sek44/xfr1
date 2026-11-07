@@ -43,7 +43,7 @@ test("classic navigation, controls, questions and progress share semantic type r
   for (const role of ["page-title", "tab", "score-tab", "question", "score-number"]) {
     assert.ok(classic.includes("var(--type-" + role + ")"), role);
   }
-  for (const role of ["home-title", "section-title", "stat"]) {
+  for (const role of ["home-title", "card-title", "stat"]) {
     assert.ok(home.includes("var(--type-" + role + ")"), role);
   }
 });
