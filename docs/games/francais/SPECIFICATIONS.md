@@ -2,7 +2,7 @@
 
 ## Objectif et déroulement
 
-Compléter une phrase en choisissant les lettres manquantes. Deux familles d'exercices : **g / gu / ge** et **c / ç**. Le groupe de lettres choisi remplace intégralement la zone vide ; une lettre faisant partie de la solution (`u` de `gu`, `e` de `ge`) ne doit pas être révélée à l'avance. Quand le `u` est la voyelle prononcée après `g`, il reste au contraire visible et la réponse est `g` : « lé_ume » → « légume », « dé_ustation » → « dégustation ». Il ne faut pas demander `gu` devant une consonne.
+Compléter une phrase en choisissant les lettres manquantes. La page affiche directement les onglets et l'exercice, sans texte d'introduction séparé (comme Conjugaison). Deux familles d'exercices : **g / gu / ge** et **c / ç**. Le groupe de lettres choisi remplace intégralement la zone vide ; une lettre faisant partie de la solution (`u` de `gu`, `e` de `ge`) ne doit pas être révélée à l'avance. Quand le `u` est la voyelle prononcée après `g`, il reste au contraire visible et la réponse est `g` : « lé_ume » → « légume », « dé_ustation » → « dégustation ». Il ne faut pas demander `gu` devant une consonne.
 
 Chaque ligne doit conserver la disposition calculée pour la graphie la plus longue du mot, quel que soit le choix fait ensuite. Les lettres restent accolées au mot (par exemple « neige » et non « nei g e »), et l’espace supplémentaire est réservé **à la fin de la ligne**, jamais entre ce mot et le suivant. Les variantes servant à mesurer la largeur ne sont pas visibles.
 

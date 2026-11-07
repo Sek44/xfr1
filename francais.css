@@ -1,12 +1,4 @@
 /* Français — spacing specific to this exercise; tabs and keys use classic.css. */
-html[data-theme="magical-academy"] body.francais-page .exercise-intro {
-  margin: 7px 12px 10px;
-  color: #fff3db;
-  font-size: clamp(var(--text-xs), 2.8vw, var(--text-sm));
-  font-weight: var(--weight-medium);
-  text-align: center;
-  text-shadow: 0 1px 3px #03162d;
-}
 html[data-theme="magical-academy"] body.francais-page .choices {
   display: flex;
   flex-wrap: wrap;
