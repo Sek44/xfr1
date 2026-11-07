@@ -15,7 +15,7 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 
 | Fichier | API / responsabilité |
 | --- | --- |
-| `game-common.js` | `ExerciseGame` : déroulement des questions, validation, score de premier essai, délai avant question suivante, snapshot et reprise ; **composant `progress()` partagé** avec « Question x/maximum » et « Score x » (sans dénominateur). Le bouton de validation est une instance DOM stable réutilisée lors des changements d’état, pour ne pas perdre les taps rapides. Le clic « Bravo ! Suivant » ignore le délai et annule le timer restant. |
+| `game-common.js` | `ExerciseGame` : déroulement des questions, validation, score de premier essai, délai avant question suivante, snapshot et reprise ; **composant `progress()` partagé** avec « Question x/maximum » et « Score x » (sans dénominateur). Le bouton de validation est une instance DOM stable réutilisée lors des changements d’état, pour ne pas perdre les taps rapides. Le clic « Bravo ! Suivant » ignore le délai et annule le timer restant. Les contrôleurs utilisent aussi `changeSettings(hasProgress, onAccept)` : confirmation `AppConfirm` uniquement après une interaction sur la série, suspension du timer pendant la boîte, reprise en cas d’annulation et exécution du nouveau réglage uniquement après accord. |
 | `game-ui.js` | `GameUI` : éléments DOM, `tabs()` pour les cartouches interactifs accessibles, touches `.academy-key` du pavé numérique, clavier AZERTY partagé, édition de nombres et de mots |
 | `exercise-weighting.js` | `ExerciseWeighting` : compteurs d'apparition/erreur et tirage pondéré sans remise |
 | `conjugaison-data.js` | `ConjugaisonData` : banques de verbes, sujets et règles du présent des 1er et 2e groupes |
