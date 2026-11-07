@@ -11,9 +11,11 @@
     const restart = nav.dataset.restart === "true";
     const scores = nav.dataset.scores === "true";
     const backId = nav.dataset.backId || "";
-    if (!title) return;
+    const home = nav.dataset.home === "true";
+    if (!title && !home) return;
 
     nav.replaceChildren();
+    if (!home) {
     const back = document.createElement("a");
     back.className = "nav-link nav-icon academy-nav-button academy-nav-back";
     back.href = "./";
@@ -30,6 +32,7 @@
     label.textContent = title;
     heading.append(artwork, label);
     nav.append(back, heading);
+    }
 
     if (restart) {
       const button = document.createElement("button");
@@ -43,7 +46,7 @@
     if (scores) {
       const link = document.createElement("a");
       link.className = "nav-link nav-icon academy-nav-button academy-nav-scores";
-      link.href = "./scores.html?game=" + encodeURIComponent(game);
+      link.href = home ? "./scores.html" : "./scores.html?game=" + encodeURIComponent(game);
       link.setAttribute("aria-label", "Voir les scores");
       link.title = "Mes scores";
       nav.append(link);
