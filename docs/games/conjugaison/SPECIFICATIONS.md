@@ -2,7 +2,7 @@
 
 ## Présent de l’indicatif — 1er et 2e groupes
 
-Deux onglets sélectionnent le groupe : « Présent · 1er groupe » et « Présent · 2e groupe ». Chaque onglet propose une série de dix questions propre au groupe. Changer d’onglet abandonne la série en cours sans enregistrer de score ni créditer d’exercice. L’onglet sélectionné est restauré après rechargement, avec sa série en cours.
+Deux onglets sélectionnent le groupe : « Présent · 1er groupe » et « Présent · 2e groupe ». Chaque onglet propose une série de dix questions propre au groupe. Un clic sur l’onglet actif ne modifie rien. Changer d’onglet demande confirmation si le joueur a commencé à saisir, valider ou avancer dans la série. Annuler préserve exactement la réponse, la question, le score et le délai de passage automatique ; confirmer abandonne la série sans score ni crédit quotidien, et commence la nouvelle. Avant toute saisie et une fois la série terminée, le changement est immédiat. L’onglet sélectionné est restauré après rechargement, avec sa série en cours.
 
 ### 1er groupe
 
