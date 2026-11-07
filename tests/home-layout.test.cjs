@@ -55,7 +55,7 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.ok(html.includes("home-v3.css?v=progress-finetune2-20261106"));
+  assert.ok(html.includes("home-v3.css?v=nav-layers-20261107"));
 });
 
 test("daily progress has symmetric horizontal and vertical spacing", () => {
@@ -120,4 +120,15 @@ test("progress groups shift inward without moving dividers or changing text size
   assert.ok(css.includes("transform: translate(calc(-1 * var(--daily-stat-inset)), -2px);"));
   assert.ok(css.includes("--daily-icon-size: 40px;"));
   assert.ok(css.includes("font-size: var(--type-card-title);"));
+});
+
+test("home Scores shortcut layers the same WebP symbol and frame as classic navigation", () => {
+  assert.ok(html.includes('class="hero-tool hero-tool--scores"'));
+  assert.ok(html.includes('aria-label="Mes scores"'));
+  assert.ok(css.includes('background-image: url("./assets/nav-scores.webp"), url("./assets/nav-background.webp")'));
+  assert.ok(css.includes('background: transparent url("./assets/nav-background.webp")'));
+  assert.ok(css.includes(".hero-tool svg"));
+  for (const name of ["nav-background.webp", "nav-scores.webp"]) {
+    assert.ok(fs.existsSync(path.join(root, "styles/themes/magical-academy/assets", name)));
+  }
 });
