@@ -486,7 +486,7 @@ test("Additions controller uses the shared keypad and retains typed input over s
   f.context.visit.suspend();
   f.advance(10000);
   f.context.visit.resume();
-  assert.equal(display.textContent, "12");
+  assert.equal(findByClass(display, "answer-visible").textContent, "12");
   assert.equal(game.index, 0);
   keypad.children[9].onclick();
   assert.equal(findByClass(display, "answer-visible").textContent.trim(), "");
