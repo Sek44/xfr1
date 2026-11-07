@@ -105,7 +105,7 @@ test("score-only CSS stays in Scores, and the shared scores iframe retains its s
     assert.equal(confirmation.includes(selector), false, selector + " is not a dialog rule");
     assert.ok(scores.includes(selector), selector + " belongs to scores.css");
   }
-  for (const page of ["francais", "conjugaison", "calcul"]) {
+  for (const page of ["francais", "conjugaison", "calcul", "magic", "space"]) {
     assert.equal(fs.readFileSync(path.join(root, page + ".html"), "utf8").includes("scores-overlay.css"), false, page);
   }
 });
