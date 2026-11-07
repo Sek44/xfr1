@@ -220,13 +220,7 @@
       event.preventDefault();
       pause();
     } else if (running && !paused && !confirming && !viewingScores) {
-      if (/^\d$/.test(event.key)) {
-        event.preventDefault();
-        edit(event.key);
-      } else if (event.key === "Backspace" || event.key === "Delete") {
-        event.preventDefault();
-        edit(event.key === "Backspace" ? "erase" : "clear");
-      }
+      GameUI.handlePhysicalKeyboard(event, edit);
     }
   });
 
