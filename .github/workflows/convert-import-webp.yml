@@ -4,6 +4,11 @@ on:
     paths:
       - '.github/workflows/convert-import-webp.yml'
       - 'docs/design/import/nav-*.png'
+      - 'index.html'
+      - '*.html'
+      - 'styles/themes/magical-academy/classic.css'
+      - 'styles/themes/magical-academy/home-v3.css'
+      - 'tests/*.test.cjs'
   workflow_dispatch:
 permissions:
   contents: write
@@ -47,6 +52,11 @@ jobs:
                   image.save(dest, 'WEBP', quality=90, method=6, exact=True)
               print(f"{source} -> {dest}")
           PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run the site tests
+        run: node --test tests/*.test.cjs
       - name: Commit converted assets
         run: |
           git config user.name "github-actions[bot]"
