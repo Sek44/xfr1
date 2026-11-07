@@ -3,7 +3,7 @@
 ## Organisation
 
 - `calcul.html` : structure de la page et ses dépendances ; `calcul.css` : disposition et responsive spécifiques aux listes catégorie/difficulté, à l’opération et au pavé numérique. Le bandeau provient de `academy-header.js` et les panneaux, boutons, marges et fontes communes de `styles/themes/magical-academy/classic.css`.
-- `calcul.js` : tables `levels` et `ranges`, génération des opérations, sélection des options, validation et restauration des données du jeu.
+- `calcul.js` : tables `levels` et `ranges`, génération des opérations, sélection des options, validation et restauration des données du jeu. Les sélecteurs ne déclenchent rien pour la valeur actuelle, restaurent immédiatement la sélection visuelle avant toute confirmation asynchrone et ne mettent à jour le paramètre qu’après `ExerciseGame.changeSettings` (si la série a commencé).
 - `game-common.js` (`ExerciseGame`) : état de session, score au premier essai, correction, délai auto de 3 secondes, snapshot.
 - `game-ui.js` : `GameUI.keypad` et `GameUI.editNumber` pour la saisie sur six chiffres au maximum. Les touches du pavé numérique utilisent `.academy-key` et l’aspect du clavier de Conjugaison, sans modifier leur disposition en trois colonnes. `ExerciseGame.progress()` partage `Question x/10` et `Score x` avec les deux exercices de français ; `calcul.css` définit uniquement les espacements entre paramètres et progression.
 - `game-state.js`, `score-view.js`, `scores.js` : sauvegarde de la session, suspension lors de la consultation des scores, enregistrement du résultat.
