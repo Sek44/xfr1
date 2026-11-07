@@ -2,7 +2,7 @@
 
 ## Présent de l’indicatif — 1er et 2e groupes
 
-Trois onglets sont disponibles : « Présent · 1er groupe », « Présent · 2e groupe » et « Tout ». « Tout » mélange les questions des deux groupes. Chaque onglet propose une série de dix questions propre au groupe. Un clic sur l’onglet actif ne modifie rien. Changer d’onglet demande confirmation si le joueur a commencé à saisir, valider ou avancer dans la série. Annuler préserve exactement la réponse, la question, le score et le délai de passage automatique ; confirmer abandonne la série sans score ni crédit quotidien, et commence la nouvelle. Avant toute saisie et une fois la série terminée, le changement est immédiat. L’onglet sélectionné est restauré après rechargement, avec sa série en cours.
+Trois onglets sont disponibles : « Présent - 1er », « Présent - 2e » et « Tout ». « Tout » mélange les questions des deux groupes. Chaque onglet propose une série de dix questions propre au groupe. Un clic sur l’onglet actif ne modifie rien. Changer d’onglet demande confirmation si le joueur a commencé à saisir, valider ou avancer dans la série. Annuler préserve exactement la réponse, la question, le score et le délai de passage automatique ; confirmer abandonne la série sans score ni crédit quotidien, et commence la nouvelle. Avant toute saisie et une fois la série terminée, le changement est immédiat. L’onglet sélectionné est restauré après rechargement, avec sa série en cours.
 
 ### 1er groupe
 

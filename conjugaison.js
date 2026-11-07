@@ -7,8 +7,8 @@
     all: "Tout",
   };
   const TABS = [
-    ["present-1", "Présent · 1er groupe"],
-    ["present-2", "Présent · 2e groupe"],
+    ["present-1", "Présent - 1er"],
+    ["present-2", "Présent - 2e"],
     ["all", "Tout"],
   ];
   const tracker = ExerciseWeighting.create({
