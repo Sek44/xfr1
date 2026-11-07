@@ -238,8 +238,8 @@ window.GameUI = (() => {
   // Physical typing follows the same input handlers as the on-screen keys.
   // Each game controls when its keyboard is active and whether Enter advances.
   function handlePhysicalKeyboard(event, onInput, { layout = "number", onEnter } = {}) {
-    if (event.defaultPrevented || event.isComposing ||
-        event.ctrlKey || event.metaKey || event.altKey ||
+    if (event.defaultPrevented || event.isComposing || event.metaKey ||
+        ((event.ctrlKey || event.altKey) && !event.getModifierState?.("AltGraph")) ||
         document.querySelector(".scores-view, .app-confirm[open]")) return false;
     const target = event.target;
     if (target?.closest?.('input, textarea, select, a, [contenteditable="true"]')) return false;
