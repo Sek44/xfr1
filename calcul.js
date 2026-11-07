@@ -223,9 +223,18 @@
     equation.append(q);
     const display = document.createElement("div");
     display.className = "answer-display";
-    display.setAttribute("aria-label", "Résultat saisi");
     display.setAttribute("role", "status");
-    display.textContent = answer || " ";
+    display.setAttribute("aria-label", "Résultat saisi : " + (answer || "vide"));
+    // Match Conjugaison: keep the field stable as digits are entered.
+    const reserve = document.createElement("span");
+    reserve.className = "answer-reserve";
+    reserve.setAttribute("aria-hidden", "true");
+    reserve.textContent = String(questions[game.index].result);
+    const visible = document.createElement("span");
+    visible.className = "answer-visible";
+    visible.setAttribute("aria-hidden", "true");
+    visible.textContent = answer || "\u00a0";
+    display.append(reserve, visible);
     equation.append(display);
     const questionFrame = document.createElement("div");
     questionFrame.className = "question-frame";
@@ -244,7 +253,8 @@
         button.classList.remove("feedback-retry");
         button.textContent = "Vérifier";
       }
-      display.textContent = answer || " ";
+      visible.textContent = answer || "\u00a0";
+      display.setAttribute("aria-label", "Résultat saisi : " + (answer || "vide"));
       button.disabled = !answer.length;
       persist();
     }
