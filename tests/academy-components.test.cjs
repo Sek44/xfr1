@@ -209,7 +209,7 @@ test("Calcul has a deliberate gap after the difficulty selectors", () => {
 });
 
 test("final results reuse the shared parchment and standard button styling", () => {
-  const css = read("styles/themes/magical-academy/components.css");
+  const css = read("styles/themes/magical-academy/results.css");
   const js = read("game-common.js");
   assert.ok(css.includes(".panel:has(> .academy-result)"));
   assert.ok(css.includes(".academy-result::before"));
@@ -222,4 +222,20 @@ test("final results reuse the shared parchment and standard button styling", () 
   assert.ok(js.includes('card.className = "academy-result"'));
   assert.ok(js.includes('heading.textContent = "Exercice terminé !"'));
   assert.ok(js.includes('button.textContent = "Recommencer"'));
+});
+
+test("page-specific theme styles load after shared components", () => {
+  const common = read("styles/themes/magical-academy/components.css");
+  assert.equal(common.includes(".score-chart-panel"), false);
+  assert.equal(common.includes(".academy-result::before"), false);
+  for (const page of ["francais", "conjugaison", "calcul"]) {
+    const html = read(page + ".html");
+    assert.ok(html.indexOf("magical-academy/components.css") < html.indexOf("magical-academy/results.css"), page);
+    assert.equal(html.includes("magical-academy/scores.css"), false, page);
+  }
+  const scores = read("scores.html");
+  assert.ok(scores.indexOf("magical-academy/components.css") < scores.indexOf("magical-academy/scores.css"));
+  assert.equal(scores.includes("magical-academy/results.css"), false);
+  assert.equal(read("index.html").includes("magical-academy/results.css"), false);
+  assert.equal(read("index.html").includes("magical-academy/scores.css"), false);
 });

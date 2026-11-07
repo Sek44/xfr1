@@ -1,7 +1,5 @@
 /* Shared school-inspired visual language, matching the home page.
    Only presentation: game logic, keypad sizing and layout remain game-owned. */
-:root { color-scheme: light; --school-ink: #23334d; --school-muted: #62738a; --school-border: #dce5f0; --school-blue: #2768b7; --school-bg: #f4f7fc; }
-body { background: var(--school-bg); color: var(--school-ink); }
 .page-header { margin-bottom: 12px; }
 .page-header .page-title {
   color: #163b69;

@@ -1,0 +1,157 @@
+/* Shared final-result card for the three classic exercises. */
+/* The final card already contains the definitive score. Hide the
+   in-session progress pills to avoid displaying the same score twice.
+   Keep the family tabs and difficulty selectors available for a new session. */
+html[data-theme="magical-academy"] body.academy-page:has(.academy-result) .academy-progress {
+  display: none;
+}
+html[data-theme="magical-academy"] body.francais-page:has(.academy-result) .exercise-intro {
+  display: none;
+}
+
+/* One shared final-result screen for Français, Calcul and Conjugaison.
+   Use the filled 9-slice parchment from normal question frames rather than
+   a rectangular generic .panel. The content stays selectable and accessible. */
+html[data-theme="magical-academy"] body.academy-page .panel:has(> .academy-result) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 340px;
+  gap: clamp(8px, 1.8vw, 13px);
+  margin: 0 auto;
+  padding: clamp(25px, 4vw, 35px) clamp(20px, 4.2vw, 36px) clamp(28px, 4vw, 36px);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 1px solid transparent;
+  border-image-source: url("./assets/question-frame-filled-9slice.webp");
+  border-image-slice: 100 110 100 110 fill;
+  border-image-width: 26px 29px 26px 29px;
+  border-image-repeat: stretch;
+  pointer-events: none;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result > * {
+  position: relative;
+  z-index: 2;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-trophy {
+  display: block;
+  flex: 0 0 auto;
+  width: clamp(64px, 15vw, 82px);
+  height: clamp(64px, 15vw, 82px);
+  background: url("./assets/home-cup.webp") center / contain no-repeat;
+  filter: drop-shadow(0 3px 4px #67462665);
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-title {
+  margin: 0;
+  color: #1b3054;
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-lg), 5vw, var(--text-2xl));
+  font-weight: var(--weight-bold);
+  line-height: 1.12;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff8e7;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: min(215px, 86%);
+  max-width: 100%;
+  gap: 2px;
+  margin: 2px 0;
+  padding: 8px clamp(25px, 5vw, 36px);
+  border: 1.5px solid #afc4ce;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ecf6f9, #d8eaf0);
+  box-shadow: inset 0 2px 3px #fffaf6c7, 0 3px 5px #31495833;
+  color: #203757;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-score-label {
+  font-family: var(--font-ui);
+  font-size: clamp(var(--text-xs), 3vw, var(--text-sm));
+  font-weight: var(--weight-heavy);
+  line-height: 1.15;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-score-numbers {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-score-value {
+  color: #0f5898;
+  font-family: var(--font-ui);
+  font-size: var(--type-result-score);
+  font-weight: var(--weight-heavy);
+  line-height: 1;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-message.encouragement {
+  max-width: 34rem;
+  margin: 1px auto 5px;
+  color: #264c7c;
+  font-family: var(--font-ui);
+  font-size: clamp(var(--text-sm), 3.5vw, var(--text-md));
+  font-weight: var(--weight-heavy);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-actions .primary {
+  width: min(260px, 92%);
+  max-width: 100%;
+  margin: 0;
+  font-size: clamp(var(--text-md), 4.8vw, var(--text-lg));
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-actions .primary::before {
+  content: "↻";
+  display: inline-block;
+  flex: 0 0 33px;
+  width: 33px;
+  height: auto;
+  background: none;
+  color: #ffdc7c;
+  font-family: var(--font-ui);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  text-shadow: 0 2px 2px #092b4e;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result-actions .primary:active {
+  transform: translateY(2px);
+}
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.academy-page .academy-result {
+    min-height: 0;
+    gap: 9px;
+    padding: 24px 19px 30px;
+  }
+  html[data-theme="magical-academy"] body.academy-page .academy-result-actions .primary {
+    width: min(260px, 92%);
+    height: 60px;
+    min-height: 60px;
+  }
+}
+@media (max-width: 360px) {
+  html[data-theme="magical-academy"] body.academy-page .academy-result {
+    padding: 22px 14px 26px;
+  }
+  html[data-theme="magical-academy"] body.academy-page .academy-result-trophy {
+    width: 61px;
+    height: 61px;
+  }
+}
