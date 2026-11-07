@@ -14,6 +14,8 @@ Six familles : **-er** régulier, **-ger**, **-cer**, **-guer**, **-yer** (passa
 
 Une banque de 22 verbes réguliers en **-ir** (notamment finir, choisir, réussir, grandir, rougir, remplir, réfléchir, obéir, applaudir, ralentir, bondir, bâtir, avertir, réunir et nourrir) utilise les terminaisons **-is, -is, -it, -issons, -issez, -issent**. Les neuf personnes et leurs variantes de sujets sont communes au 1er groupe. Les verbes en -ir du 3e groupe (comme partir) sont exclus.
 
+La zone de phrase réserve la hauteur de deux lignes et centre verticalement les phrases plus courtes. Le cadre peut s’agrandir si la phrase dépasse deux lignes, sans limiter son contenu.
+
 ## Score et correction
 
 La session comporte 10 combinaisons distinctes (famille, infinitif, personne) du groupe choisi. Après saisie, « Vérifier » signale la justesse. Le bouton bleu est centré et volontairement plus étroit que le clavier, avec un libellé large et une icône de baguette ; ses variantes de correction sont légèrement plus larges avec des caractères plus grands, tout en conservant la même hauteur. Une erreur au premier essai empêche de gagner le point sur cette question ; une bonne correction permet d’avancer mais ne rapporte pas de point. Après réussite, la question suivante arrive automatiquement au bout d’environ 3 secondes ou immédiatement avec « Suivant ».

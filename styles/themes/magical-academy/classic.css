@@ -460,6 +460,13 @@ html[data-theme="magical-academy"] body.academy-page .question-frame :is(.senten
   font-size: var(--type-question);
   line-height: 1.23;
 }
+/* Keep the visible Français and Conjugaison sentences at two line-heights,
+   centering shorter sentences without restricting longer ones. Exclude the
+   invisible Français measurement sentence to preserve natural line wrapping. */
+html[data-theme="magical-academy"] body.academy-page .question-frame :is(.sentence:not(.sentence-measure), .conjugaison-sentence) {
+  min-height: 2lh;
+  align-content: center;
+}
 html[data-theme="magical-academy"] body.academy-page .question-frame .equation-row {
   display: flex;
   justify-content: center;
