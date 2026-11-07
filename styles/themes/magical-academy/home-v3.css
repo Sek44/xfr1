@@ -5,7 +5,8 @@ html[data-theme="magical-academy"] body:not(.school-page) {
 }
 html[data-theme="magical-academy"] body:not(.school-page) main {
   padding: 10px 12px 24px;
-  background: linear-gradient(180deg, #0c2e6088, #081e4230 48%, #081e4270);\n  background-clip: padding-box;
+  background: linear-gradient(180deg, #0c2e6088, #081e4230 48%, #081e4270);
+  background-clip: padding-box;
 }
 html[data-theme="magical-academy"] .academy-hero {
   position: relative;
