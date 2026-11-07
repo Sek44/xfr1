@@ -35,9 +35,9 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
       appearancesKey: "counts", errorsKey: "errors",
     });
     ${chooser}
-    window.bank = { sets, TABS, categoryFor, wordKey, shuffleSession, weighting };
+    window.bank = { sets, TABS, categoryFor, isValidQuestion, wordKey, shuffleSession, weighting };
   })();`, context);
-  const { sets, TABS, categoryFor, wordKey, shuffleSession, weighting } = context.bank;
+  const { sets, TABS, categoryFor, isValidQuestion, wordKey, shuffleSession, weighting } = context.bank;
   assert.equal(TABS.at(-1)[1], "Tout");
   assert.ok(sets.g.items.length > 0 && sets.c.items.length > 0 && sets.s.items.length > 0);
   assert.deepEqual(Array.from(sets.s.options), ["s", "ss"]);
@@ -55,19 +55,39 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
   assert.equal(new Set(questions.map((q) => wordKey(categoryFor(q), q))).size, 10);
   for (const q of questions)
     assert.ok(sets[categoryFor(q)].options.includes(q[2]));
-  // All s/ss blanks are between vowels, with a balanced bank of
-  // distinct words including the meaning-dependent minimal pairs.
+  // Preserve the existing meaning-dependent pairs while extending the
+  // bank to « s » at word/sentence boundaries and next to consonants.
   assert.ok(sets.s.items.length >= 90);
   assert.ok(sets.s.items.filter((q) => q[2] === "s").length >= 40);
   assert.ok(sets.s.items.filter((q) => q[2] === "ss").length >= 40);
   const sWords = new Set(sets.s.items.map((q) => JSON.parse(wordKey("s", q))[1]));
   for (const word of ["poison", "poisson", "cousin", "coussin", "case", "casse", "laser", "lasser"])
     assert.ok(sWords.has(word), word);
+  const vowel = /[aeiouyàâäéèêëîïôöùûüÿ]/iu;
+  let atSentenceStart = 0, atSentenceEnd = 0;
+  let atWordStart = 0, atWordEnd = 0, beforeConsonant = 0, afterConsonant = 0;
   for (const q of sets.s.items) {
     assert.equal(categoryFor(q), "s");
-    assert.match(q[0], /[aeiouyàâäéèêëîïôöùûüÿ]$/iu);
-    assert.match(q[1], /^[aeiouyàâäéèêëîïôöùûüÿ]/iu);
+    assert.equal(isValidQuestion("s", q), true);
+    const before = q[0].match(/[\\p{L}]$/u)?.[0] || "";
+    const after = q[1].match(/^[\\p{L}]/u)?.[0] || "";
+    if (q[0] === "") atSentenceStart++;
+    if (q[1] === ".") atSentenceEnd++;
+    if (!before) atWordStart++;
+    if (!after) atWordEnd++;
+    if (after && !vowel.test(after)) beforeConsonant++;
+    if (before && !vowel.test(before)) afterConsonant++;
+    if (q[2] === "ss") {
+      assert.match(before, vowel);
+      assert.match(after, vowel);
+    }
   }
+  assert.ok(atSentenceStart >= 10);
+  assert.ok(atSentenceEnd >= 10);
+  assert.ok(atWordStart >= 10);
+  assert.ok(atWordEnd >= 10);
+  assert.ok(beforeConsonant >= 12);
+  assert.ok(afterConsonant >= 8);
   const sSession = shuffleSession("s");
   assert.equal(sSession.length, 10);
   assert.ok(sSession.every((q) => categoryFor(q) === "s"));
