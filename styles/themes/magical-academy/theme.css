@@ -51,11 +51,11 @@ html[data-theme="magical-academy"] body {
   color: var(--color-text);
   font-family: var(--font-ui);
   background-color: #0b2049;
-  /* Show the artwork all the way to the bottom, with no dark overlay.
-     Cover fills the page area proportionally at every aspect ratio. */
+  /* Keep the home scene's scale and top alignment on every page.
+     Height of exercise content must never affect the artwork's size. */
   background-image: var(--art-scene);
   background-position: center top;
-  background-size: cover;
+  background-size: 100% auto;
   background-repeat: no-repeat;
   background-attachment: scroll;
 }
@@ -67,13 +67,11 @@ html[data-theme="magical-academy"] body {
     --art-scene: url("./assets/background-scene-vertical.webp");
   }
 
-  /* Scale the illustration proportionally to cover the whole portrait
-     viewport (no side gutters, no stretching). A little vertical cropping is
-     inevitable at different aspect ratios; favor the lower decorations. */
+  /* Same width-based scaling in portrait: no content-height dependency. */
   html[data-theme="magical-academy"] body {
     background-image: var(--art-scene);
-    background-size: cover;
-    background-position: center 65%;
+    background-size: 100% auto;
+    background-position: center top;
     background-repeat: no-repeat;
   }
 }
