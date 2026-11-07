@@ -67,20 +67,9 @@ html[data-theme="magical-academy"] .hero-tool {
   list-style: none;
   touch-action: manipulation;
 }
-html[data-theme="magical-academy"] .hero-tool::-webkit-details-marker { display: none; }
 html[data-theme="magical-academy"] .hero-tool:hover,
-html[data-theme="magical-academy"] .hero-preferences[open] > .hero-tool {
+html[data-theme="magical-academy"] .hero-tool:focus-visible {
   filter: brightness(1.12);
-}
-/* The preferences gear stays as a vector above the same WebP frame. */
-html[data-theme="magical-academy"] .hero-tool svg {
-  width: 55%;
-  height: 55%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 /* Scores reuses the exact same two-layer button as the classic page headers. */
 html[data-theme="magical-academy"] .hero-tool--scores {
@@ -89,34 +78,6 @@ html[data-theme="magical-academy"] .hero-tool--scores {
   background-size: contain, contain;
   background-repeat: no-repeat, no-repeat;
 }
-html[data-theme="magical-academy"] .hero-preferences { position: relative; }
-html[data-theme="magical-academy"] .preferences-panel {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  z-index: 10;
-  width: min(270px, calc(100vw - 65px));
-  padding: 15px;
-  border: 2px solid #d8b36e;
-  border-radius: 14px;
-  background: #fff6df;
-  color: #253459;
-  box-shadow: 0 14px 32px #07152cb8;
-}
-html[data-theme="magical-academy"] .preferences-panel h2 {
-  margin: 0 0 10px;
-  font-size: var(--text-sm);
-  font-family: var(--font-display);
-}
-html[data-theme="magical-academy"] .preferences-panel label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--text-xs);
-  line-height: 1.35;
-  cursor: pointer;
-}
-html[data-theme="magical-academy"] .preferences-panel input { width: 18px; height: 18px; accent-color: #15589a; }
 html[data-theme="magical-academy"] .hero-book {
   position: absolute;
   /* Anchor the book to the title plaque so the two form one composition. */
@@ -300,8 +261,8 @@ html[data-theme="magical-academy"] .daily-stat strong {
 }
 html[data-theme="magical-academy"] .daily-error { margin: 7px 0 0; color: #8a2d30; font-size: var(--text-xs); text-align: center; }
 html[data-theme="magical-academy"] .daily-error[hidden] { display: none; }
-html[data-theme="magical-academy"].home-compact .activity-body .description { display: none; }
-html[data-theme="magical-academy"].home-compact .activity-card { min-height: 73px; }
+/* Descriptions were removed permanently; keep the compact card height. */
+html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
 
 @media (max-width: 600px) {
   html[data-theme="magical-academy"] body:not(.school-page) { padding: 7px; }
