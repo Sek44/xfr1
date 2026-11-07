@@ -198,6 +198,16 @@
       ],
     },
   };
+  const TABS = [
+    ["g", sets.g.name],
+    ["c", sets.c.name],
+    ["all", "Tout"],
+  ];
+  // Both families have disjoint answer alphabets, so saved question triplets
+  // still identify their original family, including in mixed sessions.
+  function categoryFor(item) {
+    return sets.c.options.includes(item[2]) ? "c" : "g";
+  }
   // Missing g/gu/ge must be immediately followed by a vowel.
   function isValidQuestion(category, item) {
     if (category !== "g") return true;
@@ -295,7 +305,7 @@
         lastQuestionIndex = game.index;
       }
       if (game.index < questions.length && game.index > countedThrough) {
-        recordAppearance(tab, questions[game.index]);
+        recordAppearance(categoryFor(questions[game.index]), questions[game.index]);
         countedThrough = game.index;
       }
       render();
@@ -388,7 +398,7 @@
     }
     if (
       !state ||
-      !Object.hasOwn(sets, state.tab) ||
+      !TABS.some(([key]) => key === state.tab) ||
       !Array.isArray(state.questions) ||
       state.questions.length !== SESSION_SIZE ||
       !state.questions.every(
@@ -396,10 +406,12 @@
           Array.isArray(item) &&
           item.length === 3 &&
           item.every((part) => typeof part === "string") &&
-          sets[state.tab].options.includes(item[2]),
+          (state.tab === "all" || categoryFor(item) === state.tab) &&
+          sets[categoryFor(item)].options.includes(item[2]) &&
+          isValidQuestion(categoryFor(item), item),
       ) ||
       (state.selected !== null &&
-        !sets[state.tab].options.includes(state.selected)) ||
+        !sets[categoryFor(state.questions[state.progress?.index] || state.questions[0])].options.includes(state.selected)) ||
       state.progress?.total !== state.questions.length
     )
       return false;
@@ -415,13 +427,17 @@
   }
 
   function shuffleSession(t) {
-    // Select unique word keys, not individual sentence variants.
+    // Select unique word keys from the selected family, or both in Tout.
+    // Using the original family keys shares one weight history across tabs.
     const sentencesByWord = new Map();
-    for (const item of sets[t].items) {
-      if (!isValidQuestion(t, item)) continue;
-      const key = wordKey(t, item);
-      if (!sentencesByWord.has(key)) sentencesByWord.set(key, []);
-      sentencesByWord.get(key).push(item);
+    for (const [category, collection] of Object.entries(sets)) {
+      if (t !== "all" && t !== category) continue;
+      for (const item of collection.items) {
+        if (!isValidQuestion(category, item)) continue;
+        const key = wordKey(category, item);
+        if (!sentencesByWord.has(key)) sentencesByWord.set(key, []);
+        sentencesByWord.get(key).push(item);
+      }
     }
     return weighting.choose(sentencesByWord, SESSION_SIZE);
   }
@@ -434,7 +450,7 @@
     game.reset(questions.length);
   }
   function switchTab(t) {
-    if (!Object.hasOwn(sets, t) || t === tab) return;
+    if (!TABS.some(([key]) => key === t) || t === tab) return;
     void game.changeSettings(
       game.index > 0 || game.failed || game.correct || selected !== null,
       () => {
@@ -455,7 +471,7 @@
     if (selected !== null && !game.correct) {
       const isCorrect = selected === questions[game.index][2];
       showRetry = !isCorrect;
-      if (!isCorrect && !game.failed) recordError(tab, questions[game.index]);
+      if (!isCorrect && !game.failed) recordError(categoryFor(questions[game.index]), questions[game.index]);
       game.validate(isCorrect);
     }
   }
@@ -476,15 +492,15 @@
     scoreCard.replaceChildren();
     scoreCard.hidden = false;
     panel.classList.toggle("academy-playing", game.index !== game.total);
-    GameUI.tabs(tabs, Object.entries(sets).map(([key, entry]) => [key, entry.name]), tab, switchTab);
+    GameUI.tabs(tabs, TABS, tab, switchTab);
 
-    const data = sets[tab],
-      total = questions.length;
+    const total = questions.length;
     game.progress(scoreCard, "Phrase");
     if (game.index === total) {
       game.finish(panel, restart);
       return;
     }
+    const data = sets[categoryFor(questions[game.index])];
     const [before, after] = questions[game.index];
     const match = before.match(/^(.*?)([^\s]*)$/s),
       prefix = match[1],
@@ -519,7 +535,7 @@
     const reference = make("div", "sentence sentence-measure");
     reference.setAttribute("aria-hidden", "true");
     const referenceWord = make("span", "word");
-    for (const option of sets[tab].options) referenceWord.append(spelling(option, true));
+    for (const option of data.options) referenceWord.append(spelling(option, true));
     referenceWord.append(spelling(selected, false));
     for (const token of tokens) {
       if (token.type === "space") {

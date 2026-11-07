@@ -131,7 +131,7 @@ window.ConjugaisonData = (() => {
   function possibleQuestions(mode = "present-1") {
     const grouped = new Map();
     for (const [type, entries] of Object.entries(groups)) {
-      if ((type === "ir") !== (mode === "present-2")) continue;
+      if (mode !== "all" && (type === "ir") !== (mode === "present-2")) continue;
       for (const [verb, complement] of entries)
         for (const [person, variants] of Object.entries(subjects)) {
           const answer = conjugate(type, verb, person);

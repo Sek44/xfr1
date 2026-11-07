@@ -4,10 +4,12 @@
   const MODES = {
     "present-1": "Présent de l’indicatif · 1er groupe",
     "present-2": "Présent de l’indicatif · 2e groupe",
+    all: "Tout",
   };
   const TABS = [
     ["present-1", "Présent · 1er groupe"],
     ["present-2", "Présent · 2e groupe"],
+    ["all", "Tout"],
   ];
   const tracker = ExerciseWeighting.create({
     appearancesKey: "entrainement_conjugaison_counts_v1",
@@ -61,7 +63,8 @@
         state.questions.length !== SESSION_SIZE ||
         !state.questions.every((q) =>
           ConjugaisonData.valid(q) &&
-          (q.type === "ir") === (state.mode === "present-2")) ||
+          (state.mode === "all" ||
+             (q.type === "ir") === (state.mode === "present-2"))) ||
         new Set(state.questions.map(ConjugaisonData.key)).size !== SESSION_SIZE ||
         typeof state.answer !== "string" ||
         !GameUI.validWordAnswer(state.answer, 24) ||
