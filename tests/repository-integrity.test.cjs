@@ -42,6 +42,7 @@ test("legacy stylesheet paths have been removed", () => {
     "home.css", "shared.css", "school-common.css",
     "exercise-theme.css", "exercise-restart.css",
     "scores-theme.css", "score-view.css",
+    "exercise-header.css", "scores-base.css",
     "styles/themes/magical-academy/home-v3.css",
     "styles/themes/magical-academy/classic.css",
   ]) assert.equal(fs.existsSync(path.join(root, filename)), false, filename);
@@ -71,4 +72,17 @@ test("each page imports each JavaScript and CSS file only once", () => {
     assert.equal(new Set(imports).size, imports.length,
       page + ": duplicate script or stylesheet import");
   }
+});
+
+test("classic pages load navigation and score styles only from the active theme", () => {
+  for (const page of ["index", "francais", "conjugaison", "calcul", "scores"]) {
+    const html = fs.readFileSync(path.join(root, page + ".html"), "utf8");
+    assert.doesNotMatch(html, /(?:exercise-header|scores-base)\.css/);
+    assert.match(html, /magical-academy\/components\.css/);
+  }
+  const components = fs.readFileSync(path.join(root, "styles/themes/magical-academy/components.css"), "utf8");
+  const scores = fs.readFileSync(path.join(root, "styles/themes/magical-academy/scores.css"), "utf8");
+  assert.match(components, /\.academy-banner \.nav-icon\.academy-nav-button/);
+  assert.match(scores, /\.history-panel :is\(h2, h3\)/);
+  assert.match(scores, /letter-spacing: -\.02em/);
 });

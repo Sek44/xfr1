@@ -6,6 +6,10 @@ html[data-theme="magical-academy"] body.academy-page .history-panel {
   box-shadow: inset 0 0 0 3px #fff5e1d9, 0 6px 16px #06152f67;
 }
 
+html[data-theme="magical-academy"] body.academy-page .history-panel :is(h2, h3) {
+  letter-spacing: -.02em;
+}
+
 /* Scores: a separate parchment card above the full history list. */
 html[data-theme="magical-academy"] body.academy-page .score-chart-panel {
   margin: 14px 0 17px;

@@ -7,13 +7,12 @@ Les fichiers de référence sont [`theme.css`](../../styles/themes/magical-acade
 - `home-layout.css` : structure et disposition de base des cartes de l’accueil.
 - `styles/themes/magical-academy/home.css` : composition illustrée de l’accueil.
 - `styles/themes/magical-academy/theme.css` : couleurs, fond de page et cadre global.
-- `styles/themes/magical-academy/components.css` : composants communs (navigation, onglets, progression, questions, touches).
+- `styles/themes/magical-academy/components.css` : composants communs (navigation, redémarrage, onglets, progression, questions, touches).
 - `styles/themes/magical-academy/results.css` : carte de résultat finale commune aux exercices classiques.
 - `styles/themes/magical-academy/scores.css` : graphique, historique et adaptation mobile de Scores.
 - `shared-components.css` : styles utilitaires communs et historique des scores.
-- `school-base.css` : styles de base des pages scolaires ; `exercise-base.css` : contrôles classiques avant l’application du thème.
-- `exercise-header.css` : bouton de redémarrage du bandeau.
-- `scores-base.css` : styles de base de la page Scores ; `scores-overlay.css` : affichage plein écran des scores pendant une partie.
+- `school-base.css` : palette et styles de base des pages scolaires ; `exercise-base.css` : styles résiduels de contrôles classiques.
+- `scores-overlay.css` : affichage plein écran des scores pendant une partie.
 - `francais.css`, `calcul.css`, `keyboard.css`, `magic.css`, `space.css` et `styles/themes/magical-academy/conjugaison.css` : styles spécifiques aux jeux et à leur clavier.
 
 Les noms distinguent les **bases de mise en page**, le **thème visuel** et les **styles propres à un jeu**. Les feuilles sont chargées dans l’ordre indiqué par chaque page HTML ; `components.css` termine la base commune ; `results.css` ou `scores.css` est ensuite chargé selon la page.

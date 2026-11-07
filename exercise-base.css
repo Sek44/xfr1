@@ -1,23 +1,5 @@
 /* Shared school-inspired visual language, matching the home page.
    Only presentation: game logic, keypad sizing and layout remain game-owned. */
-.page-header { margin-bottom: 12px; }
-.page-header .page-title {
-  color: #163b69;
-  font-weight: var(--weight-heavy);
-  letter-spacing: -.035em;
-}
-.page-header .nav-icon, .page-header .restart-header {
-  background: #fff;
-  border: 1px solid #cbd9ed;
-  color: #285a9c;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #1e3d6810;
-}
-.page-header .nav-icon:hover, .page-header .nav-icon:focus-visible,
-.page-header .restart-header:hover, .page-header .restart-header:focus-visible {
-  background: #e8f1ff;
-  border-color: #9bbbe6;
-}
 .panel, .score-card, .score, .setting {
   background: #fff;
   border: 1px solid var(--school-border);
