@@ -39,20 +39,39 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
   })();`, context);
   const { sets, TABS, categoryFor, wordKey, shuffleSession, weighting } = context.bank;
   assert.equal(TABS.at(-1)[1], "Tout");
-  assert.ok(sets.g.items.length > 0 && sets.c.items.length > 0);
+  assert.ok(sets.g.items.length > 0 && sets.c.items.length > 0 && sets.s.items.length > 0);
+  assert.deepEqual(Array.from(sets.s.options), ["s", "ss"]);
   // Include a word from each family in one deterministic mixed session.
   vm.runInContext(`Math.random = (() => {
     let i = 0;
-    const values = [0, 0, 0.99999, 0, 0.4, 0, 0.75, 0];
+    const values = [0, 0, 0.55, 0, 0.99999, 0, 0.75, 0];
     return () => values[i++ % values.length];
   })();`, context);
   const questions = shuffleSession("all");
   assert.equal(questions.length, 10);
   assert.ok(questions.some((q) => categoryFor(q) === "g"));
   assert.ok(questions.some((q) => categoryFor(q) === "c"));
+  assert.ok(questions.some((q) => categoryFor(q) === "s"));
   assert.equal(new Set(questions.map((q) => wordKey(categoryFor(q), q))).size, 10);
   for (const q of questions)
     assert.ok(sets[categoryFor(q)].options.includes(q[2]));
+  // All s/ss blanks are between vowels, with a balanced bank of
+  // distinct words including the meaning-dependent minimal pairs.
+  assert.ok(sets.s.items.length >= 90);
+  assert.ok(sets.s.items.filter((q) => q[2] === "s").length >= 40);
+  assert.ok(sets.s.items.filter((q) => q[2] === "ss").length >= 40);
+  const sWords = new Set(sets.s.items.map((q) => JSON.parse(wordKey("s", q))[1]));
+  for (const word of ["poison", "poisson", "cousin", "coussin", "case", "casse", "laser", "lasser"])
+    assert.ok(sWords.has(word), word);
+  for (const q of sets.s.items) {
+    assert.equal(categoryFor(q), "s");
+    assert.match(q[0], /[aeiouyàâäéèêëîïôöùûüÿ]$/iu);
+    assert.match(q[1], /^[aeiouyàâäéèêëîïôöùûüÿ]/iu);
+  }
+  const sSession = shuffleSession("s");
+  assert.equal(sSession.length, 10);
+  assert.ok(sSession.every((q) => categoryFor(q) === "s"));
+  assert.equal(new Set(sSession.map((q) => wordKey("s", q))).size, 10);
   const item = questions[0];
   const key = wordKey(categoryFor(item), item);
   weighting.appearance(key); // Displayed in Tout.

@@ -197,19 +197,135 @@
         ["Le ", "anard nage dans l'étang.", "c"],
       ],
     },
+    s: {
+      name: "s / ss",
+      options: ["s", "ss"],
+      items: [
+        ["Le poi", "on peut être très dangereux.", "s"],
+        ["Mon cou", "in vient jouer chez moi.", "s"],
+        ["Il coche une ca", "e dans le tableau.", "s"],
+        ["La ba", "e du château est en pierre.", "s"],
+        ["Le la", "er projette un point rouge sur le mur.", "s"],
+        ["La mai", "on a un toit rouge.", "s"],
+        ["L'oi", "eau chante dans l'arbre.", "s"],
+        ["Le rai", "in mûrit sur la vigne.", "s"],
+        ["Je mange une frai", "e bien rouge.", "s"],
+        ["La chai", "e est près de la table.", "s"],
+        ["Une ro", "e pousse dans le jardin.", "s"],
+        ["Le va", "e contient des fleurs.", "s"],
+        ["Le voi", "in nous dit bonjour.", "s"],
+        ["La mu", "ique accompagne la danse.", "s"],
+        ["Nous allons vi", "iter le musée.", "s"],
+        ["Son vi", "age est couvert de peinture.", "s"],
+        ["La cui", "ine sent le gâteau chaud.", "s"],
+        ["L'u", "ine fabrique des jouets.", "s"],
+        ["Quel plai", "ir de jouer ensemble !", "s"],
+        ["Une surpri", "e nous attend à la maison.", "s"],
+        ["Une bri", "e fraîche souffle ce matin.", "s"],
+        ["Sa ru", "e a trompé le dragon.", "s"],
+        ["Le dé", "ert est très sec.", "s"],
+        ["La fu", "ée décolle vers les étoiles.", "s"],
+        ["Le pay", "age est couvert de neige.", "s"],
+        ["Il faut pe", "er les pommes.", "s"],
+        ["Tu dois arro", "er les plantes.", "s"],
+        ["Je vais écra", "er la banane.", "s"],
+        ["La ca", "erne des pompiers est ouverte.", "s"],
+        ["La sai", "on des pluies commence.", "s"],
+        ["Le tré", "or est caché sous le sable.", "s"],
+        ["La pri", "on est entourée de murs.", "s"],
+        ["Le ha", "ard lui a porté chance.", "s"],
+        ["Je propo", "e un nouveau jeu.", "s"],
+        ["Ce livre est po", "é sur l'étagère.", "s"],
+        ["Le joueur doit vi", "er la cible.", "s"],
+        ["Elle va choi", "ir un livre.", "s"],
+        ["Les enfants s'amu", "ent dans le parc.", "s"],
+        ["Il ra", "e sa barbe devant le miroir.", "s"],
+        ["Je dépo", "e mon cartable dans l'entrée.", "s"],
+        ["La banqui", "e flotte au loin.", "s"],
+        ["Il po", "e une question au professeur.", "s"],
+        ["J'ai une vi", "ion du futur.", "s"],
+        ["C'est une occa", "ion spéciale.", "s"],
+        ["Il refu", "e de manger ses légumes.", "s"],
+        ["La me", "ure est juste.", "s"],
+        ["Le poi", "on de cette plante ne doit pas être touché.", "s"],
+        ["Ce cou", "in habite loin de chez nous.", "s"],
+        ["La ro", "e est une jolie fleur.", "s"],
+        ["Le voi", "in promène son chien.", "s"],
+        ["Le poi", "on nage près du bateau.", "ss"],
+        ["Ce cou", "in est très moelleux.", "ss"],
+        ["Il ca", "e une branche en deux.", "ss"],
+        ["Une note ba", "e résonne au piano.", "ss"],
+        ["Ce bruit va finir par me la", "er.", "ss"],
+        ["Le de", "ert arrive après le repas.", "ss"],
+        ["La ta", "e est remplie de lait.", "ss"],
+        ["Notre cla", "e part en sortie.", "ss"],
+        ["L'a", "iette est propre.", "ss"],
+        ["Ma chau", "ure est mouillée.", "ss"],
+        ["Ce ti", "u est très doux.", "ss"],
+        ["La bro", "e démêle les cheveux.", "ss"],
+        ["Un bui", "on cache le lapin.", "ss"],
+        ["Le pou", "in sort de son œuf.", "ss"],
+        ["La mou", "e flotte sur l'eau.", "ss"],
+        ["La vite", "e du train augmente.", "ss"],
+        ["Sa réu", "ite rend ses parents heureux.", "ss"],
+        ["Je pa", "e devant l'école.", "ss"],
+        ["Il faut ca", "er les noix.", "ss"],
+        ["Une cha", "e au trésor commence.", "ss"],
+        ["Il rama", "e les feuilles mortes.", "ss"],
+        ["Le vélo gli", "e sur la glace.", "ss"],
+        ["Je de", "ine un dragon.", "ss"],
+        ["Son me", "age est arrivé.", "ss"],
+        ["Le pa", "age piéton est devant l'école.", "ss"],
+        ["Une boi", "on fraîche est sur la table.", "ss"],
+        ["Il ra", "ure son petit frère.", "ss"],
+        ["La mi", "ion commence à l'aube.", "ss"],
+        ["Sa pa", "ion est de construire des châteaux.", "ss"],
+        ["Elle e", "aie son nouveau vélo.", "ss"],
+        ["Le de", "in est accroché au mur.", "ss"],
+        ["La le", "ive sèche dehors.", "ss"],
+        ["La bou", "ole indique le nord.", "ss"],
+        ["La ca", "erole chauffe sur le feu.", "ss"],
+        ["Un vai", "eau spatial approche.", "ss"],
+        ["Le pa", "ager attend le train.", "ss"],
+        ["Le do", "ier est dans le tiroir.", "ss"],
+        ["Un croi", "ant sort du four.", "ss"],
+        ["La gro", "e valise est lourde.", "ss"],
+        ["Le ma", "if montagneux est enneigé.", "ss"],
+        ["Un profe", "eur nous accueille.", "ss"],
+        ["L'impa", "e est barrée par un mur.", "ss"],
+        ["Le cai", "ier sert les clients.", "ss"],
+        ["Elle se pre", "e pour ne pas rater le bus.", "ss"],
+        ["Ce livre est pa", "ionnant.", "ss"],
+        ["La fo", "e aux lions est profonde.", "ss"],
+        ["La ma", "e de la pierre est importante.", "ss"],
+        ["Le ba", "in est rempli d'eau.", "ss"],
+        ["Il vi", "e une vis dans le bois.", "ss"],
+        ["Le proce", "us est très long.", "ss"],
+        ["Cette po", "ibilité me plaît.", "ss"],
+        ["Le poi", "on rouge tourne dans son bocal.", "ss"],
+        ["Le cou", "in est posé sur le canapé.", "ss"],
+      ],
+    },
   };
   const TABS = [
     ["g", sets.g.name],
     ["c", sets.c.name],
+    ["s", sets.s.name],
     ["all", "Tout"],
   ];
-  // Both families have disjoint answer alphabets, so saved question triplets
-  // still identify their original family, including in mixed sessions.
+  // Disjoint answer alphabets identify the original family even in saved
+  // mixed sessions, without adding fields to existing question triplets.
   function categoryFor(item) {
-    return sets.c.options.includes(item[2]) ? "c" : "g";
+    if (sets.c.options.includes(item[2])) return "c";
+    if (sets.s.options.includes(item[2])) return "s";
+    return "g";
   }
-  // Missing g/gu/ge must be immediately followed by a vowel.
+  // Missing g/gu/ge must precede a vowel; s/ss questions illustrate
+  // the contrast between vowels ([z] with s, [s] with ss).
   function isValidQuestion(category, item) {
+    if (category === "s")
+      return /[aeiouyàâäéèêëîïôöùûüÿ]$/iu.test(item[0]) &&
+        /^[aeiouyàâäéèêëîïôöùûüÿ]/iu.test(item[1]);
     if (category !== "g") return true;
     return /^[aeiouyàâäéèêëîïôöùûüÿ]/iu.test(item[1]);
   }
@@ -427,7 +543,7 @@
   }
 
   function shuffleSession(t) {
-    // Select unique word keys from the selected family, or both in Tout.
+    // Select unique word keys from the selected family, or all in Tout.
     // Using the original family keys shares one weight history across tabs.
     const sentencesByWord = new Map();
     for (const [category, collection] of Object.entries(sets)) {

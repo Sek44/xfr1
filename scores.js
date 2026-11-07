@@ -7,7 +7,7 @@ window.ExerciseScores = (() => {
   function scoreCategory(record) {
     if (record.tab === "space" || record.tab === "magic" || record.mode === "arcade")
       return "mission";
-    if (["g", "c", "all", "math", "conjugaison"].includes(record.tab))
+    if (["g", "c", "s", "all", "math", "conjugaison"].includes(record.tab))
       return "exercise";
     return record.scoreCategory === "mission" ? "mission" : "exercise";
   }
@@ -112,6 +112,7 @@ window.ExerciseScores = (() => {
     if (record.tab === "conjugaison") return "Conjugaison · " + (record.category || "Présent · 1er groupe");
     if (record.tab === "g") return "Français · g / gu / ge";
     if (record.tab === "c") return "Français · c / ç";
+    if (record.tab === "s") return "Français · s / ss";
     if (record.tab === "all") return "Français · Tout";
     return String(record.category || record.tab || "Exercice");
   }
@@ -416,7 +417,7 @@ window.ExerciseScores = (() => {
           ? r.tab === "math"
           : game === "space" || game === "magic"
             ? r.tab === game
-            : r.tab === "g" || r.tab === "c" || r.tab === "all"),
+            : r.tab === "g" || r.tab === "c" || r.tab === "s" || r.tab === "all"),
     );
     if (chartContainer) renderGraph(chartContainer, records, game);
     else renderGraph(container, records, game);

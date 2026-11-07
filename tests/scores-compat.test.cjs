@@ -147,5 +147,8 @@ test("French Tout scores remain exercises and are visible in French history", ()
   assert.equal(fixture.scores.save({ tab: "all", score: 8, total: 10 }), true);
   assert.equal(JSON.parse(fixture.stored)[0].scoreCategory, "exercise");
   assert.match(source, /record\.tab === "all"\) return "Français · Tout"/);
-  assert.match(source, /r\.tab === "g" \|\| r\.tab === "c" \|\| r\.tab === "all"/);
+  assert.match(source, /record\.tab === "s"\) return "Français · s \/ ss"/);
+  assert.equal(fixture.scores.save({ tab: "s", score: 9, total: 10 }), true);
+  assert.equal(JSON.parse(fixture.stored)[0].scoreCategory, "exercise");
+  assert.match(source, /r\.tab === "g" \|\| r\.tab === "c" \|\| r\.tab === "s" \|\| r\.tab === "all"/);
 });
