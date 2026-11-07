@@ -16,7 +16,8 @@ html[data-theme="magical-academy"] .academy-hero {
 /* Symmetric engraved midnight-blue plaque, with space for decorative scrolls. */
 html[data-theme="magical-academy"] .hero-plaque {
   position: absolute;
-  bottom: 8px;
+  /* Raise the entire title composition while keeping the hero's layout height. */
+  bottom: 24px;
   left: 50%;
   z-index: 1;
   display: grid;
@@ -259,7 +260,7 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
     margin-bottom: 11px;
   }
   html[data-theme="magical-academy"] .hero-plaque {
-    bottom: 8px;
+    bottom: 20px;
     width: min(92%, 490px);
     min-height: 72px;
     padding: 14px 24px;
