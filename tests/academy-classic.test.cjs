@@ -168,7 +168,7 @@ test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () 
   const french = read("francais.html");
   const conjugaisonPage = read("conjugaison.html");
   const scores = read("scores.html");
-  const tabStyles = common.split("/* Academy tabs")[1].split("/* Progress cards")[0];
+  const tabStyles = common.split("/* Shared navigation tabs")[1].split("/* Progress cards")[0];
   assert.ok(tabStyles.includes(".academy-tabs .academy-tab"));
   assert.ok(tabStyles.includes("linear-gradient("));
   assert.ok(tabStyles.includes("border-radius: 9px;"));
