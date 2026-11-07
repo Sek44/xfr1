@@ -152,3 +152,23 @@ test("French Tout scores remain exercises and are visible in French history", ()
   assert.equal(JSON.parse(fixture.stored)[0].scoreCategory, "exercise");
   assert.match(source, /r\.tab === "g" \|\| r\.tab === "c" \|\| r\.tab === "s" \|\| r\.tab === "all"/);
 });
+
+test("conjugation score labels use short tab titles for old and new records", () => {
+  // Read the production label function without altering its public API.
+  const start = source.indexOf("  function label(record) {");
+  const end = source.indexOf("  function encourage(", start);
+  assert.ok(start >= 0 && end > start);
+  const label = vm.runInNewContext(
+    source.slice(start, end) + "\nlabel;",
+  );
+  for (const [category, expected] of [
+    ["Présent de l’indicatif · 1er groupe", "Conjugaison · Présent - 1er"],
+    ["Présent de l’indicatif · 2e groupe", "Conjugaison · Présent - 2e"],
+    ["Présent · 1er groupe", "Conjugaison · Présent - 1er"],
+    ["Présent · 2e groupe", "Conjugaison · Présent - 2e"],
+    ["Tout", "Conjugaison · Tout"],
+  ]) {
+    assert.equal(label({ tab: "conjugaison", category }), expected);
+  }
+  assert.equal(label({ tab: "conjugaison" }), "Conjugaison · Présent - 1er");
+});

@@ -109,7 +109,17 @@ window.ExerciseScores = (() => {
     if (record.tab === "space") return "Mission calcul";
     if (record.tab === "magic") return "Mission magique";
     if (record.tab === "math") return record.category || "Additions";
-    if (record.tab === "conjugaison") return "Conjugaison · " + (record.category || "Présent · 1er groupe");
+    if (record.tab === "conjugaison") {
+      // Older scores retain their original saved categories; only the
+      // presentation changes so historical records are never rewritten.
+      const names = {
+        "Présent de l’indicatif · 1er groupe": "Présent - 1er",
+        "Présent de l’indicatif · 2e groupe": "Présent - 2e",
+        "Présent · 1er groupe": "Présent - 1er",
+        "Présent · 2e groupe": "Présent - 2e",
+      };
+      return "Conjugaison · " + (names[record.category] || record.category || "Présent - 1er");
+    }
     if (record.tab === "g") return "Français · g / gu / ge";
     if (record.tab === "c") return "Français · c / ç";
     if (record.tab === "s") return "Français · s / ss";
