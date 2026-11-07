@@ -282,3 +282,42 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
     padding: 3px;
   }
 }
+
+/* Like Conjugaison, keep the typed answer at the question's text size
+   and reserve only the width of the expected result. */
+html[data-theme="magical-academy"] body.calcul-page .question-frame .equation-row {
+  gap: clamp(6px, 1.5vw, 10px);
+  margin: 0;
+}
+html[data-theme="magical-academy"] body.calcul-page .question-frame .equation-row .question {
+  font: var(--weight-normal) clamp(var(--text-xl), 5.55vw, var(--text-2xl))/1.23 var(--font-display);
+}
+html[data-theme="magical-academy"] body.calcul-page .question-frame .equation-row .answer-display {
+  display: inline-grid;
+  grid-template-columns: max-content;
+  align-items: center;
+  justify-items: center;
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 2.35em;
+  max-width: 100%;
+  min-height: 0;
+  padding: 0 .12em;
+  border: 0;
+  border-bottom: 3px solid #155ba9;
+  border-radius: 3px 3px 0 0;
+  background: #e4eefc;
+  color: #1c4e8e;
+  font: var(--weight-bold) clamp(var(--text-xl), 5.55vw, var(--text-2xl))/1.23 var(--font-display);
+}
+html[data-theme="magical-academy"] body.calcul-page .answer-display :is(.answer-reserve, .answer-visible) {
+  grid-area: 1 / 1;
+  white-space: pre;
+  font: inherit;
+}
+html[data-theme="magical-academy"] body.calcul-page .answer-display .answer-reserve {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
