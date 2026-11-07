@@ -38,8 +38,8 @@ test("official typography defines exactly two families, eight sizes, and four we
 });
 
 test("classic navigation, controls, questions and progress share semantic type roles", () => {
-  const classic = read("styles/themes/magical-academy/classic.css");
-  const home = read("styles/themes/magical-academy/home-v3.css");
+  const classic = read("styles/themes/magical-academy/components.css");
+  const home = read("styles/themes/magical-academy/home.css");
   for (const role of ["page-title", "tab", "score-tab", "question", "score-number"]) {
     assert.ok(classic.includes("var(--type-" + role + ")"), role);
   }

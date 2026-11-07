@@ -5,7 +5,7 @@ const path = require("node:path");
 
 const root = path.join(__dirname, "..");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
-const css = read("styles/themes/magical-academy/home-v3.css");
+const css = read("styles/themes/magical-academy/home.css");
 const html = read("index.html");
 
 test("homepage title plaque and book form a compact, centered composition", () => {
@@ -120,7 +120,7 @@ test("progress groups shift inward without moving dividers or changing text size
 });
 
 test("Scores uses the shared header and the two-layer WebP icon", () => {
-  const classic = read("styles/themes/magical-academy/classic.css");
+  const classic = read("styles/themes/magical-academy/components.css");
   assert.ok(html.includes("data-academy-header"));
   assert.ok(html.includes('data-home="true" data-scores="true"'));
   assert.ok(html.includes("academy-home-nav"));

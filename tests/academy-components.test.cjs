@@ -89,7 +89,7 @@ test("game-specific pages use standard question and keyboard panels", () => {
 });
 
 test("navigation illustrations retain their layered backgrounds", () => {
-  const css = read("styles/themes/magical-academy/classic.css");
+  const css = read("styles/themes/magical-academy/components.css");
   for (const action of ["back", "restart", "scores"]) {
     const selector = ".page-header.school-banner.academy-banner .nav-icon.academy-nav-button.academy-nav-" + action;
     assert.ok(css.includes(selector), selector);
@@ -100,7 +100,7 @@ test("navigation illustrations retain their layered backgrounds", () => {
 });
 
 test("shared frame and score title symbol are available in the theme assets", () => {
-  const css = read("styles/themes/magical-academy/classic.css");
+  const css = read("styles/themes/magical-academy/components.css");
   assert.ok(fs.existsSync(path.join(root, "styles/themes/magical-academy/assets/nav-background.webp")));
   assert.ok(css.includes('.academy-title-art--scores { background-image: url("./assets/nav-scores.webp")'));
 });
@@ -120,7 +120,7 @@ test("Conjugaison loads its current dedicated stylesheet", () => {
   const html = read("conjugaison.html");
   assert.ok(html.includes("magical-academy/conjugaison.css"));
   assert.equal(html.includes("conjugaison-v3.css"), false);
-  assert.ok(html.includes("magical-academy/classic.css"));
+  assert.ok(html.includes("magical-academy/components.css"));
   assert.ok(html.includes("academy-header.js"));
 });
 
@@ -137,7 +137,7 @@ test("French text reserves width at the end of its measured lines", () => {
 });
 
 test("shared navigation titles and illustrations use official responsive typography", () => {
-  const css = read("styles/themes/magical-academy/classic.css");
+  const css = read("styles/themes/magical-academy/components.css");
   const tokens = read("styles/typography.css");
   const selector = 'body.academy-page .page-header.school-banner.academy-banner .page-title';
   assert.equal(css.split(selector).length - 1, 3);
@@ -149,12 +149,12 @@ test("shared navigation titles and illustrations use official responsive typogra
   assert.ok(css.includes("flex-basis: 38px; width: 38px; height: 55px"));
   assert.ok(css.includes("flex-basis: 30px; width: 30px; height: 46px"));
   for (const page of ["francais", "conjugaison", "calcul", "scores"]) {
-    assert.ok(read(page + ".html").includes("classic.css?v="));
+    assert.ok(read(page + ".html").includes("components.css?v="));
   }
 });
 
 test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () => {
-  const common = read("styles/themes/magical-academy/classic.css");
+  const common = read("styles/themes/magical-academy/components.css");
   const conjugaison = read("styles/themes/magical-academy/conjugaison.css");
   const french = read("francais.html");
   const conjugaisonPage = read("conjugaison.html");
@@ -181,11 +181,11 @@ test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () 
   assert.ok(scores.includes('link.classList.add("active")'));
   assert.ok(scores.includes('link.setAttribute("aria-current", "page")'));
   assert.ok(read("francais.js").includes("GameUI.tabs("));
-  assert.equal(read("scores-theme.css").includes(".filter a"), false);
+  assert.equal(read("scores-base.css").includes(".filter a"), false);
 });
 
 test("French choices, numeric keys and AZERTY reuse the standard key finish", () => {
-  const common = read("styles/themes/magical-academy/classic.css");
+  const common = read("styles/themes/magical-academy/components.css");
   assert.ok(common.includes("--academy-key-background"));
   assert.ok(common.includes(".academy-key, .azerty-keyboard .keyboard-key"));
   assert.ok(read("francais.js").includes('"academy-key"'));
@@ -209,7 +209,7 @@ test("Calcul has a deliberate gap after the difficulty selectors", () => {
 });
 
 test("final results reuse the shared parchment and standard button styling", () => {
-  const css = read("styles/themes/magical-academy/classic.css");
+  const css = read("styles/themes/magical-academy/components.css");
   const js = read("game-common.js");
   assert.ok(css.includes(".panel:has(> .academy-result)"));
   assert.ok(css.includes(".academy-result::before"));

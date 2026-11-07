@@ -341,7 +341,7 @@ test("score history provides styled entries and a mobile-friendly CSS layout", (
   assert.match(mission.children[3].className, /history-score-mission/);
   assert.equal(mission.children[3].textContent, "42 points");
   const css = fs.readFileSync(
-    path.join(__dirname, "../styles/themes/magical-academy/classic.css"),
+    path.join(__dirname, "../styles/themes/magical-academy/components.css"),
     "utf8",
   );
   assert.equal(css.includes(".score-chart-scroll"), false);
@@ -385,7 +385,7 @@ test("short curves retain visible markers and no scroll wrapper", () => {
 
 test("history cards use the same background and only highlight while pressed", () => {
   const css = fs.readFileSync(
-    path.join(__dirname, "../styles/themes/magical-academy/classic.css"),
+    path.join(__dirname, "../styles/themes/magical-academy/components.css"),
     "utf8",
   );
   assert.equal(css.includes("#history .history-table tbody tr:nth-child(even)"), false);

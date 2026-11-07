@@ -1,6 +1,6 @@
 # Thème et ressources graphiques actuels
 
-Les fichiers de référence sont [`theme.css`](../../styles/themes/magical-academy/theme.css) (palette, fond, cadre standard), [`classic.css`](../../styles/themes/magical-academy/classic.css) (navigation et exercices), [`home-v3.css`](../../styles/themes/magical-academy/home-v3.css) (accueil) et [`conjugaison.css`](../../styles/themes/magical-academy/conjugaison.css) (saisie de Conjugaison).
+Les fichiers de référence sont [`theme.css`](../../styles/themes/magical-academy/theme.css) (palette, fond, cadre standard), [`components.css`](../../styles/themes/magical-academy/components.css) (navigation et exercices), [`home.css`](../../styles/themes/magical-academy/home.css) (accueil) et [`conjugaison.css`](../../styles/themes/magical-academy/conjugaison.css) (saisie de Conjugaison).
 
 Les images utilisées en production résident uniquement dans [`styles/themes/magical-academy/assets/`](../../styles/themes/magical-academy/assets/) :
 

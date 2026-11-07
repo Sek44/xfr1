@@ -1,6 +1,6 @@
 # Typographie — état actuel
 
-Source de vérité : [`styles/typography.css`](../../styles/typography.css). Les composants visuels se trouvent dans [`classic.css`](../../styles/themes/magical-academy/classic.css) et [`home-v3.css`](../../styles/themes/magical-academy/home-v3.css).
+Source de vérité : [`styles/typography.css`](../../styles/typography.css). Les composants visuels se trouvent dans [`components.css`](../../styles/themes/magical-academy/components.css) et [`home.css`](../../styles/themes/magical-academy/home.css).
 
 ## Familles
 
@@ -26,4 +26,4 @@ Graisses : `--weight-normal` (400), `--weight-medium` (600), `--weight-bold` (70
 
 Préférer les rôles `--type-*` (`home-title`, `page-title`, `card-title`, `question`, `tab`, `score-tab`, `stat`, etc.) à de nouvelles tailles arbitraires. Les rôles communs s'adaptent à 520 px et 360 px. Les missions conservent leurs propres placements de HUD.
 
-Sur l'accueil, « Mes progrès » partage `--type-card-title`, `--type-stat`, `--daily-icon-size` et `--daily-divider-gap` pour équilibrer titres, icônes et espacements. Les ajustements de mise en page restent dans `home-v3.css`.
+Sur l'accueil, « Mes progrès » partage `--type-card-title`, `--type-stat`, `--daily-icon-size` et `--daily-divider-gap` pour équilibrer titres, icônes et espacements. Les ajustements de mise en page restent dans `home.css`.

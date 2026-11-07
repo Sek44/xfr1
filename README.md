@@ -15,9 +15,9 @@ Site statique d'exercices de français, de calcul et de deux missions ludiques, 
 
 | Fichiers | Responsabilité |
 | --- | --- |
-| `index.html`, `home.css`, `styles/themes/magical-academy/home-v3.css` | Accueil et progression du jour |
+| `index.html`, `home-layout.css`, `styles/themes/magical-academy/home.css` | Accueil et progression du jour |
 | `styles/themes/magical-academy/theme.css` | Palette, scène de fond, cadre extérieur partagé |
-| `styles/themes/magical-academy/classic.css`, `academy-header.js` | Navigation et composants communs aux exercices et Scores |
+| `styles/themes/magical-academy/components.css`, `academy-header.js` | Navigation et composants communs aux exercices et Scores |
 | `styles/themes/magical-academy/assets/` | Ressources WebP de production |
 | `game-common.js`, `game-ui.js`, `exercise-weighting.js` | Sessions, corrections, saisie et pondération |
 | `francais.js`, `conjugaison.js`, `conjugaison-data.js`, `calcul.js` | Contrôleurs et banques de questions |
