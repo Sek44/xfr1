@@ -13,8 +13,7 @@ html[data-theme="magical-academy"] .academy-hero {
   margin-bottom: 14px;
 }
 
-/* A pointed, double-edged arch gives the title its taller central silhouette.
-   The transparent WebP book remains a separate layer in front of this CSS art. */
+/* A rounded architectural niche, with nested gold trim and a soft glow. */
 html[data-theme="magical-academy"] .hero-arch {
   position: absolute;
   top: 5px;
@@ -23,26 +22,37 @@ html[data-theme="magical-academy"] .hero-arch {
   width: clamp(176px, 25vw, 216px);
   height: 153px;
   transform: translateX(-50%);
-  clip-path: polygon(50% 0, 76% 12%, 91% 31%, 100% 55%, 100% 100%, 0 100%, 0 55%, 9% 31%, 24% 12%);
-  background: linear-gradient(90deg, #875022, #e9b967 18%, #ffe6a4 49%, #e7ae56 80%, #875022);
-  filter: drop-shadow(0 5px 9px #04102dcc);
+  border: 3px solid #e9ba6d;
+  border-radius: 50% 50% 18px 18px / 63% 63% 18px 18px;
+  background:
+    radial-gradient(ellipse at 50% 45%, #4f5693b8 0%, #293363ea 53%, #192146fa 100%),
+    linear-gradient(180deg, #293865, #141a3c);
+  box-shadow:
+    0 0 0 1px #684529,
+    inset 0 0 0 2px #775134,
+    inset 0 0 0 6px #f1cf8c2c,
+    inset 0 9px 16px #0b173a75,
+    0 9px 17px #06112d9e;
 }
 html[data-theme="magical-academy"] .hero-arch::before {
   content: "";
   position: absolute;
-  inset: 4px;
-  clip-path: inherit;
-  background:
-    radial-gradient(circle at 29% 37%, #ffdf9e 0 1px, transparent 2px),
-    radial-gradient(circle at 72% 48%, #fff1c4 0 1px, transparent 2px),
-    radial-gradient(ellipse at 50% 30%, #34437b, #1c2552 65%, #141b3d);
+  inset: 7px;
+  border: 1px solid #e5bf7c85;
+  border-radius: 50% 50% 12px 12px / 63% 63% 12px 12px;
+  pointer-events: none;
 }
 html[data-theme="magical-academy"] .hero-arch::after {
   content: "";
   position: absolute;
-  inset: 11px;
-  clip-path: inherit;
-  border: 1px solid #e1b66e80;
+  top: 25px;
+  left: 50%;
+  width: 124px;
+  height: 91px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #9c9fe256 0%, #6573b51e 57%, transparent 77%);
+  pointer-events: none;
 }
 html[data-theme="magical-academy"] .hero-book {
   position: absolute;
@@ -58,7 +68,7 @@ html[data-theme="magical-academy"] .hero-book {
   filter: drop-shadow(0 5px 3px #09112fbd) drop-shadow(0 0 12px #ffd9899c);
 }
 
-/* A symmetric, engraved midnight-blue nameplate with a subtle pendant. */
+/* A symmetric, engraved midnight-blue nameplate with even corners. */
 html[data-theme="magical-academy"] .hero-plaque {
   position: absolute;
   bottom: 8px;
@@ -68,11 +78,11 @@ html[data-theme="magical-academy"] .hero-plaque {
   place-items: center;
   width: min(84%, 550px);
   min-height: 86px;
-  padding: 20px 38px 17px;
+  padding: 18px 38px;
   transform: translateX(-50%);
   isolation: isolate;
   border: 3px solid #f0c576;
-  border-radius: 23px 23px 29px 29px;
+  border-radius: 24px;
   background:
     radial-gradient(ellipse at 50% 0%, #493768, transparent 72%),
     linear-gradient(180deg, #302453 0%, #1a1d48 100%);
@@ -88,21 +98,8 @@ html[data-theme="magical-academy"] .hero-plaque::before {
   position: absolute;
   inset: 7px;
   border: 1px solid #e8bd7780;
-  border-radius: 15px 15px 22px 22px;
+  border-radius: 16px;
   pointer-events: none;
-}
-html[data-theme="magical-academy"] .hero-plaque::after {
-  content: "";
-  position: absolute;
-  bottom: -11px;
-  left: 50%;
-  z-index: -1;
-  width: 17px;
-  height: 17px;
-  transform: translateX(-50%) rotate(45deg);
-  border: 2px solid #edc477;
-  background: linear-gradient(135deg, #ffe3a2, #a86a32);
-  box-shadow: 2px 2px 5px #06132a85;
 }
 html[data-theme="magical-academy"] .hero-plaque h1 {
   position: relative;
@@ -256,13 +253,13 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
     bottom: 8px;
     width: min(92%, 490px);
     min-height: 72px;
-    padding: 15px 24px 13px;
+    padding: 14px 24px;
     border-width: 2px;
-    border-radius: 18px 18px 25px 25px;
+    border-radius: 20px;
   }
   html[data-theme="magical-academy"] .hero-plaque::before {
     inset: 5px;
-    border-radius: 12px 12px 19px 19px;
+    border-radius: 14px;
   }
   html[data-theme="magical-academy"] .hero-plaque h1 {
     font-size: var(--type-home-title);
