@@ -14,6 +14,9 @@ html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.
   grid-template-columns: 52px minmax(0, 1fr) 52px 52px;
   align-items: center;
   gap: 9px;
+  /* Reserve the artwork-height row even when the home header has no title.
+     This keeps the Scores button's vertical center identical on every page. */
+  height: calc(clamp(52px, 8.8vw, 78px) + 4px);
   min-height: 58px;
   margin: 0 0 3px;
   padding: 2px 5px;
@@ -715,6 +718,7 @@ html[data-theme="magical-academy"] body.academy-page #history .history-table tbo
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner {
     grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
+    height: 59px;
     min-height: 52px;
     gap: 5px;
     padding: 2px 4px;
@@ -735,7 +739,7 @@ html[data-theme="magical-academy"] body.academy-page #history .history-table tbo
   html[data-theme="magical-academy"] body.academy-page .keyboard-panel { margin: 0 1px; padding: 9px 6px 11px; border-radius: 19px; }
 }
 @media (max-width: 360px) {
-  html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner { grid-template-columns: 42px minmax(0, 1fr) 42px 42px; gap: 3px; }
+  html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner { grid-template-columns: 42px minmax(0, 1fr) 42px 42px; height: 50px; gap: 3px; }
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner .page-title { font-size: var(--type-page-title); gap: 3px; }
   html[data-theme="magical-academy"] body.academy-page .academy-title-art { flex-basis: 30px; width: 30px; height: 46px; }
   html[data-theme="magical-academy"] body.academy-page .academy-banner .nav-icon.academy-nav-button { width: 42px; height: 42px; }
