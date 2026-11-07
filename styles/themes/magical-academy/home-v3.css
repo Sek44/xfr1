@@ -5,7 +5,7 @@ html[data-theme="magical-academy"] body:not(.school-page) {
 }
 html[data-theme="magical-academy"] body:not(.school-page) main {
   padding: 10px 12px 24px;
-  background: linear-gradient(180deg, #0c2e6088, #081e4230 48%, #081e4270);
+  background: linear-gradient(180deg, #0c2e6088, #081e4230 48%, #081e4270);\n  background-clip: padding-box;
 }
 html[data-theme="magical-academy"] .academy-hero {
   position: relative;
@@ -22,20 +22,6 @@ html[data-theme="magical-academy"] .academy-hero {
   background:
     radial-gradient(ellipse at 50% 45%, #2674b857 0, transparent 64%),
     linear-gradient(180deg, #0825514d 0%, #10244b28 55%, #0b1b45b3 100%);
-}
-html[data-theme="magical-academy"] .academy-hero::before {
-  content: "";
-  position: absolute;
-  inset: 2% 9% 16%;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, #f9d97b 0 2px, transparent 3px),
-    radial-gradient(circle, #fff4bd 0 1.5px, transparent 2.5px),
-    radial-gradient(circle, #ffe69a 0 2px, transparent 3px);
-  background-size: 130px 90px, 171px 100px, 223px 100px;
-  background-position: 34% 24%, 57% 51%, 88% 13%;
-  opacity: .85;
 }
 html[data-theme="magical-academy"] .hero-tools {
   position: absolute;
@@ -100,19 +86,6 @@ html[data-theme="magical-academy"] .hero-plaque {
   /* Straight and centered below the book. */
   transform: none;
 }
-html[data-theme="magical-academy"] .hero-plaque::before,
-html[data-theme="magical-academy"] .hero-plaque::after {
-  content: "✦";
-  position: absolute;
-  top: 50%;
-  color: #f3c96e;
-  font-size: var(--text-lg);
-  line-height: 1;
-  transform: translateY(-50%);
-  text-shadow: 0 1px 4px #0e1038;
-}
-html[data-theme="magical-academy"] .hero-plaque::before { left: 8px; }
-html[data-theme="magical-academy"] .hero-plaque::after { right: 8px; }
 html[data-theme="magical-academy"] .hero-plaque h1 {
   margin: 0;
   padding: 0;
@@ -122,18 +95,6 @@ html[data-theme="magical-academy"] .hero-plaque h1 {
   letter-spacing: -.035em;
   text-shadow: 0 3px 1px #4d261a, 0 0 13px #ffc96a75;
 }
-html[data-theme="magical-academy"] .academy-hero .hero-caption {
-  position: absolute;
-  bottom: 6px;
-  width: 21px;
-  height: 21px;
-  transform: rotate(45deg);
-  border-right: 3px solid #e6b465;
-  border-bottom: 3px solid #e6b465;
-  background: #41214c;
-  box-shadow: 2px 2px 3px #09112d88;
-}
-
 /* Parchment progress card with two independently updated counters. */
 html[data-theme="magical-academy"] .daily-panel {
   position: relative;
@@ -171,18 +132,6 @@ html[data-theme="magical-academy"] .daily-panel::before {
 html[data-theme="magical-academy"] .daily-panel > * {
   position: relative;
   z-index: 1;
-}
-html[data-theme="magical-academy"] .daily-panel::after {
-  content: "◆";
-  position: absolute;
-  bottom: -11px;
-  left: 50%;
-  z-index: 2;
-  transform: translateX(-50%);
-  color: #f8d77b;
-  font-size: var(--text-xs);
-  line-height: 1;
-  text-shadow: 0 1px 2px #77522b;
 }
 html[data-theme="magical-academy"] .daily-heading {
   display: flex;
