@@ -38,7 +38,8 @@
     questions = [],
     answer = "",
     lastQuestionIndex = 0,
-    showRetry = false;
+    showRetry = false,
+    inputFromPhysicalKeyboard = null;
   const storedGame = GameState.create("calcul");
   const game = ExerciseGame.create({
     onChange: () => {
@@ -202,6 +203,7 @@
     const p = el("panel");
     p.classList.toggle("academy-playing", questions.length > 0 && game.index !== game.total);
     p.replaceChildren();
+    inputFromPhysicalKeyboard = null;
     if (!questions.length) {
       const message = document.createElement("p");
       message.textContent =
@@ -258,6 +260,7 @@
       button.disabled = !answer.length;
       persist();
     }
+    inputFromPhysicalKeyboard = edit;
     GameUI.keypad(keypad, edit, { disabled: game.correct });
     controls.append(keypad);
     const button = game.actionButton();
@@ -276,6 +279,14 @@
     controls.append(actions);
     p.append(controls);
   }
+  document.addEventListener("keydown", (event) => {
+    if (!el("panel").querySelector(".keypad")) return;
+    GameUI.handlePhysicalKeyboard(
+      event,
+      game.correct ? null : inputFromPhysicalKeyboard,
+      { onEnter: () => game.correct ? next() : verify() },
+    );
+  });
   document.getElementById("restart-series").onclick = game.restartButton(newSession).onclick;
   if (!restore()) newSession();
 
