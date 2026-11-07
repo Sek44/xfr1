@@ -1,0 +1,68 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+
+test("Français Tout mixes families, keeps original keys and answer choices", () => {
+  const source = fs.readFileSync(path.join(__dirname, "../francais.js"), "utf8");
+  const weightingSource = fs.readFileSync(path.join(__dirname, "../exercise-weighting.js"), "utf8");
+  const storage = new Map();
+  const context = {
+    window: null,
+    localStorage: {
+      getItem: (key) => storage.get(key) ?? null,
+      setItem: (key, value) => storage.set(key, value),
+    },
+  };
+  context.window = context;
+  vm.createContext(context);
+  vm.runInContext(weightingSource, context);
+  // Exercise the actual data and sampler functions without a browser mock.
+  function between(start, end) {
+    const a = source.indexOf(start), b = source.indexOf(end, a);
+    assert.ok(a >= 0 && b > a);
+    return source.slice(a, b);
+  }
+  const definitions = between("  const sets = {", "  const SESSION_SIZE = 10;");
+  const keyFunction = between("  function wordKey(", "  function loadWordCounts()");
+  const chooser = between("  function shuffleSession(", "  function restart()");
+  vm.runInContext(`(() => {
+    ${definitions}
+    ${keyFunction}
+    const SESSION_SIZE = 10;
+    const weighting = ExerciseWeighting.create({
+      appearancesKey: "counts", errorsKey: "errors",
+    });
+    ${chooser}
+    window.bank = { sets, TABS, categoryFor, wordKey, shuffleSession, weighting };
+  })();`, context);
+  const { sets, TABS, categoryFor, wordKey, shuffleSession, weighting } = context.bank;
+  assert.equal(TABS.at(-1)[1], "Tout");
+  assert.ok(sets.g.items.length > 0 && sets.c.items.length > 0);
+  // Include a word from each family in one deterministic mixed session.
+  vm.runInContext(`Math.random = (() => {
+    let i = 0;
+    const values = [0, 0, 0.99999, 0, 0.4, 0, 0.75, 0];
+    return () => values[i++ % values.length];
+  })();`, context);
+  const questions = shuffleSession("all");
+  assert.equal(questions.length, 10);
+  assert.ok(questions.some((q) => categoryFor(q) === "g"));
+  assert.ok(questions.some((q) => categoryFor(q) === "c"));
+  assert.equal(new Set(questions.map((q) => wordKey(categoryFor(q), q))).size, 10);
+  for (const q of questions)
+    assert.ok(sets[categoryFor(q)].options.includes(q[2]));
+  const item = questions[0];
+  const key = wordKey(categoryFor(item), item);
+  weighting.appearance(key); // Displayed in Tout.
+  assert.equal(weighting.counts[key], 1); // Same key as in the original family.
+  assert.equal(context.ExerciseWeighting.weight(weighting.counts[key], 0), 0.25);
+  weighting.error(wordKey(categoryFor(item), item));
+  assert.equal(weighting.failures[key], 1);
+  assert.equal(context.ExerciseWeighting.weight(weighting.counts[key], weighting.failures[key]), 4);
+  assert.equal(JSON.parse(storage.get("counts"))[key], 1);
+  assert.equal(JSON.parse(storage.get("errors"))[key], 1);
+  assert.match(source, /recordAppearance\(categoryFor\(questions\[game.index\]\)/);
+  assert.match(source, /recordError\(categoryFor\(questions\[game.index\]\)/);
+});

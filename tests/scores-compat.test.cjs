@@ -141,3 +141,11 @@ test("new scores carry a separate exercise/mission category without touching the
   assert.equal(saved[1].category, "Additions 100-1000");
   assert.deepEqual(saved.slice(2), before);
 });
+
+test("French Tout scores remain exercises and are visible in French history", () => {
+  const fixture = setup("[]");
+  assert.equal(fixture.scores.save({ tab: "all", score: 8, total: 10 }), true);
+  assert.equal(JSON.parse(fixture.stored)[0].scoreCategory, "exercise");
+  assert.match(source, /record\.tab === "all"\) return "Français · Tout"/);
+  assert.match(source, /r\.tab === "g" \|\| r\.tab === "c" \|\| r\.tab === "all"/);
+});

@@ -155,3 +155,35 @@ test("conjugaison uses the shared tab component for both present groups", () => 
   assert.match(controller, /"present-2": "Présent de l’indicatif · 2e groupe"/);
   assert.match(controller, /stored\.save\(\{ mode, questions/);
 });
+
+test("Tout draws both conjugation groups with their original shared weights", () => {
+  const { context, storage } = load(["conjugaison-data.js", "exercise-weighting.js"]);
+  const data = context.ConjugaisonData;
+  const first = data.possibleQuestions("present-1");
+  const second = data.possibleQuestions("present-2");
+  const mixed = data.possibleQuestions("all");
+  assert.equal(mixed.size, first.size + second.size);
+  for (const [key, variants] of [...first, ...second]) {
+    assert.ok(mixed.has(key), key);
+    assert.equal(mixed.get(key).length, variants.length);
+  }
+  const tracker = context.ExerciseWeighting.create({
+    appearancesKey: "shared-counts", errorsKey: "shared-errors",
+  });
+  const example = first.values().next().value[0];
+  const key = data.key(example);
+  const selectedInTout = mixed.get(key)[0];
+  tracker.appearance(data.key(selectedInTout));
+  assert.equal(tracker.counts[key], 1);
+  assert.equal(context.ExerciseWeighting.weight(tracker.counts[key], 0), 0.25);
+  tracker.error(data.key(example));
+  assert.equal(context.ExerciseWeighting.weight(tracker.counts[key], tracker.failures[key]), 4);
+  assert.equal(JSON.parse(storage.get("shared-counts"))[key], 1);
+  assert.equal(JSON.parse(storage.get("shared-errors"))[key], 1);
+  const series = tracker.choose(mixed, 10, () => 0.999);
+  assert.equal(series.length, 10);
+  assert.equal(new Set(series.map(data.key)).size, 10);
+  const controller = fs.readFileSync(path.join(__dirname, "../conjugaison.js"), "utf8");
+  assert.match(controller, /\["all", "Tout"\]/);
+  assert.match(controller, /state\.mode === "all"/);
+});
