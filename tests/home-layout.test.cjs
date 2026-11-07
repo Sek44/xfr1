@@ -55,7 +55,7 @@ test("daily progress heading matches exercise card typography and icons stay bal
   assert.ok(css.includes("height: var(--daily-icon-size);"));
   assert.ok(css.includes("font-size: clamp(var(--text-sm), 3.8vw, var(--type-stat))"));
   assert.ok(css.includes("@media (max-width: 350px)"));
-  assert.match(html, /home-v3\.css\?v=/);
+  assert.match(html, /home\.css\?v=/);
 });
 
 test("daily progress has symmetric horizontal and vertical spacing", () => {

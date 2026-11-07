@@ -74,7 +74,7 @@ test("four classic pages share the theme and its header controller", () => {
     assert.match(html, /class="school-page academy-page|class="school-page academy-page conjugaison-page/);
     assert.match(html, /data-academy-header/);
     assert.match(html, /academy-header\.js/);
-    assert.match(html, /magical-academy\/classic\.css/);
+    assert.match(html, /magical-academy\/components\.css/);
     assert.doesNotMatch(html, /<style>/);
   }
 });
