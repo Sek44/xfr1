@@ -256,8 +256,10 @@ test("shared AZERTY Shift, Backspace and numbers/symbols mode", () => {
   assert.equal(labels(0).slice(0, 9).join(""), "àâéèêùûôç");
   assert.equal(labels(1).join(""), "azertyuiop");
   assert.equal(labels(2).join(""), "qsdfghjklm");
-  assert.deepEqual(labels(3).slice(1), ["w", "x", "c", "v", "b", "n", "⌫"]);
+  assert.deepEqual(labels(3).slice(1, 7), ["w", "x", "c", "v", "b", "n"]);
   assert.equal(keyboard.children[3].children[0].children[0].tagName, "svg");
+  assert.equal(keyboard.children[3].children[7].children[0].tagName, "svg");
+  assert.equal(keyboard.children[3].children[7].textContent, undefined);
   assert.equal(keyboard.children[3].children[0].attributes["aria-pressed"], "false");
   assert.equal(keyboard.children[3].children[7].attributes["aria-label"], "Effacer la dernière lettre");
   assert.deepEqual(labels(4), ["Tout effacer", "Espace", "?123"]);
@@ -273,6 +275,8 @@ test("shared AZERTY Shift, Backspace and numbers/symbols mode", () => {
   keyboard.children[4].children[2].onclick();
   assert.equal(labels(0).join(""), "1234567890");
   assert.equal(labels(1).join(""), "@#€%&-+()/");
+  assert.equal(keyboard.children[3].children[7].children[0].tagName, "svg");
+  assert.equal(keyboard.children[3].children[7].attributes["aria-label"], "Effacer la dernière lettre");
   assert.equal(labels(4)[2], "ABC");
   keyboard.children[0].children[0].onclick();
   keyboard.children[1].children[0].onclick();

@@ -139,8 +139,7 @@ window.GameUI = (() => {
           const button = element(
             "button",
             "keyboard-key" + (special ? " keyboard-key--" + character : ""),
-            character === "shift" || character === "accent-page"
-              ? undefined : character === "erase" ? "⌫" : label,
+            special ? undefined : label,
           );
           button.type = "button";
           button.disabled = disabled;
@@ -170,6 +169,10 @@ window.GameUI = (() => {
               fillRow(row, [...ACCENT_PAGES[accentPage], "accent-page"]);
             };
           } else if (character === "erase") {
+            button.innerHTML =
+              '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+              '<path d="M10 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-1.6-.8L3 12l5.4-6.2A2 2 0 0 1 10 5Z"/>' +
+              '<path d="m12 9 6 6m0-6-6 6"/></svg>';
             button.setAttribute("aria-label", "Effacer la dernière lettre");
             button.onclick = () => onInput("erase");
           } else {
