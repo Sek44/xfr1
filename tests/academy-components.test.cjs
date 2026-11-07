@@ -181,7 +181,7 @@ test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () 
   assert.ok(scores.includes('link.classList.add("active")'));
   assert.ok(scores.includes('link.setAttribute("aria-current", "page")'));
   assert.ok(read("francais.js").includes("GameUI.tabs("));
-  assert.equal(read("scores-base.css").includes(".filter a"), false);
+  assert.equal(fs.existsSync(path.join(root, "scores-base.css")), false);
 });
 
 test("French choices, numeric keys and AZERTY reuse the standard key finish", () => {
