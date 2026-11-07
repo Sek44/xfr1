@@ -3,11 +3,6 @@
 html[data-theme="magical-academy"] body:not(.school-page) {
   background-color: #091d43;
 }
-html[data-theme="magical-academy"] body:not(.school-page) main {
-  padding: 10px 12px 24px;
-  /* Keep the outer frame transparent so the full scene remains visible. */
-  background: transparent;
-}
 html[data-theme="magical-academy"] .academy-hero {
   position: relative;
   isolation: isolate;
@@ -23,43 +18,6 @@ html[data-theme="magical-academy"] .academy-hero {
   /* The illustrated page background should remain visible behind the book
      and title; only the title plaque has its own background. */
   background: transparent;
-}
-html[data-theme="magical-academy"] .hero-tools {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  z-index: 5;
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-}
-html[data-theme="magical-academy"] .hero-tool {
-  box-sizing: border-box;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  border: 0;
-  border-radius: 0;
-  background: transparent url("./assets/nav-background.webp") center / contain no-repeat;
-  color: #fffae8;
-  box-shadow: none;
-  cursor: pointer;
-  text-decoration: none;
-  list-style: none;
-  touch-action: manipulation;
-}
-html[data-theme="magical-academy"] .hero-tool:hover,
-html[data-theme="magical-academy"] .hero-tool:focus-visible {
-  filter: brightness(1.12);
-}
-/* Scores reuses the exact same two-layer button as the classic page headers. */
-html[data-theme="magical-academy"] .hero-tool--scores {
-  background-image: url("./assets/nav-scores.webp"), url("./assets/nav-background.webp");
-  background-position: center, center;
-  background-size: contain, contain;
-  background-repeat: no-repeat, no-repeat;
 }
 html[data-theme="magical-academy"] .hero-book {
   position: absolute;
@@ -219,8 +177,6 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
     padding: 11px 3px 16px;
     margin-bottom: 11px;
   }
-  html[data-theme="magical-academy"] .hero-tools { top: 7px; right: 8px; gap: 8px; }
-  html[data-theme="magical-academy"] .hero-tool { width: 44px; height: 44px; }
   html[data-theme="magical-academy"] .hero-book {
     width: 136px;
     height: 100px;
@@ -252,7 +208,6 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
   }
 }
 @media (max-width: 350px) {
-  html[data-theme="magical-academy"] .hero-tool { width: 41px; height: 41px; }
   html[data-theme="magical-academy"] .hero-book { width: 124px; height: 90px; bottom: 73px; }
   html[data-theme="magical-academy"] .hero-plaque h1 { font-size: var(--type-home-title); }
   html[data-theme="magical-academy"] .daily-panel {
@@ -313,4 +268,14 @@ html[data-theme="magical-academy"] .activity-space .activity-icon {
 }
 html[data-theme="magical-academy"] .activity-magic .activity-icon {
   background-image: url("./assets/home-magical-hat.webp");
+}
+
+/* The home navigation is the shared header positioned over the hero.
+   Its grid and button sizes come entirely from classic.css. */
+html[data-theme="magical-academy"] body.academy-page .academy-home-nav {
+  position: absolute;
+  z-index: 5;
+  top: var(--academy-content-top);
+  left: var(--academy-content-x);
+  right: var(--academy-content-x);
 }
