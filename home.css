@@ -1,7 +1,6 @@
 :root { color-scheme: light; font-family: var(--font-ui); color: #23334d; background: #dce8f6; }
 * { box-sizing: border-box; }
-body { margin: 0; padding: clamp(14px, 3vw, 32px); }
-main { max-width: 1020px; margin: 0 auto; }
+body { margin: 0; }
 a { color: inherit; }
 .home-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 28px; }
 .brand { display: flex; align-items: center; gap: 10px; color: #527092; font-size: var(--text-xs); font-weight: var(--weight-heavy); letter-spacing: .11em; }

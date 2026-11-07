@@ -80,14 +80,27 @@ html[data-theme="magical-academy"] body {
 }
 html[data-theme="magical-academy"] main { position: relative; z-index: 1; }
 
-/* Standard outer frame shared by home, exercises and scores.
-   Layout and panel backgrounds remain page-specific. */
+/* Homepage geometry is the standard for the outer frame on all classic pages.
+   The body provides equal outer margins; the frame has one shared max-width. */
+html[data-theme="magical-academy"] :is(body:not(.school-page), body.academy-page) {
+  --academy-frame-gutter: clamp(14px, 3vw, 32px);
+  margin: 0;
+  padding: var(--academy-frame-gutter);
+}
 html[data-theme="magical-academy"] main.academy-global-frame {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
   border: 3px solid #e8d4a2;
   border-radius: 34px;
   box-shadow: inset 0 0 0 2px #4c3e5b, 0 12px 30px #03142d80;
 }
 @media (max-width: 600px) {
+  html[data-theme="magical-academy"] :is(body:not(.school-page), body.academy-page) {
+    --academy-frame-gutter: 7px;
+    padding: var(--academy-frame-gutter) max(7px, env(safe-area-inset-right)) var(--academy-frame-gutter) max(7px, env(safe-area-inset-left));
+  }
   html[data-theme="magical-academy"] main.academy-global-frame {
     border-width: 2px;
     border-radius: 26px;
@@ -107,9 +120,6 @@ html[data-theme="magical-academy"] :is(.school-page .page-header.school-banner, 
 }
 
 /* Home — a compact header and a single parchment welcome plaque. */
-html[data-theme="magical-academy"] body:not(.school-page) main {
-  max-width: 900px;
-}
 html[data-theme="magical-academy"] .home-header {
   display: flex;
   gap: 12px;
@@ -470,9 +480,6 @@ html[data-theme="magical-academy"] .app-confirm:not(.app-confirm-dark) .confirm-
 }
 
 @media (max-width: 600px) {
-  html[data-theme="magical-academy"] body:not(.school-page) {
-    padding: 12px max(12px, env(safe-area-inset-right)) 28px max(12px, env(safe-area-inset-left));
-  }
   html[data-theme="magical-academy"] .home-header {
     gap: 8px;
     margin-bottom: 13px;

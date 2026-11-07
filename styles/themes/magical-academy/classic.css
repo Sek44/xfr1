@@ -7,18 +7,11 @@ html[data-theme="magical-academy"] body.academy-page,
 html[data-theme="magical-academy"] body.academy-page *,
 html[data-theme="magical-academy"] body.academy-page *::before,
 html[data-theme="magical-academy"] body.academy-page *::after { box-sizing: border-box; }
-html[data-theme="magical-academy"] body.academy-page {
-  margin: 0;
-  padding: 5px max(6px, env(safe-area-inset-right)) 10px max(6px, env(safe-area-inset-left));
-}
 html[data-theme="magical-academy"] body.academy-page main {
   position: relative;
   isolation: isolate;
-  width: 100%;
-  max-width: 960px;
-  min-height: calc(100vh - 15px);
-  min-height: calc(100dvh - 15px);
-  margin: 0 auto;
+  min-height: calc(100vh - var(--academy-frame-gutter) - var(--academy-frame-gutter));
+  min-height: calc(100dvh - var(--academy-frame-gutter) - var(--academy-frame-gutter));
   padding: 6px 7px 17px;
   background: rgba(6, 23, 58, .58);
 }
@@ -728,10 +721,7 @@ html[data-theme="magical-academy"] body.academy-page #history .history-table tbo
 }
 
 @media (max-width: 520px) {
-  html[data-theme="magical-academy"] body.academy-page { padding: 3px max(4px, env(safe-area-inset-right)) 9px max(4px, env(safe-area-inset-left)); }
   html[data-theme="magical-academy"] body.academy-page main {
-    min-height: calc(100vh - 12px);
-    min-height: calc(100dvh - 12px);
     padding: 4px 4px 12px;
   }
   html[data-theme="magical-academy"] body.academy-page .page-header.school-banner.academy-banner {

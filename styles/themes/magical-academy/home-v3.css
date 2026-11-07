@@ -4,7 +4,6 @@ html[data-theme="magical-academy"] body:not(.school-page) {
   background-color: #091d43;
 }
 html[data-theme="magical-academy"] body:not(.school-page) main {
-  max-width: 780px;
   padding: 10px 12px 24px;
   background: linear-gradient(180deg, #0c2e6088, #081e4230 48%, #081e4270);
 }
@@ -262,7 +261,6 @@ html[data-theme="magical-academy"] .daily-error[hidden] { display: none; }
 html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
 
 @media (max-width: 600px) {
-  html[data-theme="magical-academy"] body:not(.school-page) { padding: 7px; }
   html[data-theme="magical-academy"] body:not(.school-page) main {
     padding: 7px 7px 24px;
   }
