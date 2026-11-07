@@ -253,7 +253,7 @@ test("shared AZERTY Shift, Backspace and numbers/symbols mode", () => {
   ui.azertyKeyboard(keyboard, (command) => commands.push(command));
   const labels = (row) => keyboard.children[row].children.map((key) => key.textContent);
   assert.equal(keyboard.children.length, 5);
-  assert.equal(labels(0).join(""), "àéèêùûîïôç");
+  assert.equal(labels(0).slice(0, 9).join(""), "àâéèêùûôç");
   assert.equal(labels(1).join(""), "azertyuiop");
   assert.equal(labels(2).join(""), "qsdfghjklm");
   assert.deepEqual(labels(3).slice(1), ["w", "x", "c", "v", "b", "n", "⌫"]);
@@ -267,7 +267,7 @@ test("shared AZERTY Shift, Backspace and numbers/symbols mode", () => {
   assert.equal(labels(3)[1], "W");
   keyboard.children[3].children[1].onclick();
   assert.equal(labels(3)[1], "w");
-  keyboard.children[0].children[1].onclick();
+  keyboard.children[0].children[2].onclick();
   keyboard.children[4].children[1].onclick();
   keyboard.children[3].children[7].onclick();
   keyboard.children[4].children[2].onclick();
@@ -278,7 +278,7 @@ test("shared AZERTY Shift, Backspace and numbers/symbols mode", () => {
   keyboard.children[1].children[0].onclick();
   keyboard.children[3].children[7].onclick();
   keyboard.children[4].children[2].onclick();
-  assert.equal(labels(0).join(""), "àéèêùûîïôç");
+  assert.equal(labels(0).slice(0, 9).join(""), "àâéèêùûôç");
   keyboard.children[4].children[0].onclick();
   assert.deepEqual(commands, ["W", "é", "space", "erase", "1", "@", "erase", "clear"]);
   assert.equal(ui.editWord("un", "space", 8), "un ");
@@ -295,6 +295,50 @@ test("shared AZERTY Shift, Backspace and numbers/symbols mode", () => {
   ui.azertyKeyboard(disabled, () => {}, { disabled: true, clearLabel: "Effacer tout" });
   assert.ok(disabled.children.every((row) => row.children.every((button) => button.disabled)));
   assert.equal(disabled.children[4].children[0].textContent, "Effacer tout");
+});
+
+test("accent key changes only the first keyboard row and keeps its page when switching modes", () => {
+  const { context } = setup();
+  const keyboard = new Node("div");
+  const typed = [];
+  context.GameUI.azertyKeyboard(keyboard, (value) => typed.push(value));
+  const characters = () => keyboard.children[0].children.slice(0, 9)
+    .map((button) => button.textContent).join("");
+  const accentRow = keyboard.children[0];
+  const otherRows = keyboard.children.slice(1);
+  const pageKey = () => keyboard.children[0].children[9];
+
+  assert.equal(characters(), "àâéèêùûôç");
+  assert.equal(keyboard.children[0].children.length, 10);
+  assert.equal(pageKey().children[0].tagName, "svg");
+  assert.equal(pageKey().attributes["aria-label"], "Afficher les accents rares");
+  pageKey().onclick();
+  assert.equal(characters(), "îïäëüöÿœæ");
+  assert.equal(keyboard.children[0], accentRow, "first row stays in the same position");
+  assert.deepEqual(keyboard.children.slice(1), otherRows, "only accent keys are replaced");
+  assert.equal(pageKey().attributes["aria-label"], "Afficher les accents courants");
+  assert.deepEqual(typed, [], "page change does not type a character");
+
+  keyboard.children[0].children[0].onclick();
+  assert.deepEqual(typed, ["î"]);
+  keyboard.children[3].children[0].onclick(); // Shift preserves the second accent page.
+  assert.equal(characters(), "ÎÏÄËÜÖŸŒÆ");
+  keyboard.children[0].children[1].onclick();
+  assert.deepEqual(typed, ["î", "Ï"]);
+  assert.equal(characters(), "îïäëüöÿœæ");
+
+  keyboard.children[4].children[2].onclick(); // ?123
+  assert.equal(keyboard.children[0].children[0].textContent, "1");
+  keyboard.children[4].children[2].onclick(); // ABC
+  assert.equal(characters(), "îïäëüöÿœæ");
+  pageKey().onclick();
+  assert.equal(characters(), "àâéèêùûôç");
+  assert.equal(pageKey().attributes["aria-label"], "Afficher les accents rares");
+
+  const disabled = new Node("div");
+  context.GameUI.azertyKeyboard(disabled, () => {}, { disabled: true });
+  assert.ok(disabled.children[0].children.every((key) => key.disabled));
+  assert.equal(disabled.children[0].children[9].disabled, true);
 });
 
 test("shared session preserves correction state and remaining delay during score visits; saves once", () => {

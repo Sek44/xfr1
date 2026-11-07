@@ -93,7 +93,14 @@ window.GameUI = (() => {
     return wordCharacter(command) && answer.length < maxLength ? answer + command : answer;
   }
 
-  // Accent keys follow vowels a, e, u, i, o, then ç. Shift affects one letter.
+  // The common accents fit on the first line; the last key swaps only that
+  // line to the rarer accents (including i), without changing typed input.
+  const ACCENT_PAGES = [
+    ["à", "â", "é", "è", "ê", "ù", "û", "ô", "ç"],
+    ["î", "ï", "ä", "ë", "ü", "ö", "ÿ", "œ", "æ"],
+  ];
+
+  // Shift affects one letter; the accent page stays selected until changed.
   function azertyKeyboard(
     container,
     onInput,
@@ -101,6 +108,7 @@ window.GameUI = (() => {
   ) {
     let shifted = false;
     let symbols = false;
+    let accentPage = 0;
     function render() {
       container.replaceChildren();
       const rows = symbols
@@ -111,24 +119,28 @@ window.GameUI = (() => {
             { name: "lower", keys: [",", "[", "]", "{", "}", "<", ">", "erase"] },
           ]
         : [
-            { name: "accents", keys: ["à", "é", "è", "ê", "ù", "û", "î", "ï", "ô", "ç"] },
+            { name: "accents", keys: [...ACCENT_PAGES[accentPage], "accent-page"] },
             { name: "upper", keys: [..."azertyuiop"] },
             { name: "middle", keys: [..."qsdfghjklm"] },
             { name: "lower", keys: ["shift", ..."wxcvbn", "erase"] },
           ];
 
-      for (const { name, keys } of rows) {
-        const row = element("div", "keyboard-row keyboard-row--" + name);
+      // Repopulating a single row avoids redrawing the other four rows
+      // (or losing their interaction state) when changing accent pages.
+      function fillRow(row, keys) {
+        row.replaceChildren();
         row.style.setProperty("--keys", keys.length);
         for (const character of keys) {
-          const special = character === "shift" || character === "erase";
+          const special = character === "shift" || character === "erase" ||
+            character === "accent-page";
           const label = shifted && !special
             ? character.toLocaleUpperCase("fr")
             : character;
           const button = element(
             "button",
             "keyboard-key" + (special ? " keyboard-key--" + character : ""),
-            character === "shift" ? undefined : character === "erase" ? "⌫" : label,
+            character === "shift" || character === "accent-page"
+              ? undefined : character === "erase" ? "⌫" : label,
           );
           button.type = "button";
           button.disabled = disabled;
@@ -141,6 +153,21 @@ window.GameUI = (() => {
             button.onclick = () => {
               shifted = !shifted;
               render();
+            };
+          } else if (character === "accent-page") {
+            button.innerHTML =
+              '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+              (accentPage === 0
+                ? '<path d="m9 5 7 7-7 7"/>'
+                : '<path d="m15 5-7 7 7 7"/>') + "</svg>";
+            button.setAttribute(
+              "aria-label",
+              accentPage === 0 ? "Afficher les accents rares" : "Afficher les accents courants",
+            );
+            button.title = accentPage === 0 ? "Autres accents" : "Accents courants";
+            button.onclick = () => {
+              accentPage = 1 - accentPage;
+              fillRow(row, [...ACCENT_PAGES[accentPage], "accent-page"]);
             };
           } else if (character === "erase") {
             button.setAttribute("aria-label", "Effacer la dernière lettre");
@@ -157,6 +184,10 @@ window.GameUI = (() => {
           }
           row.append(button);
         }
+      }
+      for (const { name, keys } of rows) {
+        const row = element("div", "keyboard-row keyboard-row--" + name);
+        fillRow(row, keys);
         container.append(row);
       }
 

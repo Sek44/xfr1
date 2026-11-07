@@ -45,6 +45,23 @@
   background: #f9fbff;
   border-color: #dae5f2;
 }
+/* Both accent pages use ten identically sized positions, with a final
+   navigation key. Changing pages therefore leaves the layout stable. */
+.azerty-keyboard .keyboard-row--accents .keyboard-key--accent-page {
+  display: grid;
+  place-items: center;
+  background: #e1eafa;
+  border-color: #b6c9e6;
+}
+.azerty-keyboard .keyboard-key--accent-page svg {
+  width: clamp(20px, 4vw, 28px);
+  height: clamp(20px, 4vw, 28px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .azerty-keyboard .keyboard-row--lower .keyboard-key--shift,
 .azerty-keyboard .keyboard-row--lower .keyboard-key--erase {
   display: grid;
