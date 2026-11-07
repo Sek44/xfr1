@@ -27,7 +27,7 @@ Site statique HTML/CSS/JavaScript, sans serveur applicatif, compilation ni dépe
 | `academy-header.js` (`AcademyHeader`) | Bandeau commun des quatre pages classiques, généré via les attributs du `<nav data-academy-header>` ; préserve `restart-series`, `scores-back`, liens, libellés accessibles et navigation Scores en iframe |
 | `styles/typography.css` | Échelle de huit tailles, quatre graisses, deux familles et rôles responsives communs à toutes les pages |
 | `styles/themes/magical-academy/classic.css` | Styles réutilisables de l'identité Académie magique : panneaux, progressions, boutons, navigation, typographie et adaptations mobiles |
-| `shared.css`, `keyboard.css`, `score-view.css`, `app-confirm.css` | Base historique partagée, clavier AZERTY, affichage des scores et confirmations |
+| `shared.css`, `keyboard.css`, `score-view.css`, `app-confirm.css` | Base historique partagée, clavier AZERTY, affichage des scores et confirmations ; `keyboard.css` apporte aussi aux deux missions le tracé SVG du retour arrière de leur pavé numérique |
 
 `francais.js`, `calcul.js` et `conjugaison.js` utilisent `ExerciseGame`. Français et Conjugaison partagent également `ExerciseWeighting` ; leurs statistiques et questions restent distinctes. Les jeux d'arcade délèguent leurs règles à des moteurs isolables (`space-engine.js` et `magic-engine.js`) tandis que leurs contrôleurs gèrent interface, événements, rendu et persistance. Voir leurs architectures dédiées.
 
