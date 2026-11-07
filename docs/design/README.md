@@ -39,3 +39,9 @@ Trois WebP transparents optimisés (320 × 320, alpha préservé), issus des ima
 ## Onglets communs (CSS uniquement)
 
 Les onglets de Français, Conjugaison et les filtres de Scores utilisent maintenant les classes `academy-tabs` et `academy-tab`, définies dans `styles/themes/magical-academy/classic.css`. Leur style bleu saphir, aux rectangles symétriques légèrement arrondis et contour doré sobre, avec sélection bleue lumineuse, est entièrement réalisé en CSS. Aucun liseré intérieur ni décoration de coins n'est nécessaire. **Aucun cadre WebP n’est utilisé pour les onglets** : les images 9-slice restent réservées aux cadres de questions et aux autres éléments illustrés qui les nécessitent.
+
+## Navigation en deux calques WebP (7 novembre 2026)
+
+Les sources `nav-background.png`, `nav-back.png`, `nav-reset.png` et `nav-scores.png` restent dans `docs/design/import/`. Le workflow `.github/workflows/convert-import-webp.yml` produit les WebP RGBA optimisés à **320 × 320** dans `styles/themes/magical-academy/assets/` : `nav-background.webp`, `nav-back.webp`, `nav-reset.webp` et `nav-scores.webp`.
+
+Chaque bouton des bandeaux classiques superpose deux images CSS : le pictogramme transparent au premier plan (retour, réinitialisation ou scores), puis le même cadre `nav-background.webp` à l’arrière-plan. Leurs deux zones de rendu sont alignées et utilisent `background-size: contain`. Cela remplace les anciennes illustrations monolithiques `nav-*-academy.webp` pour l’affichage. Le raccourci Scores de l’accueil utilise la même paire ; le bouton Paramètres conserve son SVG en premier plan devant le cadre. Le titre de la page Scores utilise les trois barres sans le cadre.
