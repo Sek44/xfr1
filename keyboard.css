@@ -69,7 +69,8 @@
   background: #e1eafa;
 }
 .azerty-keyboard .keyboard-key--shift svg,
-.azerty-keyboard .keyboard-key--erase svg {
+.azerty-keyboard .keyboard-key--erase svg,
+.keypad .academy-key--erase svg {
   width: clamp(22px, 4.5vw, 30px);
   height: clamp(22px, 4.5vw, 30px);
   fill: none;

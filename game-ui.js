@@ -34,10 +34,16 @@ window.GameUI = (() => {
       : answer;
   }
 
+  // One SVG definition shared by the number pad and both AZERTY layouts.
+  const BACKSPACE_SVG =
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<path d="M10 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-1.6-.8L3 12l5.4-6.2A2 2 0 0 1 10 5Z"/>' +
+    '<path d="m12 9 6 6m0-6-6 6"/></svg>';
+
   function keypad(
     container,
     onInput,
-    { clearLabel = "Effacer", disabled = false } = {},
+    { clearLabel = "Tout effacer", disabled = false } = {},
   ) {
     container.replaceChildren();
     const keys = [
@@ -56,9 +62,18 @@ window.GameUI = (() => {
     ];
     for (const command of keys) {
       const editing = command === "clear" || command === "erase";
-      const label =
-        command === "clear" ? clearLabel : command === "erase" ? "⌫" : command;
-      const button = element("button", "academy-key" + (editing ? " erase" : ""), label);
+      const splitClear = command === "clear" && clearLabel === "Tout effacer";
+      const button = element(
+        "button",
+        "academy-key" + (editing ? " erase academy-key--" + command : ""),
+        command === "erase" || splitClear
+          ? undefined
+          : command === "clear" ? clearLabel : command,
+      );
+      if (command === "erase") button.innerHTML = BACKSPACE_SVG;
+      if (splitClear) {
+        button.append(element("span", "", "Tout"), element("span", "", "effacer"));
+      }
       button.type = "button";
       button.disabled = disabled;
       if (editing)
@@ -169,10 +184,7 @@ window.GameUI = (() => {
               fillRow(row, [...ACCENT_PAGES[accentPage], "accent-page"]);
             };
           } else if (character === "erase") {
-            button.innerHTML =
-              '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
-              '<path d="M10 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-1.6-.8L3 12l5.4-6.2A2 2 0 0 1 10 5Z"/>' +
-              '<path d="m12 9 6 6m0-6-6 6"/></svg>';
+            button.innerHTML = BACKSPACE_SVG;
             button.setAttribute("aria-label", "Effacer la dernière lettre");
             button.onclick = () => onInput("erase");
           } else {

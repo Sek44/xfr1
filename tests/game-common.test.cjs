@@ -238,6 +238,21 @@ test("numeric controls use identical commands with game-specific labels, limits 
     container.children[11].onclick();
   }
   assert.deepEqual(commands, ["clear", "erase", "clear", "erase"]);
+  const standard = new Node("div");
+  const standardCommands = [];
+  ui.keypad(standard, (value) => standardCommands.push(value));
+  assert.equal(standard.children.length, 12);
+  assert.equal(standard.children[9].className, "academy-key erase academy-key--clear");
+  assert.deepEqual(standard.children[9].children.map((span) => span.textContent),
+    ["Tout", "effacer"]);
+  assert.equal(standard.children[9].attributes["aria-label"], "Tout effacer");
+  assert.equal(standard.children[11].className, "academy-key erase academy-key--erase");
+  assert.equal(standard.children[11].children[0].tagName, "svg");
+  assert.equal(standard.children[11].attributes["aria-label"], "Effacer le dernier chiffre");
+  assert.equal(standard.children[11].textContent, undefined);
+  standard.children[9].onclick();
+  standard.children[11].onclick();
+  assert.deepEqual(standardCommands, ["clear", "erase"]);
   assert.equal(ui.editNumber("123", "4", 3), "123");
   assert.equal(ui.editNumber("123", "4", 6), "1234");
   assert.equal(ui.editNumber("12", "erase", 6), "1");

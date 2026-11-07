@@ -9,8 +9,29 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key {
   font-size: clamp(var(--text-lg), 5.1vw, var(--text-xl));
   font-weight: var(--weight-heavy);
 }
-html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
-  font-size: clamp(var(--text-sm), 3.8vw, var(--text-md));
+/* Match the AZERTY Tout effacer key: two centered lines and the same
+   font as its ?123 control, without changing numeric-key proportions. */
+html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key--clear {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 5px 8px;
+  font-family: var(--font-ui);
+  font-size: clamp(var(--text-xs), 2.85vw, var(--text-md));
+  font-weight: var(--weight-heavy);
+  line-height: 1.04;
+}
+html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key--clear span {
+  display: block;
+  white-space: nowrap;
+}
+@media (max-width: 360px) {
+  html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key--clear {
+    font-size: clamp(var(--text-xs), 2.9vw, var(--text-sm));
+    padding-inline: 6px;
+  }
 }
 @media (max-width: 520px) {
   html[data-theme="magical-academy"] body.calcul-page #categories.settings {
@@ -41,9 +62,6 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   font-weight: var(--weight-medium);
   min-height: 44px;
   touch-action: manipulation;
-}
-.keypad button.erase {
-  font-size: var(--text-md);
 }
 .keypad button:active {
   background: #dbeafe;
@@ -149,11 +167,6 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
   min-width: 0;
   padding: 8px 4px;
 }
-.keypad button.erase {
-  font-size: clamp(var(--text-xs), 2.2vw, var(--text-sm));
-  padding: 8px 2px;
-  white-space: nowrap;
-}
 .panel .progress {
   text-align: left;
 }
@@ -251,9 +264,6 @@ html[data-theme="magical-academy"] body.calcul-page .keypad .academy-key.erase {
     min-height: 49px;
     padding: 7px 4px;
     font-size: var(--text-lg);
-  }
-  .keypad button.erase {
-    font-size: var(--text-xs);
   }
 }
 /* Only very short landscape viewports need the tighter sizing. */

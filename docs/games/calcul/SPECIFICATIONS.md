@@ -18,6 +18,8 @@ Choisir à nouveau la catégorie ou la difficulté déjà active ne fait rien. C
 
 ## Score et progression
 
+Le pavé numérique de trois colonnes conserve les chiffres de 0 à 9. Sa dernière rangée affiche « Tout effacer » sur deux lignes (même typographie que la touche « ?123 » du clavier AZERTY), « 0 » et Retour arrière, dont l'icône SVG et les traits sont identiques à ceux de Conjugaison. Les deux effacements restent distincts : vider toute la saisie ou retirer uniquement le dernier chiffre.
+
 Le joueur saisit, efface et valide la réponse. Une erreur peut être corrigée mais **ne donne plus de point pour ce calcul**. Seule la réussite au premier essai ajoute un point. Après réussite, l'exercice suivant apparaît automatiquement au bout d'environ **3 secondes**, ou dès l'action d'avancement.
 
 La série terminée vaut **1 point d’exercice quotidien**, quel que soit le nombre de réponses correctes au premier essai ; ce crédit ajoute actuellement **3 minutes de jeu autorisées** au compteur commun. Une session sans question ou interrompue ne crédite rien. Le bouton de redémarrage (icône à gauche des scores dans l’en-tête) demande confirmation. Annuler conserve la série en cours ; confirmer relance dix nouveaux calculs dans la catégorie et la difficulté courantes, sans enregistrer ni créditer la série abandonnée.
