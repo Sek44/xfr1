@@ -281,12 +281,14 @@
     const tileW = Math.max(70, Math.min(106, w / 6));
     const tileH = tileW * .48;
     const stride = tileH / 2;
+    // Tiles move down with the character's travel distance. Keep their world
+    // identities fixed when the scrolling offset wraps to the next row.
     const first = Math.floor(game.distance / stride);
     const offset = game.distance % stride;
     const cols = Math.ceil(w / tileW) + 2;
     const rows = Math.ceil(h / stride) + 3;
     for (let r = -1; r < rows; r++) {
-      const worldRow = first + r;
+      const worldRow = r - first;
       const y = r * stride + offset;
       for (let c = -1; c <= cols; c++) {
         const x = (c + (worldRow % 2) * .5) * tileW;
@@ -312,9 +314,9 @@
     }
     // Paint trees after the floor, so tiles cannot cover their foliage.
     for (let r = -1; r < rows; r++) {
-      const worldRow = first + r;
+      const worldRow = r - first;
       const y = r * stride + offset;
-      if (r % 3 !== 0) continue;
+      if (worldRow % 3 !== 0) continue;
       for (let c = -1; c <= cols; c++) {
         const x = (c + (worldRow % 2) * .5) * tileW;
         if (Math.abs(x - w * .5) < w * .33) continue;
