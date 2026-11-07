@@ -9,14 +9,15 @@
     <link rel="stylesheet" href="./home.css?v=frame-layout-20261107" />
     <link rel="stylesheet" href="./school-common.css?v=typography-1" />
     <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=full-scene-20261107" />
-    <link rel="stylesheet" href="./styles/themes/magical-academy/home-v3.css?v=full-scene-20261107" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/classic.css?v=shared-frame-nav-20261107" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/home-v3.css?v=shared-frame-nav-20261107" />
   </head>
-  <body>
+  <body class="academy-page academy-home-page">
     <main class="academy-global-frame">
+      <nav class="page-nav page-header school-banner academy-banner academy-home-nav"
+           data-academy-header data-home="true" data-scores="true"
+           aria-label="Navigation de l’accueil"></nav>
       <header class="academy-hero">
-        <nav class="hero-tools" aria-label="Raccourcis de l’accueil">
-          <a class="hero-tool hero-tool--scores" href="./scores.html" aria-label="Mes scores" title="Mes scores"></a>
-        </nav>
         <span class="hero-book" aria-hidden="true"></span>
         <div class="hero-plaque">
           <h1 id="welcome-title">Entraînement</h1>
@@ -89,6 +90,7 @@
         </a>
       </nav>
     </main>
+    <script src="./academy-header.js?v=home-nav-20261107"></script>
     <script src="./daily-exercises.js?v=20261106-3min"></script>
     <script>
       DailyExercises.mountStats(
