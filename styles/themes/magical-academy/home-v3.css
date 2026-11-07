@@ -9,15 +9,16 @@ html[data-theme="magical-academy"] .academy-hero {
   position: relative;
   isolation: isolate;
   z-index: 2;
-  height: clamp(184px, 24vw, 210px);
+  /* Reclaim the space below the raised plaque without moving the plaque itself. */
+  height: calc(clamp(184px, 24vw, 210px) - 32px);
   margin-bottom: 14px;
 }
 
 /* Symmetric engraved midnight-blue plaque, with space for decorative scrolls. */
 html[data-theme="magical-academy"] .hero-plaque {
   position: absolute;
-  /* Raise the entire title composition while keeping the hero's layout height. */
-  bottom: 40px;
+  /* Offset the reduced hero height to preserve the title's screen position. */
+  bottom: 8px;
   left: 50%;
   z-index: 1;
   display: grid;
@@ -256,11 +257,11 @@ html[data-theme="magical-academy"] .activity-card { min-height: 73px; }
 
 @media (max-width: 600px) {
   html[data-theme="magical-academy"] .academy-hero {
-    height: clamp(170px, 43vw, 194px);
+    height: calc(clamp(170px, 43vw, 194px) - 24px);
     margin-bottom: 11px;
   }
   html[data-theme="magical-academy"] .hero-plaque {
-    bottom: 32px;
+    bottom: 8px;
     width: min(92%, 490px);
     min-height: 72px;
     padding: 14px 24px;
