@@ -4,7 +4,8 @@ html[data-theme="magical-academy"] body.conjugaison-page .question-frame .verb-l
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  align-items: center;
+  /* Align the caption and infinitive on the same typographic baseline. */
+  align-items: baseline;
   justify-content: center;
   gap: clamp(5px, 1.5vw, 10px);
   min-height: 46px;
