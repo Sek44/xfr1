@@ -221,7 +221,7 @@ test("final results reuse the shared parchment and standard button styling", () 
   assert.ok(css.includes(".academy-result-actions .primary"));
   assert.ok(js.includes('card.className = "academy-result"'));
   assert.ok(js.includes('heading.textContent = "Exercice terminé !"'));
-  assert.ok(js.includes('button.textContent = "Recommencer"'));
+  assert.ok(js.includes('button.textContent = pending ? "Recommencer sans enregistrer" : "Recommencer"'));
 });
 
 test("page-specific theme styles load after shared components", () => {
