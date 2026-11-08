@@ -87,7 +87,9 @@ window.ExerciseGame = (() => {
         state.total > 100 ||
         !Number.isInteger(state.index) ||
         state.index < 0 ||
-        state.index >= state.total ||
+        state.index > state.total ||
+        (state.index === state.total &&
+          (state.correct || state.failed || state.remaining !== null)) ||
         !Number.isInteger(state.score) ||
         state.score < 0 ||
         state.score > state.index + 1 ||
@@ -130,8 +132,8 @@ window.ExerciseGame = (() => {
       container.append(left, right);
     }
     // One final-result card across Français, Calcul and Conjugaison.
-    // The ornate parchment and button appearance live in components.css.
-    function finish(container, restart) {
+    // The ornate parchment and button appearance live in results.css.
+    function finish(container, restart, pending = null) {
       container.replaceChildren();
 
       const card = document.createElement("section");
@@ -183,7 +185,21 @@ window.ExerciseGame = (() => {
         : restart;
       actions.append(button);
 
-      card.append(trophy, heading, result, message, actions);
+      if (pending) {
+        const warning = document.createElement("p");
+        warning.className = "result-save-warning";
+        warning.setAttribute("role", "alert");
+        warning.textContent = pending.message;
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.className = "primary result-save-retry";
+        retry.textContent = "Réessayer l’enregistrement";
+        retry.onclick = pending.retry;
+        actions.prepend(retry);
+        card.append(trophy, heading, result, message, warning, actions);
+      } else {
+        card.append(trophy, heading, result, message, actions);
+      }
       container.append(card);
     }
     function feedback({ correction, retry }) {
@@ -305,5 +321,60 @@ window.ExerciseGame = (() => {
       },
     };
   }
-  return { create };
+  // Score and daily-credit retries share a stable series ID.
+  function resultTracker(game, storage, buildRecord) {
+    let resultId = GameState.newSessionId();
+    let pending = false;
+    let message = "";
+
+    function save(result) {
+      const scoreSaved = ExerciseScores.save({
+        ...buildRecord(result),
+        resultId,
+      });
+      const daily = window.DailyExercises;
+      const creditSaved = scoreSaved && (!daily ||
+        (typeof daily.awardOnce === "function"
+          ? daily.awardOnce(game, resultId)
+          : daily.award(game, resultId)));
+      pending = !(scoreSaved && creditSaved);
+      message = !scoreSaved
+        ? "Le score n’a pas pu être enregistré. Vérifie le stockage du navigateur et réessaie."
+        : !creditSaved
+          ? "Le score est enregistré, mais le crédit quotidien n’a pas pu être ajouté. Réessaie."
+          : "";
+      if (!pending) storage.clear();
+      return !pending;
+    }
+
+    function fresh() {
+      resultId = GameState.newSessionId();
+      pending = false;
+      message = "";
+    }
+
+    function restore(state) {
+      if (state?.pendingResult === true &&
+          (typeof state.resultId !== "string" || !state.resultId ||
+           state.resultId.length >= 120)) return false;
+      if (typeof state?.resultId === "string" && state.resultId &&
+          state.resultId.length < 120) resultId = state.resultId;
+      pending = state?.pendingResult === true;
+      message = pending
+        ? "L’enregistrement de la dernière série reste à terminer. Réessaie."
+        : "";
+      return true;
+    }
+
+    return {
+      save,
+      fresh,
+      restore,
+      snapshot: () => ({ resultId, pendingResult: pending }),
+      get pending() { return pending; },
+      get message() { return message; },
+    };
+  }
+
+  return { create, resultTracker };
 })();
