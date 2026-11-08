@@ -79,42 +79,61 @@ window.DailyExercises = (() => {
     }
   }
 
-  function award(game, token = null) {
-    if (typeof game !== "string" || !game || (token !== null && typeof token !== "string"))
-      return false;
+  // Distinguish a duplicate, a new credit and a failed persistence attempt.
+  function commitAward(game, token) {
+    if (typeof game !== "string" || !game ||
+        (token !== null && (typeof token !== "string" || !token)))
+      return "failed";
     const state = read();
-    if (!state) return false;
+    if (!state) return "failed";
     const event = token === null ? null : game + ":" + token;
-    if (event && state.events.includes(event)) return false;
+    if (event && state.events.includes(event)) return "already";
     if (!Number.isSafeInteger(state.points + 1) ||
-        !Number.isSafeInteger(state.minutes + MINUTES_PER_POINT)) return false;
+        !Number.isSafeInteger(state.minutes + MINUTES_PER_POINT)) return "failed";
     state.points++;
     state.minutes += MINUTES_PER_POINT;
     if (event) state.events.push(event);
-    return write(state);
+    return write(state) ? "added" : "failed";
+  }
+
+  function award(game, token = null) {
+    return commitAward(game, token) === "added";
+  }
+
+  // Successful retries are idempotent, including when a prior award committed.
+  function awardOnce(game, token) {
+    if (typeof token !== "string" || !token) return false;
+    return commitAward(game, token) !== "failed";
   }
 
   // Preserve partial arcade series across different sessions of the same game.
   // The event token makes a replay after a refresh idempotent.
-  function recordProgress(game, count, perPoint, token) {
+  function commitProgress(game, count, perPoint, token) {
     if (typeof game !== "string" || !game ||
         !Number.isSafeInteger(count) || count <= 0 ||
         !Number.isSafeInteger(perPoint) || perPoint <= 0 ||
-        typeof token !== "string" || !token) return 0;
+        typeof token !== "string" || !token) return { ok: false, completed: 0 };
     const state = read();
-    if (!state) return 0;
+    if (!state) return { ok: false, completed: 0 };
     const event = game + ":" + token;
-    if (state.events.includes(event)) return 0;
+    if (state.events.includes(event)) return { ok: true, completed: 0 };
     const previous = state.progress[game] || 0;
-    if (!Number.isSafeInteger(previous + count)) return 0;
+    if (!Number.isSafeInteger(previous + count)) return { ok: false, completed: 0 };
     const completed = Math.floor((previous + count) / perPoint);
     if (!Number.isSafeInteger(state.points + completed) ||
-        !Number.isSafeInteger(state.minutes + completed * MINUTES_PER_POINT)) return 0;
+        !Number.isSafeInteger(state.minutes + completed * MINUTES_PER_POINT))
+      return { ok: false, completed: 0 };
     state.progress[game] = (previous + count) % perPoint;
     state.points += completed;
     state.minutes += completed * MINUTES_PER_POINT;
     state.events.push(event);
-    return write(state) ? completed : 0;
+    return { ok: write(state), completed };
+  }
+
+  // Keep the numeric API for external readers and older callers.
+  function recordProgress(game, count, perPoint, token) {
+    const result = commitProgress(game, count, perPoint, token);
+    return result.ok ? result.completed : 0;
   }
 
   function newSessionId() {
@@ -161,12 +180,13 @@ window.DailyExercises = (() => {
       refresh(score);
       if (!Number.isSafeInteger(score) || score <= seenScore) return 0;
       const previous = seenScore;
-      const earned = recordProgress(
+      const result = commitProgress(
         game, score - previous, perPoint,
         sessionId + ":" + date + ":" + previous + "-" + score,
       );
-      seenScore = score;
-      return earned;
+      // A failed write must not consume kills that still need crediting.
+      if (result.ok) seenScore = score;
+      return result.ok ? result.completed : 0;
     }
 
     return {
@@ -222,5 +242,5 @@ window.DailyExercises = (() => {
     });
   }
 
-  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, recordProgress, milestones, mount, mountStats };
+  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, awardOnce, recordProgress, milestones, mount, mountStats };
 })();

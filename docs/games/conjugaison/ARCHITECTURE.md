@@ -15,6 +15,6 @@
 - La clé de pondération est JSON `[type, verb, person]`. Le mode `all` mélange les banques des deux groupes avec exactement les mêmes clés/compteurs que chaque groupe, sans statistiques distinctes. Les différentes formulations de sujets d’un triplet partagent le même poids, indépendamment du nombre de variantes.
 - `ExerciseWeighting` utilise les clés `entrainement_conjugaison_counts_v1` et `entrainement_conjugaison_errors_v1`, avec la formule `(1 + 3 × erreurs) / (1 + max(0, apparitions − erreurs))²`.
 - `GameState.create("conjugaison")` garde le mode `present-1`, `present-2` ou `all`, les dix questions du ou des groupes correspondants, la réponse en cours, un index de dernier comptage et un `ExerciseGame.snapshot()`. Les sessions historiques `present-1` restent compatibles ; la restauration ne compte pas deux fois une apparition.
-- Seule la dernière question validée déclenche `ExerciseScores.save` puis `DailyExercises.award("conjugaison")`. Le checkpoint est alors supprimé. Les données de Français ne sont ni réécrites ni effacées.
+- La dernière question validée passe par `ExerciseGame.resultTracker()`, qui enregistre le score et le crédit quotidien avec un identifiant de session stable. En cas de refus du stockage, le checkpoint achevé persiste avec une action de réessai ; il n'est supprimé qu'après succès. Les données de Français ne sont ni réécrites ni effacées.
 
 Voir l’[architecture transversale](../../ARCHITECTURE.md) pour les services communs.

@@ -65,8 +65,12 @@ window.ExerciseScores = (() => {
   }
   function save(record) {
     try {
-      const previous = raw(),
-        now = new Date();
+      const previous = raw();
+      // Retrying a checkpoint must never duplicate an already-written result.
+      if (typeof record.resultId === "string" && record.resultId &&
+          previous.some((old) => old && old.resultId === record.resultId))
+        return true;
+      const now = new Date();
       localStorage.setItem(
         KEY,
         JSON.stringify([

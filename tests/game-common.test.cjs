@@ -22,6 +22,10 @@ class Node {
     this.children = [];
     this.append(...nodes);
   }
+  prepend(...nodes) {
+    for (const node of nodes) node.parent = this;
+    this.children.unshift(...nodes);
+  }
   setAttribute(name, value) {
     this.attributes[name] = value;
   }
@@ -83,7 +87,9 @@ function setup(files = ["game-state.js", "game-ui.js", "game-common.js", "exerci
       addEventListener() {},
       querySelector: (selector) => selector === "main" ? new Node("main") : null,
     },
-    Date: { now: () => now },
+    Date: class extends Date {
+      static now() { return now; }
+    },
     setTimeout(callback, delay) {
       timers.set(++id, { callback, at: now + delay });
       return id;
@@ -109,6 +115,7 @@ function setup(files = ["game-state.js", "game-ui.js", "game-common.js", "exerci
   context.window = context;
   vm.createContext(context);
   function run(file) {
+    if (file === "francais.js" && !context.FrancaisData) run("francais-data.js");
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "..", file), "utf8"),
       context,
@@ -752,11 +759,10 @@ test("game checkpoints remain independent across all game pages", () => {
 
 
 test("French bank keeps a pronounced u visible and tests the g only", () => {
-  const source = fs.readFileSync(path.join(__dirname, "..", "francais.js"), "utf8");
-  const begin = source.indexOf("  const sets = ") + "  const sets = ".length;
-  const end = source.indexOf("\n  const TABS", begin);
-  assert.ok(begin > 20 && end > begin);
-  const sets = vm.runInNewContext("(" + source.slice(begin, end).trim().replace(/;$/, "") + ")");
+  const context = { window: {} };
+  const source = fs.readFileSync(path.join(__dirname, "..", "francais-data.js"), "utf8");
+  vm.runInNewContext(source, context);
+  const sets = context.window.FrancaisData.sets;
   for (const [before, after, answer] of sets.g.items) {
     if (answer === "gu") {
       assert.match(after, /^[aeiouyàâäéèêëîïôöùûü]/i,
@@ -1010,4 +1016,69 @@ test("Calcul keeps selects unchanged until a started series confirms a change", 
   assert.equal(state().category, "2");
   assert.equal(state().answer, "");
   assert.equal(select(1).value, "2");
+});
+
+test("a completed addition stays recoverable when the score history is corrupted", () => {
+  const storage = new Map([["exercices_francais_scores", "{broken"]]);
+  const first = setup(undefined, storage);
+  first.run("scores.js");
+  first.run("calcul.js");
+  const game = first.sessions[0];
+  for (let i = 0; i < game.total; i++) {
+    const panel = first.elements.get("panel");
+    const equation = findByClass(panel, "question").textContent;
+    const [a, b] = equation.match(/\d+/g).map(Number);
+    const keypad = findByClass(panel, "keypad");
+    for (const digit of String(a + b))
+      keypad.children[digit === "0" ? 10 : Number(digit) - 1].onclick();
+    findByClass(panel, "exercise-actions").children[0].onclick();
+    game.next();
+  }
+  const key = "exercices_in_progress_calcul";
+  assert.equal(JSON.parse(storage.get(key)).session.pendingResult, true);
+  assert.equal(storage.get("exercices_francais_scores"), "{broken");
+  assert.ok(findByClass(first.elements.get("panel"), "result-save-retry"));
+
+  const restored = setup(undefined, storage);
+  restored.run("scores.js");
+  restored.run("calcul.js");
+  const retry = findByClass(restored.elements.get("panel"), "result-save-retry");
+  assert.ok(retry);
+  retry.onclick();
+  assert.equal(storage.get("exercices_francais_scores"), "{broken");
+  assert.equal(JSON.parse(storage.get(key)).session.pendingResult, true);
+
+  storage.set("exercices_francais_scores", "[]");
+  findByClass(restored.elements.get("panel"), "result-save-retry").onclick();
+  assert.equal(storage.has(key), false);
+  assert.equal(JSON.parse(storage.get("exercices_francais_scores")).length, 1);
+});
+
+
+test("Mission calcul retains a failed final score and retries without starting a new game", () => {
+  const storage = new Map();
+  const f = setup(["game-state.js", "game-ui.js", "space-engine.js"], storage);
+  f.context.SpaceEnemies = {
+    visual: () => ({ svg: "<svg/>", color: "blue", armor: "gray" }),
+  };
+  let available = false;
+  f.context.ExerciseScores.save = (record) => {
+    if (!available) return false;
+    f.saved.push(record);
+    return true;
+  };
+  f.run("space.js");
+  f.elements.get("start").onclick();
+  f.elements.get("end-game").onclick();
+  const key = "exercices_in_progress_space";
+  const pending = JSON.parse(storage.get(key)).session.pendingResult;
+  assert.equal(pending.record.tab, "space");
+  assert.equal(f.saved.length, 0);
+  assert.match(f.elements.get("start").textContent, /Réessayer/);
+
+  available = true;
+  f.elements.get("start").onclick();
+  assert.equal(f.saved.length, 1);
+  assert.equal(storage.has(key), false);
+  assert.match(f.elements.get("start").textContent, /Rejouer/);
 });

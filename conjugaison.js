@@ -18,6 +18,10 @@
   const stored = GameState.create("conjugaison");
   let mode = "present-1";
   let questions = [], answer = "", lastIndex = 0, countedThrough = -1;
+  const result = ExerciseGame.resultTracker(
+    "conjugaison", stored,
+    ({ score, total }) => ({ tab: "conjugaison", category: MODES[mode], score, total }),
+  );
   // A persistent live region announces feedback without occupying any layout space.
   const feedbackStatus = GameUI.element("div", "conjugaison-feedback-live");
   feedbackStatus.setAttribute("role", "status");
@@ -39,22 +43,19 @@
       render();
       persist();
     },
-    onFinish({ score, total }) {
-      stored.clear();
-      ExerciseScores.save({
-        tab: "conjugaison",
-        category: MODES[mode],
-        score, total,
-      });
-      window.DailyExercises?.award("conjugaison");
+    onFinish(outcome) {
+      result.save(outcome);
     },
   });
   function persist() {
-    if (game.index === game.total) {
+    if (game.index === game.total && !result.pending) {
       stored.clear();
       return;
     }
-    stored.save({ mode, questions, answer, countedThrough, progress: game.snapshot() });
+    stored.save({
+      mode, questions, answer, countedThrough, progress: game.snapshot(),
+      ...result.snapshot(),
+    });
   }
   function restore() {
     const state = stored.load();
@@ -68,7 +69,10 @@
         new Set(state.questions.map(ConjugaisonData.key)).size !== SESSION_SIZE ||
         typeof state.answer !== "string" ||
         !GameUI.validWordAnswer(state.answer, 24) ||
-        state.progress?.total !== SESSION_SIZE) return false;
+        state.progress?.total !== SESSION_SIZE ||
+        (state.progress?.index === state.progress?.total &&
+         state.pendingResult !== true) ||
+        !result.restore(state)) return false;
     mode = state.mode;
     questions = state.questions;
     answer = state.answer;
@@ -79,6 +83,7 @@
     return game.restore(state.progress);
   }
   function restart() {
+    result.fresh();
     answer = "";
     lastIndex = 0;
     countedThrough = -1;
@@ -135,7 +140,14 @@
     panel.classList.toggle("academy-playing", game.index !== game.total);
     panel.replaceChildren();
     if (game.index === game.total) {
-      game.finish(panel, restart);
+      game.finish(panel, restart, result.pending ? {
+        message: result.message,
+        retry: () => {
+          result.save({ score: game.score, total: game.total });
+          render();
+          persist();
+        },
+      } : null);
       return;
     }
     const q = questions[game.index];

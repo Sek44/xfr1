@@ -24,7 +24,7 @@ function setup(initial = {}) {
     addEventListener: (type, handler) => { listeners[type] = handler; },
   };
   vm.runInNewContext(source, { window, document, localStorage, Date, Math });
-  return { api: window.DailyExercises, items, listeners };
+  return { api: window.DailyExercises, items, listeners, localStorage };
 }
 
 test("one exercise gives three minutes, regardless of its score", () => {
@@ -133,4 +133,61 @@ test("structured progress counters handle inaccessible stored data without overw
   assert.equal(error.hidden, false);
   assert.match(error.textContent, /indisponible/);
   assert.equal(items.get(api.KEY), "{broken");
+});
+
+test("a failed milestone write retains uncredited kills for a later retry", () => {
+  const { api, items, localStorage } = setup();
+  const tracker = api.milestones("space", 10);
+  let available = false;
+  localStorage.setItem = (key, value) => {
+    if (!available) throw new Error("storage unavailable");
+    items.set(key, value);
+  };
+  assert.equal(tracker.record(8), 0);
+  assert.equal(tracker.snapshot().seenScore, 0);
+  available = true;
+  assert.equal(tracker.record(8), 0);
+  assert.equal(tracker.snapshot().seenScore, 8);
+  assert.equal(api.read().progress.space, 8);
+  assert.equal(tracker.record(10), 1);
+  assert.equal(tracker.snapshot().seenScore, 10);
+  assert.equal(api.read().points, 1);
+  assert.equal(tracker.record(10), 0);
+  assert.equal(api.read().points, 1);
+});
+
+test("corrupt daily storage never consumes progress; after repair it credits exactly once", () => {
+  const { api, items } = setup({ entrainement_daily_exercises_v1: "{broken" });
+  const tracker = api.milestones("magic", 20);
+  assert.equal(tracker.record(20), 0);
+  assert.equal(tracker.snapshot().seenScore, 0);
+  assert.equal(items.get(api.KEY), "{broken");
+  items.delete(api.KEY);
+  assert.equal(tracker.record(20), 1);
+  assert.equal(tracker.snapshot().seenScore, 20);
+  assert.equal(api.read().points, 1);
+  assert.equal(tracker.record(20), 0);
+  assert.equal(api.read().points, 1);
+});
+
+test("idempotent daily awards distinguish duplicates from failed writes", () => {
+  const { api, items, localStorage } = setup();
+  assert.equal(api.awardOnce("francais", "session-A"), true);
+  assert.equal(api.awardOnce("francais", "session-A"), true);
+  assert.equal(api.read().points, 1);
+  assert.equal(api.award("francais", "session-A"), false);
+  let fail = true;
+  const write = localStorage.setItem;
+  localStorage.setItem = (key, value) => {
+    if (fail) throw new Error("quota");
+    write(key, value);
+  };
+  assert.equal(api.awardOnce("calcul", "session-B"), false);
+  assert.equal(api.read().points, 1);
+  fail = false;
+  assert.equal(api.awardOnce("calcul", "session-B"), true);
+  assert.equal(api.awardOnce("calcul", "session-B"), true);
+  assert.equal(api.read().points, 2);
+  assert.equal(api.read().minutes, 6);
+  assert.equal(items.get(api.KEY) !== null, true);
 });

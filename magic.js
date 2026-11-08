@@ -14,6 +14,7 @@
   let width = 1, height = 1, running = false, paused = false;
   let saved = false, viewingScores = false, confirming = false;
   let answer = "", last = 0, lastPersist = 0;
+  let resultId = GameState.newSessionId(), pendingResult = null;
 
   const art = [
     // Friendly ghost
@@ -39,8 +40,12 @@
   });
 
   function persist() {
-    if (running && !saved)
-      storage.save({ game: game.snapshot(), answer, paused, rewardProgress: rewards?.snapshot() });
+    if (pendingResult) storage.save({ pendingResult });
+    else if (running && !saved)
+      storage.save({
+        game: game.snapshot(), answer, paused, resultId,
+        rewardProgress: rewards?.snapshot(),
+      });
   }
 
   function showPause() {
@@ -54,10 +59,26 @@
 
   function restore() {
     const state = storage.load();
+    const pending = state?.pendingResult;
+    if (pending?.record?.tab === "magic" &&
+        Number.isSafeInteger(pending.record.score) && pending.record.score > 0 &&
+        typeof pending.record.resultId === "string" &&
+        pending.record.resultId.length > 0 && pending.record.resultId.length < 120) {
+      pendingResult = pending;
+      resultId = pending.record.resultId;
+      game.score = pending.record.score;
+      rewards?.restore(pending.rewardProgress, game.score);
+      saved = true;
+      running = false;
+      showFinished();
+      return true;
+    }
     if (!state || typeof state.answer !== "string" ||
         !/^\d{0,2}$/.test(state.answer) ||
         !game.restore(state.game)) return false;
     answer = state.answer;
+    if (typeof state.resultId === "string" && state.resultId &&
+        state.resultId.length < 120) resultId = state.resultId;
     rewards?.restore(state.rewardProgress, game.score);
     running = true;
     paused = true; // Never advance the world before the player resumes.
@@ -97,6 +118,8 @@
   function start() {
     game.reset();
     rewards?.reset();
+    resultId = GameState.newSessionId();
+    pendingResult = null;
     for (const map of [creatures, spells, bursts]) {
       for (const node of map.values()) node.remove();
       map.clear();
@@ -122,31 +145,49 @@
     persist();
   }
 
+  function saveFinished() {
+    if (!pendingResult) return;
+    const scoreSaved = ExerciseScores.save(pendingResult.record);
+    rewards?.record(pendingResult.record.score);
+    const creditsSaved = !rewards ||
+      rewards.snapshot().seenScore >= pendingResult.record.score;
+    if (scoreSaved && creditsSaved) {
+      pendingResult = null;
+      storage.clear();
+    } else {
+      pendingResult.rewardProgress = rewards?.snapshot();
+      persist();
+    }
+  }
+  function showFinished() {
+    $("overlay-title").textContent = "Mission accomplie !";
+    $("instructions").textContent =
+      (game.score >= 10
+        ? "Fantastique ! Tu es un véritable maître des sortilèges !"
+        : "Bien joué ! Chaque addition te rend plus fort en magie.") +
+      (pendingResult ? " Enregistrement du score ou des crédits indisponible : réessaie." : "");
+    $("result").textContent =
+      game.score + " point" + (game.score === 1 ? "" : "s");
+    $("start").textContent = pendingResult ? "Réessayer l’enregistrement" : "Rejouer ✨";
+    $("overlay").hidden = false;
+    sync();
+  }
   function finish() {
     if (!running || saved) return;
     saved = true;
     running = false;
     paused = false;
-    storage.clear();
-    // An abandoned zero-point session is not added to the history.
-    if (game.score > 0)
-      ExerciseScores.save({
-        tab: "magic",
-        category: "Mission magique",
-        score: game.score,
-        total: 1,
-        mode: "arcade",
-      });
-    $("overlay-title").textContent = "Mission accomplie !";
-    $("instructions").textContent =
-      game.score >= 10
-        ? "Fantastique ! Tu es un véritable maître des sortilèges !"
-        : "Bien joué ! Chaque addition te rend plus fort en magie.";
-    $("result").textContent =
-      game.score + " point" + (game.score === 1 ? "" : "s");
-    $("start").textContent = "Rejouer ✨";
-    $("overlay").hidden = false;
-    sync();
+    // An abandoned zero-point session is not added to score history.
+    pendingResult = game.score > 0 ? {
+      record: {
+        tab: "magic", category: "Mission magique", score: game.score,
+        total: 1, mode: "arcade", resultId,
+      },
+      rewardProgress: rewards?.snapshot(),
+    } : null;
+    if (pendingResult) saveFinished();
+    else storage.clear();
+    showFinished();
   }
 
   async function endGame() {
@@ -198,7 +239,13 @@
     }
   });
 
-  $("start").onclick = () => running && paused ? pause() : start();
+  $("start").onclick = () => {
+    if (pendingResult) {
+      saveFinished();
+      showFinished();
+    } else if (running && paused) pause();
+    else start();
+  };
   $("pause").onclick = pause;
   $("end-game").onclick = endGame;
 

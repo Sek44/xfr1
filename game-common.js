@@ -169,8 +169,18 @@ window.ExerciseGame = (() => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "primary";
-      button.textContent = "Recommencer";
-      button.onclick = restart;
+      button.textContent = pending ? "Recommencer sans enregistrer" : "Recommencer";
+      button.onclick = pending
+        ? async () => {
+            const discard = await AppConfirm.ask({
+              title: "Abandonner le résultat non enregistré ?",
+              message: "Le score ou le crédit quotidien de cette série pourrait être perdu.",
+              confirmText: "Abandonner",
+              cancelText: "Réessayer",
+            });
+            if (discard) restart();
+          }
+        : restart;
       actions.append(button);
 
       card.append(trophy, heading, result, message, actions);

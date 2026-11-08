@@ -21,7 +21,7 @@ Site statique d'exercices de français, de calcul et de deux missions ludiques, 
 | `styles/themes/magical-academy/results.css`, `styles/themes/magical-academy/scores.css` | Écran de résultat partagé et styles propres à la page Scores |
 | `styles/themes/magical-academy/assets/` | Ressources WebP de production |
 | `game-common.js`, `game-ui.js`, `exercise-weighting.js` | Sessions, corrections, saisie et pondération |
-| `francais.js`, `conjugaison.js`, `conjugaison-data.js`, `calcul.js` | Contrôleurs et banques de questions |
+| `francais.js`, `francais-data.js`, `conjugaison.js`, `conjugaison-data.js`, `calcul.js` | Contrôleurs et banques de questions distincts |
 | `space-engine.js`, `space-enemies.js`, `space.js` | Mission calcul |
 | `magic-engine.js`, `magic.js` | Mission magique |
 | `scores.js`, `score-view.js`, `game-state.js` | Historique, visite Scores et reprise |

@@ -6,6 +6,7 @@ const vm = require("node:vm");
 
 test("Français Tout mixes families, keeps original keys and answer choices", () => {
   const source = fs.readFileSync(path.join(__dirname, "../francais.js"), "utf8");
+  const dataSource = fs.readFileSync(path.join(__dirname, "../francais-data.js"), "utf8");
   const weightingSource = fs.readFileSync(path.join(__dirname, "../exercise-weighting.js"), "utf8");
   const storage = new Map();
   const context = {
@@ -18,13 +19,16 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
   context.window = context;
   vm.createContext(context);
   vm.runInContext(weightingSource, context);
+  vm.runInContext(dataSource, context);
   // Exercise the actual data and sampler functions without a browser mock.
   function between(start, end) {
     const a = source.indexOf(start), b = source.indexOf(end, a);
     assert.ok(a >= 0 && b > a);
     return source.slice(a, b);
   }
-  const definitions = between("  const sets = {", "  const SESSION_SIZE = 10;");
+  const definitions =
+    "const sets = FrancaisData.sets;\n" +
+    between("  const TABS = [", "  const SESSION_SIZE = 10;");
   const keyFunction = between("  function wordKey(", "  function loadWordCounts()");
   const chooser = between("  function shuffleSession(", "  function restart()");
   vm.runInContext(`(() => {
@@ -108,4 +112,14 @@ test("Français Tout mixes families, keeps original keys and answer choices", ()
   assert.equal(JSON.parse(storage.get("errors"))[key], 1);
   assert.match(source, /recordAppearance\(categoryFor\(questions\[game.index\]\)/);
   assert.match(source, /recordError\(categoryFor\(questions\[game.index\]\)/);
+});
+
+test("French controller imports its unchanged question bank before use", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../francais.html"), "utf8");
+  const controller = fs.readFileSync(path.join(__dirname, "../francais.js"), "utf8");
+  const data = fs.readFileSync(path.join(__dirname, "../francais-data.js"), "utf8");
+  assert.ok(html.indexOf("francais-data.js") < html.indexOf("francais.js?v="));
+  assert.match(controller, /const sets = FrancaisData\.sets;/);
+  assert.equal(controller.includes("  const sets = {"), false);
+  assert.match(data, /window\.FrancaisData =/);
 });

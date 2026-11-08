@@ -41,6 +41,13 @@
     showRetry = false,
     inputFromPhysicalKeyboard = null;
   const storedGame = GameState.create("calcul");
+  const result = ExerciseGame.resultTracker(
+    "calcul", storedGame, ({ score, total }) => ({
+      tab: "math",
+      category: "Additions " + range + " / niveau " + category,
+      score, total,
+    }),
+  );
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
@@ -51,20 +58,11 @@
       render();
       persist();
     },
-    onFinish: ({ score, total }) => {
-      storedGame.clear();
-      ExerciseScores.save({
-        tab: "math",
-        category: "Additions " + range + " / niveau " + category,
-        score,
-        total,
-      });
-      window.DailyExercises?.award("calcul");
-    },
+    onFinish: (outcome) => result.save(outcome),
   });
   const el = (id) => document.getElementById(id);
   function persist() {
-    if (!questions.length || game.index === game.total) {
+    if (!questions.length || (game.index === game.total && !result.pending)) {
       storedGame.clear();
       return;
     }
@@ -74,6 +72,7 @@
       questions,
       answer,
       progress: game.snapshot(),
+      ...result.snapshot(),
     });
   }
   function restore() {
@@ -95,7 +94,10 @@
       ) ||
       typeof state.answer !== "string" ||
       !/^\d{0,6}$/.test(state.answer) ||
-      state.progress?.total !== state.questions.length
+      state.progress?.total !== state.questions.length ||
+      (state.progress?.index === state.progress?.total &&
+       state.pendingResult !== true) ||
+      !result.restore(state)
     )
       return false;
     range = state.range;
@@ -109,6 +111,7 @@
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
   function newSession() {
+    result.fresh();
     answer = "";
     showRetry = false;
     questions = [];
@@ -212,7 +215,14 @@
       return;
     }
     if (game.index === game.total) {
-      game.finish(p, newSession);
+      game.finish(p, newSession, result.pending ? {
+        message: result.message,
+        retry: () => {
+          result.save({ score: game.score, total: game.total });
+          render();
+          persist();
+        },
+      } : null);
       return;
     }
 

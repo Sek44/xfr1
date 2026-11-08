@@ -172,3 +172,39 @@ test("conjugation score labels use short tab titles for old and new records", ()
   }
   assert.equal(label({ tab: "conjugaison" }), "Conjugaison · Présent - 1er");
 });
+
+test("score retries are idempotent and preserve legacy fields", () => {
+  const legacy = { tab: "g", score: 4, extra: { untouched: true } };
+  const fixture = setup(JSON.stringify([legacy]));
+  const result = { tab: "math", score: 8, total: 10, resultId: "calcul:retry-1" };
+  assert.equal(fixture.scores.save(result), true);
+  assert.equal(fixture.scores.save(result), true);
+  assert.equal(fixture.writes, 1);
+  const records = JSON.parse(fixture.stored);
+  assert.equal(records.length, 2);
+  assert.deepEqual(records[1], legacy);
+  assert.equal(records[0].resultId, "calcul:retry-1");
+});
+
+test("unavailable score storage does not lose a retriable result", () => {
+  let stored = "[]", available = false;
+  const context = {
+    window: {},
+    localStorage: {
+      getItem() { return stored; },
+      setItem(key, value) {
+        assert.equal(key, "exercices_francais_scores");
+        if (!available) throw new Error("Storage unavailable");
+        stored = value;
+      },
+    },
+  };
+  vm.runInNewContext(source, context);
+  const result = { tab: "magic", score: 14, total: 1, resultId: "magic:retry-2" };
+  assert.equal(context.window.ExerciseScores.save(result), false);
+  assert.equal(stored, "[]");
+  available = true;
+  assert.equal(context.window.ExerciseScores.save(result), true);
+  assert.equal(context.window.ExerciseScores.save(result), true);
+  assert.equal(JSON.parse(stored).length, 1);
+});

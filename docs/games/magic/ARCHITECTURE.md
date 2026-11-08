@@ -19,6 +19,6 @@ Les fichiers de code ci-dessus se trouvent à la racine du dépôt.
 
 Le contrôleur distingue `running`, `paused`, `saved`, `viewingScores` et `confirming`. `GameState.create("magic")` sauvegarde `game.snapshot()`, la saisie, l'état de pause et `rewardProgress` (session, date, dernier score crédité). `DailyExercises.milestones("magic", 20)` transmet chaque calcul réussi au compteur commun, qui conserve les séries incomplètes entre parties et déduplique les opérations déjà créditées. Un snapshot ancien sans `rewardProgress` ne crédite pas les points passés. `MagicGame.restore` vérifie les propriétés des objets et coordonnées. À la reprise d'une session, une pause est montrée avant tout avancement.
 
-`ScoreView.bind` suspend la simulation durant la consultation des scores. Lors d'une fin de mission, `ExerciseScores.save` reçoit `tab: "magic"` et `mode: "arcade"` uniquement si `score > 0`. `saved` empêche un double enregistrement et la session provisoire est effacée.
+`ScoreView.bind` suspend la simulation durant la consultation des scores. Lors d'une fin de mission, `ExerciseScores.save` reçoit `tab: "magic"` et `mode: "arcade"` uniquement si `score > 0`. `saved` empêche un double enregistrement ; un `resultId` empêche les doublons après rechargement. Le checkpoint est effacé seulement quand score et crédits sont confirmés, sinon `pendingResult` reste restaurable avec un bouton de réessai.
 
 Contrats de persistance communs : [architecture transversale](../../ARCHITECTURE.md). Travaux ouverts : [backlog](BACKLOG.md).

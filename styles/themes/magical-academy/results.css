@@ -155,3 +155,16 @@ html[data-theme="magical-academy"] body.academy-page .academy-result-actions .pr
     height: 61px;
   }
 }
+
+/* Uncommitted results stay visible and retriable without changing the score card. */
+html[data-theme="magical-academy"] body.academy-page .academy-result .result-save-warning {
+  margin: 6px auto 12px;
+  max-width: 34rem;
+  color: #923b3b;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.academy-page .academy-result .result-save-retry {
+  white-space: normal;
+}

@@ -153,7 +153,7 @@ test("conjugaison uses the shared tab component for both present groups", () => 
   assert.match(controller, /GameUI\.tabs\(/);
   assert.match(controller, /"present-1": "Présent de l’indicatif · 1er groupe"/);
   assert.match(controller, /"present-2": "Présent de l’indicatif · 2e groupe"/);
-  assert.match(controller, /stored\.save\(\{ mode, questions/);
+  assert.match(controller, /stored\.save\(\{\s*mode, questions/);
 });
 
 test("Tout draws both conjugation groups with their original shared weights", () => {

@@ -15,7 +15,9 @@
     lastPersist = 0;
   const sprites = new Map();
   let viewingScores = false,
-    confirmingLeave = false;
+    confirmingLeave = false,
+    resultId = GameState.newSessionId(),
+    pendingResult = null;
   ScoreView.bind({
     suspend: () => {
       viewingScores = true;
@@ -28,8 +30,12 @@
     },
   });
   function persist() {
-    if (running && !saved && !game.over)
-      storedGame.save({ game: game.snapshot(), answer, paused, rewardProgress: rewards?.snapshot() });
+    if (pendingResult) storedGame.save({ pendingResult });
+    else if (running && !saved && !game.over)
+      storedGame.save({
+        game: game.snapshot(), answer, paused, resultId,
+        rewardProgress: rewards?.snapshot(),
+      });
   }
   function showPause() {
     $("overlay").hidden = false;
@@ -42,6 +48,20 @@
   }
   function restore() {
     const state = storedGame.load();
+    const pending = state?.pendingResult;
+    if (pending?.record?.tab === "space" &&
+        Number.isSafeInteger(pending.record.score) && pending.record.score >= 0 &&
+        typeof pending.record.resultId === "string" &&
+        pending.record.resultId.length > 0 && pending.record.resultId.length < 120) {
+      pendingResult = pending;
+      resultId = pending.record.resultId;
+      game.score = pending.record.score;
+      rewards?.restore(pending.rewardProgress, game.score);
+      saved = true;
+      running = false;
+      showFinished();
+      return true;
+    }
     if (
       !state ||
       typeof state.answer !== "string" ||
@@ -49,6 +69,8 @@
       !game.restore(state.game)
     ) return false;
     answer = state.answer;
+    if (typeof state.resultId === "string" && state.resultId &&
+        state.resultId.length < 120) resultId = state.resultId;
     rewards?.restore(state.rewardProgress, game.score);
     running = true;
     // No enemies should move before the player chooses to resume.
@@ -154,6 +176,8 @@
     sprites.clear();
     game.reset();
     rewards?.reset();
+    resultId = GameState.newSessionId();
+    pendingResult = null;
     running = true;
     paused = false;
     saved = false;
@@ -172,31 +196,49 @@
     sync();
     persist();
   }
+  function saveFinished() {
+    if (!pendingResult) return;
+    const scoreSaved = ExerciseScores.save(pendingResult.record);
+    rewards?.record(pendingResult.record.score);
+    const creditsSaved = !rewards ||
+      rewards.snapshot().seenScore >= pendingResult.record.score;
+    if (scoreSaved && creditsSaved) {
+      pendingResult = null;
+      storedGame.clear();
+    } else {
+      pendingResult.rewardProgress = rewards?.snapshot();
+      persist();
+    }
+  }
+  function showFinished() {
+    $("overlay-title").textContent = "Mission terminée !";
+    $("instructions").textContent =
+      (game.score >= 10
+        ? "Fantastique, tu es un as du calcul !"
+        : "Bien joué ! Chaque mission te fait progresser.") +
+      (pendingResult ? " Enregistrement du score ou des crédits indisponible : réessaie." : "");
+    $("bomb-help").hidden = true;
+    $("result").textContent =
+      game.score + " point" + (game.score === 1 ? "" : "s");
+    $("start").textContent = pendingResult ? "Réessayer l’enregistrement" : "Rejouer 🚀";
+    $("overlay").hidden = false;
+    sync();
+  }
   function finish() {
     if (saved) return;
     saved = true;
     running = false;
     paused = false;
     game.over = true;
-    storedGame.clear();
-    ExerciseScores.save({
-      tab: "space",
-      category: "Mission calcul",
-      score: game.score,
-      total: 1,
-      mode: "arcade",
-    });
-    $("overlay-title").textContent = "Mission terminée !";
-    $("instructions").textContent =
-      game.score >= 10
-        ? "Fantastique, tu es un as du calcul !"
-        : "Bien joué ! Chaque mission te fait progresser.";
-    $("bomb-help").hidden = true;
-    $("result").textContent =
-      game.score + " point" + (game.score === 1 ? "" : "s");
-    $("start").textContent = "Rejouer 🚀";
-    $("overlay").hidden = false;
-    sync();
+    pendingResult = {
+      record: {
+        tab: "space", category: "Mission calcul", score: game.score,
+        total: 1, mode: "arcade", resultId,
+      },
+      rewardProgress: rewards?.snapshot(),
+    };
+    saveFinished();
+    showFinished();
   }
   async function confirmEnd() {
     if (!running || saved || confirmingLeave) return;
@@ -218,7 +260,13 @@
       last = 0;
     }
   }
-  $("start").onclick = () => (paused ? pause() : start());
+  $("start").onclick = () => {
+    if (pendingResult) {
+      saveFinished();
+      showFinished();
+    } else if (paused) pause();
+    else start();
+  };
   $("bomb").onclick = bomb;
   $("pause").onclick = pause;
   $("end-game").onclick = () => confirmEnd();
