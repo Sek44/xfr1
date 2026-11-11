@@ -172,11 +172,25 @@
     }
   }
   function start() {
+    const nextId = GameState.newSessionId();
+    const permission = window.DailyExercises?.start?.("space", nextId, ["space:base"]);
+    if (permission && !permission.ok) {
+      $("overlay").hidden = false;
+      $("overlay-title").textContent = "Mission indisponible";
+      $("instructions").textContent = permission.blocked
+        ? "Tu as atteint ta limite de parties pour aujourd’hui. Reviens demain !"
+        : "Impossible d'enregistrer ta progression. Vérifie le stockage local puis réessaie.";
+      $("result").textContent = "";
+      $("bomb-help").hidden = true;
+      $("start").textContent = "Réessayer";
+      sync();
+      return;
+    }
     for (const node of sprites.values()) node.remove();
     sprites.clear();
     game.reset();
     rewards?.reset();
-    resultId = GameState.newSessionId();
+    resultId = nextId;
     pendingResult = null;
     running = true;
     paused = false;
@@ -218,8 +232,19 @@
         : "Bien joué ! Chaque mission te fait progresser.") +
       (pendingResult ? " Enregistrement du score ou des crédits indisponible : réessaie." : "");
     $("bomb-help").hidden = true;
-    $("result").textContent =
-      game.score + " point" + (game.score === 1 ? "" : "s");
+    const summary = window.DailyExercises?.missionSummary?.(
+      "space", rewards?.snapshot().sessionId,
+    );
+    const duration = summary
+      ? Math.floor(summary.seconds / 60) + " min" +
+        (summary.seconds % 60 ? " " + summary.seconds % 60 + " s" : "")
+      : null;
+    $("result").textContent = game.score + " point" +
+      (game.score === 1 ? "" : "s") +
+      (summary ? " · Temps gagné : " + duration +
+        " · Maîtrise " + summary.mastery + "/10" +
+        (summary.remaining === null ? "" :
+          " · " + summary.remaining + " partie(s) restante(s) aujourd’hui") : "");
     $("start").textContent = pendingResult ? "Réessayer l’enregistrement" : "Rejouer 🚀";
     $("overlay").hidden = false;
     sync();

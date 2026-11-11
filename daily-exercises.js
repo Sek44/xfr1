@@ -24,6 +24,7 @@ window.DailyExercises = (() => {
       progress: {},
       events: [],
       starts: {},
+      sessions: {},
       receipts: {},
     };
   }
@@ -40,6 +41,9 @@ window.DailyExercises = (() => {
       (state.seconds === undefined || (Number.isSafeInteger(state.seconds) && state.seconds >= 0)) &&
       (state.starts === undefined || (state.starts && typeof state.starts === "object" &&
         !Array.isArray(state.starts) && Object.values(state.starts).every((value) =>
+          Array.isArray(value) && value.every((id) => typeof id === "string")))) &&
+      (state.sessions === undefined || (state.sessions && typeof state.sessions === "object" &&
+        !Array.isArray(state.sessions) && Object.values(state.sessions).every((value) =>
           Array.isArray(value) && value.every((id) => typeof id === "string")))) &&
       (state.receipts === undefined || (state.receipts && typeof state.receipts === "object" &&
         !Array.isArray(state.receipts))) &&
@@ -132,7 +136,10 @@ window.DailyExercises = (() => {
     const rules = window.RewardRules;
     if (!state || !rules) return { ok: false, blocked: false };
     const event = game + ":" + token;
-    const starts = state.starts || {};
+    // Long-form missions limit actual play sessions separately from rewarded
+    // packs of 10/20 calculations. Neither limit can be bypassed by replays.
+    const field = game === "magic" || game === "space" ? "sessions" : "starts";
+    const starts = state[field] || {};
     const distinct = [...new Set(keys)];
     for (const id of distinct) {
       const info = rules.inspect(id);
@@ -142,7 +149,7 @@ window.DailyExercises = (() => {
           ids.length >= info.dailyLimit) return { ok: false, blocked: true };
     }
     if (commit) {
-      state.starts = starts;
+      state[field] = starts;
       for (const id of distinct) {
         if (!starts[id]) starts[id] = [];
         if (!starts[id].includes(event)) starts[id].push(event);
@@ -158,6 +165,23 @@ window.DailyExercises = (() => {
     const state = read();
     return state?.receipts?.[game + ":" + token] || null;
   }
+  function missionSummary(game, sessionId) {
+    const state = read();
+    const rules = window.RewardRules;
+    if (!state || !rules || typeof sessionId !== "string" || !sessionId) return null;
+    const id = rules.key(game);
+    const info = rules.inspect(id);
+    if (!info) return null;
+    const prefix = game + ":" + sessionId + ":";
+    const seconds = Object.entries(state.receipts || {})
+      .filter(([token]) => token.startsWith(prefix))
+      .reduce((sum, [, receipt]) => sum + (receipt.seconds || 0), 0);
+    const started = state.sessions?.[id]?.length || 0;
+    return { seconds, mastery: info.mastery, difficulty: info.difficulty,
+      remaining: info.dailyLimit == null ? null :
+        Math.max(0, info.dailyLimit - started) };
+  }
+
   function awardResultOnce(game, token, answers) {
     const rules = window.RewardRules;
     if (!rules || !rules.validAnswers(answers)) return { ok: false };
@@ -364,5 +388,6 @@ window.DailyExercises = (() => {
   }
 
   return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, awardOnce,
-    awardResultOnce, canStart, start, receipt, recordProgress, milestones, mount, mountStats };
+    awardResultOnce, canStart, start, receipt, missionSummary,
+    recordProgress, milestones, mount, mountStats };
 })();

@@ -116,9 +116,22 @@
   GameUI.keypad($("keypad"), edit, { clearLabel: "C" });
 
   function start() {
+    const nextId = GameState.newSessionId();
+    const permission = window.DailyExercises?.start?.("magic", nextId, ["magic:base"]);
+    if (permission && !permission.ok) {
+      $("overlay-title").textContent = "Mission indisponible";
+      $("instructions").textContent = permission.blocked
+        ? "Tu as atteint ta limite de parties pour aujourd’hui. Reviens demain !"
+        : "Impossible d'enregistrer ta progression. Vérifie le stockage local puis réessaie.";
+      $("result").textContent = "";
+      $("start").textContent = "Réessayer";
+      $("overlay").hidden = false;
+      sync();
+      return;
+    }
     game.reset();
     rewards?.reset();
-    resultId = GameState.newSessionId();
+    resultId = nextId;
     pendingResult = null;
     for (const map of [creatures, spells, bursts]) {
       for (const node of map.values()) node.remove();
@@ -166,8 +179,19 @@
         ? "Fantastique ! Tu es un véritable maître des sortilèges !"
         : "Bien joué ! Chaque addition te rend plus fort en magie.") +
       (pendingResult ? " Enregistrement du score ou des crédits indisponible : réessaie." : "");
-    $("result").textContent =
-      game.score + " point" + (game.score === 1 ? "" : "s");
+    const summary = window.DailyExercises?.missionSummary?.(
+      "magic", rewards?.snapshot().sessionId,
+    );
+    const duration = summary
+      ? Math.floor(summary.seconds / 60) + " min" +
+        (summary.seconds % 60 ? " " + summary.seconds % 60 + " s" : "")
+      : null;
+    $("result").textContent = game.score + " point" +
+      (game.score === 1 ? "" : "s") +
+      (summary ? " · Temps gagné : " + duration +
+        " · Maîtrise " + summary.mastery + "/10" +
+        (summary.remaining === null ? "" :
+          " · " + summary.remaining + " partie(s) restante(s) aujourd’hui") : "");
     $("start").textContent = pendingResult ? "Réessayer l’enregistrement" : "Rejouer ✨";
     $("overlay").hidden = false;
     sync();

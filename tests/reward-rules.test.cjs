@@ -121,6 +121,30 @@ test("mission packs have adjustable difficulty and keep their progress", () => {
   assert.equal(daily.recordProgress("magic", 20, 20, "magic-1"), 0);
   assert.equal(daily.read().seconds, 135);
 });
+test("mission launch cap is separate from packs and survives retries", () => {
+  const api = setup();
+  const key = "space:base";
+  seed(api, key, 50, 3, 20);
+  for (let i = 1; i <= 6; i++)
+    assert.equal(api.daily.start("space", "mission-" + i, [key]).ok, true);
+  assert.equal(api.daily.start("space", "mission-1", [key]).ok, true);
+  assert.equal(api.daily.canStart("space", "mission-7", [key]).blocked, true);
+  assert.equal(api.daily.recordProgress("space", 10, 10, "pack-1"), 1);
+  const summary = api.daily.missionSummary("space", "unused");
+  assert.equal(summary.remaining, 0);
+  assert.equal(api.daily.read().sessions[key].length, 6);
+  assert.equal(api.daily.read().starts[key].length, 1);
+});
+
+test("completely mastered missions only allow one launch", () => {
+  const api = setup();
+  seed(api, "magic:base");
+  assert.equal(api.daily.start("magic", "once", ["magic:base"]).ok, true);
+  assert.equal(api.daily.canStart("magic", "twice", ["magic:base"]).blocked, true);
+  assert.equal(api.daily.recordProgress("magic", 20, 20, "pack"), 1);
+  assert.equal(api.daily.read().seconds, 0);
+});
+
 test("failed mastery persistence retries without repeating a credited award", () => {
   const api = setup();
   const { storage, daily, rules } = api;
