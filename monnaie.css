@@ -128,8 +128,9 @@ html[data-theme="magical-academy"] body.monnaie-page .money-customer-remark {
   align-items: center;
   justify-content: center;
   margin: 0;
-  min-height: 22px;
-  padding: 1px 4px;
+  min-height: 42px;
+  gap: 7px;
+  padding: 2px 4px;
   text-align: center;
   color: #7e3a4f;
   font-family: var(--font-ui);
@@ -139,6 +140,19 @@ html[data-theme="magical-academy"] body.monnaie-page .money-customer-remark {
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-customer-remark.is-visible {
   font-weight: var(--weight-bold);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-customer-remark.is-success {
+  color: #2b6855;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-customer-svg {
+  display: block;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 1px 2px #493b2c33);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-customer-text {
+  min-width: 0;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-grid {
   display: grid;
