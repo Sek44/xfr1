@@ -53,7 +53,7 @@ for (const [title, icon, game] of [
     assert.equal(restart.tag, "button");
     assert.equal(restart.type, "button");
     assert.equal(restart.attributes["aria-label"], "Recommencer la série");
-    assert.equal(scores.href, "./scores.html?game=" + game);
+    assert.equal(scores.href, "./scores.html?game=" + game + "&from=" + game);
     assert.equal(scores.attributes["aria-label"], "Voir les scores");
   });
 }

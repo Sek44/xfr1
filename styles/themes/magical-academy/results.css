@@ -180,13 +180,13 @@ html[data-theme="magical-academy"] body.academy-page .academy-result .result-sav
   color: #334362;
   text-align: center;
 }
-.academy-result-reward strong { font-size: 1.12rem; }
-.academy-result-reward p { margin: 0; line-height: 1.4; font-size: .92rem; }
+.academy-result-reward strong { font-size: var(--text-md); }
+.academy-result-reward p { margin: 0; line-height: 1.4; font-size: var(--text-xs); }
 .academy-reward-unavailable {
   margin: 1.25rem auto;
   max-width: 34rem;
   text-align: center;
   color: #fff2c4;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   line-height: 1.5;
 }
