@@ -37,7 +37,7 @@
       ></section>
       <section id="history" class="history-panel"></section>
     </main>
-    <script src="./academy-header.js?v=1"></script>
+    <script src="./academy-header.js?v=20261111-score-origins"></script>
     <script src="./app-confirm.js?v=20261018-confirm14"></script>
     <script src="./scores.js?v=20261111-subcategories"></script>
     <script>
@@ -61,29 +61,32 @@
         magic: "magic.html",
       };
       const params = new URLSearchParams(location.search);
+      // The selected score tab is not the page the visitor came from.
+      // Preserve the explicit origin while changing games or subcategories.
       let origin = params.get("from");
-      if (!Object.hasOwn(routes, origin)) {
-        let referringGame = null;
+      if (origin !== "home" && !Object.hasOwn(routes, origin)) {
+        origin = "home";
         try {
           const ref = new URL(document.referrer);
-          if (ref.origin === location.origin)
-            referringGame = Object.keys(routes).find(
+          if (ref.origin === location.origin) {
+            const referringGame = Object.keys(routes).find(
               (key) =>
                 ref.pathname === new URL(routes[key], location.href).pathname,
             );
+            if (referringGame) origin = referringGame;
+          }
         } catch {}
-        origin = referringGame || (Object.hasOwn(routes, game) ? game : null);
       }
-      if (origin) {
+      if (origin !== "home") {
         const back = document.getElementById("scores-back");
         back.href = "./" + routes[origin];
         back.setAttribute("aria-label", "Retour au jeu");
         back.title = "Retour au jeu";
-        for (const link of document.querySelectorAll("[data-game]")) {
-          const url = new URL(link.href);
-          url.searchParams.set("from", origin);
-          link.href = url.href;
-        }
+      }
+      for (const link of document.querySelectorAll("[data-game]")) {
+        const url = new URL(link.href);
+        url.searchParams.set("from", origin);
+        link.href = url.href;
       }
       if (window.parent !== window) {
         const back = document.getElementById("scores-back");
@@ -113,6 +116,16 @@
       const scoreGame = selected === "calcul" ? "math" : selected;
       const choices = ExerciseScores.subcategories(scoreGame);
       const savedSub = params.get("sub");
+      // Calcul options normally come from recorded sessions. Show the current
+      // difficulty even before the first session has been completed.
+      if (scoreGame === "math" &&
+          /^Additions (?:0-10|10-100|100-1000|1000-10000|Toutes catégories) \/ niveau [1-5]$/.test(savedSub || "") &&
+          !choices.some(({ value }) => value === savedSub)) {
+        choices.push({
+          value: savedSub,
+          label: savedSub.replace(/^Additions\s+/i, ""),
+        });
+      }
       const selectedSub = choices.some(({ value }) => value === savedSub)
         ? savedSub : null;
       if (choices.length) {
