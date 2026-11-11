@@ -525,5 +525,5 @@ window.DailyExercises = (() => {
   return { KEY, VERSION, MINUTES_PER_POINT, today, read, grantSpecialBonus, grantAdminBonus,
     award, awardOnce,
     awardResultOnce, canStart, start, receipt, missionSummary,
-    recordProgress, milestones, mount, mountStats };
+    recordProgress, milestones, mount, mountStats, formatCredit };
 })();
