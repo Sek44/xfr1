@@ -123,13 +123,31 @@
     return choices[(question.price + selection.length) % choices.length];
   }
 
+  // The compliment varies between questions but is stable while the
+  // same validated answer is displayed or restored after a reload.
+  function customerThanks(question) {
+    if (!validQuestion(question)) return "";
+    const choices = [
+      "Le compte est bon, merci !",
+      "Parfait, merci beaucoup !",
+      "Tout est juste, merci !",
+      "Impeccable, bonne journée !",
+      "C'est exactement ça, bravo !",
+      "Merci, vous avez l'œil !",
+      "Super, il ne manque rien !",
+    ];
+    const hash = (Math.imul(question.price, 16777619) ^
+      Math.imul(question.paid, 3266489917)) >>> 0;
+    return choices[hash % choices.length];
+  }
+
   function format(cents) {
     return (cents / 100).toFixed(2).replace(".", ",") + " €";
   }
 
   const api = Object.freeze({
     COINS, NOTES, MAX_PIECES, makeQuestion, validQuestion,
-    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, customerRemark, format,
+    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, customerRemark, customerThanks, format,
   });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (root) root.MonnaieModel = api;
