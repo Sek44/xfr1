@@ -80,6 +80,11 @@
     return [...selection, value];
   }
 
+  function sortSelection(selection) {
+    // Pure ordering helper: additions do not change a previously saved value.
+    return [...selection].sort((a, b) => a - b);
+  }
+
   function remove(selection, index) {
     if (!validSelection(selection) || !Number.isInteger(index) ||
         index < 0 || index >= selection.length) return selection;
@@ -103,7 +108,7 @@
 
   const api = Object.freeze({
     COINS, NOTES, MAX_PIECES, makeQuestion, validQuestion,
-    generateQuestions, validSelection, add, remove, sum, isCorrect, format,
+    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, format,
   });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (root) root.MonnaieModel = api;

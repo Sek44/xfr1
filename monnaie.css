@@ -1,9 +1,8 @@
-/* Monnaie: only money-specific layouts; the ornate frames and action button
-   are shared with the other classic exercises. */
+/* Monnaie: compact, accessible SVG controls; shared exercise frames stay common. */
 html[data-theme="magical-academy"] body.monnaie-page .money-question {
   margin-bottom: 7px;
-  padding-top: 18px;
-  padding-bottom: 17px;
+  padding-top: 16px;
+  padding-bottom: 15px;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-purchase {
   display: grid;
@@ -14,18 +13,32 @@ html[data-theme="magical-academy"] body.monnaie-page .money-purchase {
   color: #20365a;
   text-align: center;
 }
-html[data-theme="magical-academy"] body.monnaie-page :is(.money-price, .money-paid) {
+html[data-theme="magical-academy"] body.monnaie-page .money-price {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 0;
   gap: 4px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-paid {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  width: 100%;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-caption {
   font-family: var(--font-ui);
   font-size: var(--text-sm);
   font-weight: var(--weight-bold);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-caption--stacked {
+  flex: 0 0 auto;
+  white-space: pre-line;
+  line-height: 1.12;
+  text-align: right;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-price-value {
   font-family: var(--font-display);
@@ -34,11 +47,13 @@ html[data-theme="magical-academy"] body.monnaie-page .money-price-value {
   white-space: nowrap;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-paid .money-svg--note {
+  flex: 0 1 auto;
   width: min(100%, var(--banknote-width));
+  min-width: 0;
   height: auto;
-  filter: drop-shadow(0 3px 2px #57452a5c);
+  filter: drop-shadow(0 2px 2px #57452a50);
 }
-html[data-theme="magical-academy"] body.monnaie-page .visually-hidden {
+html[data-theme="magical-academy"] body.monnaie-page :is(.visually-hidden, .money-count) {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -51,51 +66,33 @@ html[data-theme="magical-academy"] body.monnaie-page .money-controls {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-top: 7px;
-  padding-bottom: 9px;
+  padding-top: 6px;
+  padding-bottom: 8px;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-tray {
-  padding: 6px 8px;
-  border: 1.5px dashed #bb9964;
-  border-radius: 15px;
-  background: #fffaf0a8;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-heading {
-  margin: 0 0 3px;
-  color: #23365a;
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: var(--text-md);
+  padding: 4px 2px 2px;
+  border: 0;
+  background: transparent;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-selection {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 3px;
-  min-height: 45px;
-  padding: 2px;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 4px 3px;
+  min-height: 96px; /* Two 46px rows reserved before anything is selected. */
+  padding: 2px 0;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 92px;
   margin: 0;
-  padding: 5px 4px;
+  padding: 0 4px;
   color: #596783;
-  font-size: var(--text-sm);
-  text-align: center;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-count {
-  /* Spoken after each change without consuming another visible row. */
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  white-space: nowrap;
-  clip-path: inset(50%);
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-subheading {
-  margin: 0 0 3px;
-  color: #293c5c;
-  font-family: var(--font-ui);
   font-size: var(--text-sm);
   text-align: center;
 }
@@ -109,8 +106,8 @@ html[data-theme="magical-academy"] body.monnaie-page .money-grid--coins {
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-grid--notes {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
 }
-/* On wider screens all coins and notes fit in a single short row. */
 @media (min-width: 560px) {
   html[data-theme="magical-academy"] body.monnaie-page .money-grid--coins {
     grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -125,56 +122,14 @@ html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-p
   justify-content: center;
   align-items: center;
   min-width: 0;
-  padding: 4px;
-  border: 1.5px solid #d9ba87;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #fffdf7, #f1e2c4);
-  box-shadow: inset 0 1px #fff, 0 2px 2px #65513431;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   cursor: pointer;
   touch-action: manipulation;
 }
-html[data-theme="magical-academy"] body.monnaie-page .money-option {
-  width: 100%;
-  min-height: 58px;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-option--note {
-  min-height: 58px;
-  padding: 3px;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-option--coin .money-svg {
-  width: min(var(--coin-size), 100%);
-  height: auto;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-option--note .money-svg {
-  display: block;
-  width: min(100%, var(--banknote-width));
-  height: auto;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-picked {
-  min-height: 45px;
-  border-color: #6d9fba;
-  background: linear-gradient(180deg, #eef9ff, #dbeefb);
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-picked--coin {
-  width: 46px;
-  height: 46px;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-picked--coin .money-svg {
-  width: min(var(--coin-size), 100%);
-  height: auto;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-picked--note {
-  width: 86px;
-  height: 46px;
-}
-html[data-theme="magical-academy"] body.monnaie-page .money-picked--note .money-svg {
-  width: 100%;
-  height: auto;
-}
-/* Coin artwork *is* the button: transparent 46px hit area, no square tile.
-   This applies in the palette and the selected-change tray. */
 html[data-theme="magical-academy"] body.monnaie-page :is(.money-option--coin, .money-picked--coin) {
-  box-sizing: border-box;
   width: 46px;
   height: 46px;
   min-height: 46px;
@@ -183,25 +138,31 @@ html[data-theme="magical-academy"] body.monnaie-page :is(.money-option--coin, .m
   border: 0;
   border-radius: 50%;
   background: transparent;
-  box-shadow: none;
 }
 html[data-theme="magical-academy"] body.monnaie-page :is(.money-option--coin, .money-picked--coin) .money-svg {
   width: min(var(--coin-size), 44px, 100%);
   height: auto;
 }
-html[data-theme="magical-academy"] body.monnaie-page :is(.money-option--coin, .money-picked--coin):focus-visible {
+html[data-theme="magical-academy"] body.monnaie-page .money-option--note {
+  width: 100%;
+  min-height: 46px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-picked--note {
+  width: 86px;
+  height: 46px;
+  min-height: 46px;
+}
+html[data-theme="magical-academy"] body.monnaie-page :is(.money-option--note, .money-picked--note) .money-svg {
+  width: min(100%, var(--banknote-width));
+  height: auto;
+  filter: drop-shadow(0 1px 2px #45352b38);
+}
+html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-picked):focus-visible {
   outline: 3px solid #135eaa;
   outline-offset: 2px;
 }
 html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-picked):not(:disabled):active {
-  transform: translateY(1px);
-  background: #e4d4ad;
-  box-shadow: inset 0 1px 3px #806b4c60;
-}
-html[data-theme="magical-academy"] body.monnaie-page :is(.money-option--coin, .money-picked--coin):not(:disabled):active {
-  transform: scale(.93);
-  background: transparent;
-  box-shadow: none;
+  transform: scale(.94);
 }
 html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-picked):disabled {
   cursor: default;
@@ -222,7 +183,5 @@ html[data-theme="magical-academy"] body.monnaie-page .money-controls .exercise-a
   html[data-theme="magical-academy"] body.monnaie-page .money-purchase { gap: 6px; }
   html[data-theme="magical-academy"] body.monnaie-page .money-caption { font-size: var(--text-xs); }
   html[data-theme="magical-academy"] body.monnaie-page .money-price-value { font-size: var(--type-question); }
-  html[data-theme="magical-academy"] body.monnaie-page .money-option--note { min-height: 55px; }
   html[data-theme="magical-academy"] body.monnaie-page .money-grid { gap: 3px; }
-  html[data-theme="magical-academy"] body.monnaie-page .money-tray { padding: 5px; }
 }

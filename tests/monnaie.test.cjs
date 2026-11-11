@@ -54,6 +54,15 @@ test("coins, notes and repetitions are added and removed one by one", () => {
   assert.equal(model.add(Array(model.MAX_PIECES).fill(1), 1).length, model.MAX_PIECES);
 });
 
+test("selected denominations are sorted ascending without mutating the saved selection", () => {
+  const initial = [20000, 50, 1, 200, 2, 1, 500];
+  const sorted = model.sortSelection(initial);
+  assert.deepEqual(sorted, [1, 1, 2, 50, 200, 500, 20000]);
+  assert.deepEqual(initial, [20000, 50, 1, 200, 2, 1, 500]);
+  assert.deepEqual(model.sortSelection(model.remove(sorted, 0)), [1, 2, 50, 200, 500, 20000]);
+  assert.deepEqual(model.sortSelection(model.add(sorted, 5)), [1, 1, 2, 5, 50, 200, 500, 20000]);
+});
+
 test("validation uses integer cents with no floating-point rounding or partial credit", () => {
   const question = { price: 105, paid: 500 }; // 3.95 euros change.
   const right = [200, 100, 50, 20, 20, 5];
@@ -89,6 +98,18 @@ test("coin and banknote artwork is SVG with the right amount written inside", ()
     assert.match(svg.attributes.viewBox, /^0 0 /);
     assert.equal(svg.attributes["aria-hidden"], "true");
     assert.ok(collect(svg).includes(item.label), item.label);
+    if (item.cents === 1) {
+      assert.equal(svg.children[0].attributes["stroke-width"], "1.6");
+      assert.equal(svg.children.at(-1).attributes["font-size"], "37");
+    } else if (item.cents === 100) {
+      assert.equal(svg.children[0].attributes["stroke-width"], "3");
+    } else if (item.cents === 10000) {
+      // A contrast panel separates the denomination from the architectural art.
+      assert.ok(svg.children.some((part) =>
+        part.name === "rect" && part.attributes["fill-opacity"] === ".86"));
+      assert.equal(svg.children.find((part) =>
+        part.name === "text" && part.textContent === item.label).attributes["font-size"], "29");
+    }
   }
 });
 
@@ -100,9 +121,25 @@ test("compact cash controls have frame-free accessible coin buttons", () => {
   assert.match(css, /border: 0;\s*border-radius: 50%;\s*background: transparent;/);
   assert.match(css, /\.money-grid--coins \{\s*grid-template-columns: repeat\(8,/);
   assert.match(css, /\.money-grid--notes \{\s*grid-template-columns: repeat\(6,/);
-  assert.match(css, /\.money-count \{[\s\S]*?clip-path: inset\(50%\)/);
+  assert.match(css, /:is\(\.visually-hidden, \.money-count\) \{[\s\S]*?clip-path: inset\(50%\)/);
   assert.match(controller, /Math\.round\(note\.width \* 0\.69\)/);
   assert.match(controller, /button\.setAttribute\(\s*"aria-label"/);
+});
+
+test("Monnaie answer is sorted, reserves two rows and removes note frames and visible titles", () => {
+  const css = read("monnaie.css");
+  const controller = read("monnaie.js");
+  const page = read("monnaie.html");
+  assert.match(css, /\.money-caption--stacked \{[\s\S]*?white-space: pre-line/);
+  assert.match(css, /\.money-paid \{[\s\S]*?flex-direction: row/);
+  assert.match(css, /\.money-selection \{[\s\S]*?min-height: 96px/);
+  assert.match(css, /:is\(\.money-option, \.money-picked\) \{[\s\S]*?border: 0;[\s\S]*?background: transparent;/);
+  assert.match(controller, /"Le client\\ndonne"/);
+  assert.match(controller, /selection = model\.sortSelection\(state\.selection\)/);
+  assert.match(controller, /selection = model\.sortSelection\(updated\)/);
+  assert.match(controller, /selection = model\.sortSelection\(model\.remove\(selection, index\)\)/);
+  assert.doesNotMatch(controller, /"Mon rendu de monnaie"|"Pièces"|"Billets"/);
+  assert.match(page, /monnaie-art\.js\?v=20261111-layout2/);
 });
 
 test("Monnaie links, score filter and complete shared exercise integration exist", () => {

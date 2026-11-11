@@ -54,7 +54,7 @@
           state.pendingResult !== true) ||
         !result.restore(state)) return false;
     questions = state.questions;
-    selection = state.selection;
+    selection = model.sortSelection(state.selection);
     lastQuestionIndex = state.progress.index;
     showRetry = state.progress.failed && !state.progress.correct;
     return game.restore(state.progress);
@@ -136,7 +136,7 @@
     const note = model.NOTES.find((item) => item.cents === current.paid);
     paid.style.setProperty("--banknote-width", Math.round(note.width * 0.69) + "px");
     paid.append(
-      element("span", "money-caption", "Le client donne"),
+      element("span", "money-caption money-caption--stacked", "Le client\ndonne"),
       MonnaieArt.create(note),
     );
     const paidText = element("span", "visually-hidden", "Billet de " + note.name);
@@ -147,14 +147,13 @@
 
     const controls = element("div", "keyboard-panel money-controls");
     const tray = element("section", "money-tray");
-    const trayTitle = element("h2", "money-heading", "Mon rendu de monnaie");
     const chosen = element("div", "money-selection");
     chosen.setAttribute("role", "group");
     chosen.setAttribute("aria-label", "Pièces et billets à rendre au client");
     const count = element("p", "money-count");
     count.setAttribute("role", "status");
     count.setAttribute("aria-live", "polite");
-    tray.append(trayTitle, chosen, count);
+    tray.append(chosen, count);
     controls.append(tray);
 
     const button = game.actionButton();
@@ -167,7 +166,7 @@
           const item = findItem(cents);
           chosen.append(moneyButton(item, () => {
             if (game.correct) return;
-            selection = model.remove(selection, index);
+            selection = model.sortSelection(model.remove(selection, index));
             showRetry = false;
             refreshSelection();
           }, true));
@@ -185,16 +184,17 @@
       persist();
     }
 
-    function palette(items, title, kind) {
+    function palette(items, kind) {
       const group = element("section", "money-palette");
-      group.append(element("h3", "money-subheading", title));
+      group.setAttribute("role", "group");
+      group.setAttribute("aria-label", kind === "coins" ? "Ajouter des pièces" : "Ajouter des billets");
       const grid = element("div", "money-grid money-grid--" + kind);
       for (const item of items) {
         grid.append(moneyButton(item, () => {
           if (game.correct) return;
           const updated = model.add(selection, item.cents);
           if (updated === selection) return;
-          selection = updated;
+          selection = model.sortSelection(updated);
           showRetry = false;
           refreshSelection();
         }));
@@ -202,8 +202,8 @@
       group.append(grid);
       controls.append(group);
     }
-    palette(model.COINS, "Pièces", "coins");
-    palette(model.NOTES, "Billets", "notes");
+    palette(model.COINS, "coins");
+    palette(model.NOTES, "notes");
 
     button.disabled = !game.correct && !selection.length;
     button.classList.toggle("feedback-success", game.correct);
