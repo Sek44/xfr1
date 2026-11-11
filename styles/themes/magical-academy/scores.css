@@ -1,3 +1,43 @@
+/* Secondary filter: keep the main game tabs compact, even on phones. */
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px 12px;
+  margin: 3px auto 15px;
+  padding: 0 10px;
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter[hidden] {
+  display: none;
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter label {
+  color: #fff3d5;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  text-shadow: 0 2px 3px #06152f;
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter select {
+  width: min(100%, 310px);
+  min-width: 0;
+  min-height: 42px;
+  padding: 7px 13px;
+  border: 1.5px solid #d5aa71;
+  border-radius: 9px;
+  background: #fff8e9;
+  color: #24365c;
+  box-shadow: 0 2px 6px #06152f67;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter select:focus-visible {
+  outline: 3px solid #ffe2a0;
+  outline-offset: 3px;
+}
+
 /* Score-history base rules, formerly spread across shared and confirmation styles. */
 .history-scroll {
   overflow-x: auto;
