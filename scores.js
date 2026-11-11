@@ -122,6 +122,7 @@ window.ExerciseScores = (() => {
         "Présent de l’indicatif · 2e groupe": "Présent - 2e",
         "Présent · 1er groupe": "Présent - 1er",
         "Présent · 2e groupe": "Présent - 2e",
+        "Présent de l’indicatif · être et avoir": "Être et avoir",
       };
       return "Conjugaison · " + (names[record.category] || record.category || "Présent - 1er");
     }
@@ -532,7 +533,9 @@ window.ExerciseScores = (() => {
     container.append(title);
     if (!records.length) {
       const p = document.createElement("p");
-      p.textContent = "Aucun exercice terminé pour le moment.";
+      p.textContent = selectedSubcategory === null
+        ? "Aucun exercice terminé pour le moment."
+        : "Aucun score enregistré pour cette sous-catégorie.";
       container.append(p);
       return;
     }
