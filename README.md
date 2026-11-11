@@ -10,7 +10,7 @@ Site statique d'exercices de français, de mathématiques et de deux missions lu
 - **Monnaie** (`monnaie.html`) : rendre la monnaie avec des pièces et billets en euros, sans total affiché.
 - **Mission calcul** (`space.html`) : jeu spatial avec calculs.
 - **Mission magique** (`magic.html`) : jeu de forêt avec calculs.
-- **Scores** (`scores.html`) : historique et courbes, consultables pendant une partie.
+- **Scores** (`scores.html`) : historique et courbes, consultables pendant une partie ; sous le graphique, difficulté et maîtrise actuelles (sur 10) pour la sous-catégorie sélectionnée ou détail par catégorie pour les vues regroupées.
 
 ## Code
 

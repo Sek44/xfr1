@@ -29,8 +29,12 @@ class Element {
     this.listeners[type] = handler;
   }
 }
-function setup(records) {
+function setup(records, masteryProfiles = null) {
   let stored = JSON.stringify(records),
+    storedMastery = masteryProfiles === null ? null : JSON.stringify({
+      version: 1, events: [], legacyImport: { version: 1 },
+      categories: masteryProfiles,
+    }),
     writes = 0;
   const context = {
     window: {},
@@ -39,16 +43,22 @@ function setup(records) {
       createElementNS: (_, tag) => new Element(tag),
     },
     localStorage: {
-      getItem: () => stored,
-      setItem: (_, value) => {
+      getItem: (key) => key === "entrainement_mastery_v1" ? storedMastery : stored,
+      setItem: (key, value) => {
         writes++;
-        stored = value;
+        if (key === "entrainement_mastery_v1") storedMastery = value;
+        else stored = value;
       },
     },
     AppConfirm: { ask: async () => true },
     setTimeout: () => 1,
     clearTimeout: () => {},
   };
+  if (masteryProfiles !== null)
+    vm.runInNewContext(
+      fs.readFileSync(path.join(__dirname, "../reward-rules.js"), "utf8"),
+      context,
+    );
   vm.runInNewContext(
     fs.readFileSync(path.join(__dirname, "../scores.js"), "utf8"),
     context,
@@ -58,7 +68,7 @@ function setup(records) {
   return {
     root,
     chart,
-    render: (game) => context.window.ExerciseScores.render(root, game, chart),
+    render: (game, sub = null) => context.window.ExerciseScores.render(root, game, chart, sub),
     get stored() {
       return stored;
     },
@@ -410,4 +420,114 @@ test("history cards use the same background and only highlight while pressed", (
   row.listeners.pointermove({ clientX: 65, clientY: 60 });
   assert.equal(row.classList.contains("holding"), false);
   assert.equal(f.writes, 0);
+});
+
+
+const masteryProfile = (correct = 35) => ({
+  total: 50,
+  recent: Array.from({ length: 50 }, (_, i) => i < correct ? 1 : 0),
+  days: ["2026-10-20", "2026-10-21", "2026-10-22"],
+});
+const levelCards = (fixture) => find(
+  fixture.chart,
+  (node) => node.className === "score-level-card",
+);
+const levelValues = (card) => find(card, (node) => node.tagName === "strong")
+  .map((node) => node.textContent);
+
+test("single French subcategory shows its real difficulty and saved mastery below chart", () => {
+  const f = setup([
+    { tab: "c", score: 9, total: 10, date: "2026-11-04T08:00:00Z" },
+  ], { "francais:c": masteryProfile(35), "francais:g": masteryProfile(45) });
+  const original = f.stored;
+  f.render("francais", "c");
+  assert.equal(f.chart.children[0].tagName, "h2");
+  assert.equal(f.chart.children[1].tagName, "svg");
+  assert.equal(f.chart.children[2].className, "score-levels");
+  assert.equal(levelCards(f).length, 1);
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["2/10", "7/10"]);
+  assert.equal(f.stored, original);
+  assert.equal(f.writes, 0);
+});
+
+test("French and conjugation Tout display separate configured categories", () => {
+  const f = setup([], {
+    "francais:g": masteryProfile(35),
+    "conjugaison:present-2": masteryProfile(40),
+  });
+  f.render("francais", "all");
+  assert.equal(levelCards(f).length, 3);
+  const french = levelCards(f).map((card) => [
+    find(card, (node) => node.tagName === "h4")[0].textContent,
+    levelValues(card),
+  ]);
+  assert.ok(french.some(([name, values]) => name.includes("g / gu / ge")
+    && values[0] === "3/10" && values[1] === "7/10"));
+  assert.ok(french.some(([name, values]) => name.includes("c / ç")
+    && values[0] === "2/10" && values[1] === "0/10"));
+  f.render("conjugaison", "all");
+  const conjugation = levelCards(f);
+  assert.equal(conjugation.length, 3);
+  assert.ok(conjugation.some((card) => levelValues(card).join(" / ") === "6/10 / 8/10"));
+  assert.ok(conjugation.some((card) => find(card, (node) => node.tagName === "h4")[0]
+    .textContent.includes("Être et avoir")));
+  assert.equal(f.writes, 0);
+});
+
+test("calcul uses the reward formula's numeric range and selected level", () => {
+  const f = setup([], {
+    "calcul:1000-10000:3": masteryProfile(50),
+  });
+  f.render("math", "Additions 1000-10000 / niveau 3");
+  assert.equal(levelCards(f).length, 1);
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["10/10", "10/10"]);
+  f.render("math", "Additions Toutes catégories / niveau 2");
+  assert.equal(levelCards(f).length, 4);
+  assert.deepEqual(levelCards(f).map((card) => levelValues(card)[0]),
+    ["2/10", "4/10", "6/10", "9/10"]);
+  assert.equal(f.writes, 0);
+});
+
+test("uncategorized math history uses only known numeric categories and saved mastery", () => {
+  const f = setup([
+    { tab: "math", category: "Additions 10-100 / niveau 1", score: 8, total: 10 },
+    { tab: "math", category: "Old unavailable legacy mode", score: 9, total: 10 },
+  ], { "calcul:1000-10000:5": masteryProfile(40) });
+  f.render("math");
+  assert.equal(levelCards(f).length, 2);
+  assert.ok(levelCards(f).some((card) => levelValues(card)[0] === "3/10"));
+  assert.ok(levelCards(f).some((card) => levelValues(card)[0] === "10/10"));
+});
+
+test("Tous aggregates only exercise categories and never mission mastery", () => {
+  const f = setup([
+    { tab: "g", score: 9, total: 10 },
+    { tab: "space", score: 28, mode: "arcade" },
+  ], { "space:base": masteryProfile(40), "monnaie:base": masteryProfile(10) });
+  f.render(null);
+  const names = levelCards(f).map((card) =>
+    find(card, (node) => node.tagName === "h4")[0].textContent);
+  assert.ok(names.some((name) => name.includes("Français")));
+  assert.ok(names.some((name) => name.includes("monnaie")));
+  assert.ok(names.every((name) => !name.includes("Mission")));
+  assert.equal(f.writes, 0);
+});
+
+test("missions show their own difficulty and mastery even without scores", () => {
+  const f = setup([], { "magic:base": masteryProfile(40) });
+  f.render("magic");
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["2/10", "8/10"]);
+  f.render("space");
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["1/10", "0/10"]);
+  assert.equal(f.writes, 0);
+});
+
+test("score page loads the reward engine and stylesheet below chart remains responsive", () => {
+  const html = fs.readFileSync(path.join(__dirname, "../scores.html"), "utf8");
+  const css = fs.readFileSync(path.join(__dirname,
+    "../styles/themes/magical-academy/scores.css"), "utf8");
+  assert.ok(html.indexOf("reward-rules.js") < html.indexOf("scores.js"));
+  assert.match(css, /\.score-levels-grid/);
+  assert.match(css, /grid-template-columns: repeat\(auto-fit,/);
+  assert.match(css, /\.score-level-metric strong/);
 });

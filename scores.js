@@ -505,6 +505,149 @@ window.ExerciseScores = (() => {
     }
     return [];
   }
+
+  // Score tabs aggregate different training families. Keep their actual
+  // category difficulty/mastery separate rather than showing a misleading
+  // single level for a whole group or for the mixed "Tout" mode.
+  function rewardRows(game, selectedSubcategory, records, rules) {
+    const state = rules.read();
+    if (!state) return null;
+    const ids = new Set();
+    const french = ["g", "c", "s"];
+    const conjugation = ["present-1", "present-2", "etre-avoir"];
+    const ranges = Object.keys(rules.CONFIG.mathRanges);
+    const keys = Object.keys(state.categories).filter(
+      (key) => state.categories[key]?.total > 0,
+    );
+    function addFrench(sub) {
+      for (const family of sub === "all" || sub === null ? french : [sub]) {
+        if (french.includes(family)) ids.add("francais:" + family);
+      }
+    }
+    function addConjugation(sub) {
+      for (const family of sub === "all" || sub === null ? conjugation : [sub]) {
+        if (conjugation.includes(family)) ids.add("conjugaison:" + family);
+      }
+    }
+    function addMath(category) {
+      const match = typeof category === "string" &&
+        category.replace(/[\u2013\u2014]/g, "-").match(
+          /^Additions (0-10|10-100|100-1000|1000-10000|Toutes catégories) \/ niveau ([1-5])$/i,
+        );
+      if (!match) return;
+      const bands = /^Toutes/i.test(match[1]) ? ranges : [match[1]];
+      for (const band of bands) ids.add("calcul:" + band + ":" + match[2]);
+    }
+    function addFromRecord(record) {
+      if (french.includes(record.tab) || record.tab === "all")
+        addFrench(record.tab);
+      else if (record.tab === "conjugaison")
+        addConjugation(subcategory(record, "conjugaison"));
+      else if (record.tab === "math")
+        addMath(record.category);
+      else if (record.tab === "monnaie")
+        ids.add("monnaie:base");
+    }
+    if (game === "francais") addFrench(selectedSubcategory);
+    else if (game === "conjugaison") addConjugation(selectedSubcategory);
+    else if (game === "math") {
+      if (selectedSubcategory) addMath(selectedSubcategory);
+      else {
+        records.forEach(addFromRecord);
+        for (const id of keys) if (/^calcul:(?:0-10|10-100|100-1000|1000-10000):[1-5]$/.test(id)) ids.add(id);
+      }
+    } else if (game === "monnaie" || game === "space" || game === "magic")
+      ids.add(game + ":base");
+    else if (game === null) {
+      records.forEach(addFromRecord);
+      for (const id of keys) {
+        if (/^(?:francais:(?:g|c|s)|conjugaison:(?:present-1|present-2|etre-avoir)|calcul:(?:0-10|10-100|100-1000|1000-10000):[1-5]|monnaie:base)$/.test(id))
+          ids.add(id);
+      }
+    }
+    function name(id) {
+      if (id.startsWith("francais:")) {
+        const family = id.slice("francais:".length);
+        const tab = frenchTabs.find(({ value }) => value === family);
+        return "Français · " + (tab?.label || family);
+      }
+      if (id.startsWith("conjugaison:")) {
+        const family = id.slice("conjugaison:".length);
+        const tab = conjugaisonTabs.find(({ value }) => value === family);
+        return "Conjugaison · " + (tab?.label || family);
+      }
+      if (id.startsWith("calcul:")) {
+        const [, range, level] = id.split(":");
+        return "Calcul · " + range + " / niveau " + level;
+      }
+      if (id === "monnaie:base") return "Rendu de monnaie";
+      if (id === "space:base") return "Mission calcul";
+      if (id === "magic:base") return "Mission magique";
+      return id;
+    }
+    return [...ids].map((id) => ({
+      id, name: name(id), level: rules.inspect(id),
+    })).filter(({ level }) => level !== null)
+      .sort((a, b) => a.name.localeCompare(b.name, "fr", { numeric: true }));
+  }
+
+  function renderRewardLevels(container, records, game, selectedSubcategory) {
+    const rules = window.RewardRules;
+    if (!rules) return; // Standalone score renderers used by older clients.
+    const section = document.createElement("section");
+    section.className = "score-levels";
+    section.setAttribute("aria-label", "Difficulté et maîtrise des exercices");
+    const rows = rewardRows(game, selectedSubcategory, records, rules);
+    if (!rows?.length) {
+      const info = document.createElement("p");
+      info.className = "score-levels-empty";
+      info.textContent = rows === null
+        ? "Niveaux indisponibles : impossible de lire la progression."
+        : "Aucune catégorie entraînée à afficher. Choisis une sous-catégorie.";
+      section.append(info);
+      container.append(section);
+      return;
+    }
+    const grouped = rows.length > 1;
+    if (grouped) {
+      const title = document.createElement("h3");
+      title.className = "score-levels-title";
+      title.textContent = "Niveaux par catégorie";
+      section.append(title);
+    }
+    const grid = document.createElement("div");
+    grid.className = "score-levels-grid";
+    for (const row of rows) {
+      const card = document.createElement("div");
+      card.className = "score-level-card";
+      if (grouped) {
+        const name = document.createElement("h4");
+        name.className = "score-level-name";
+        name.textContent = row.name;
+        card.append(name);
+      }
+      const stats = document.createElement("div");
+      stats.className = "score-level-values";
+      for (const [caption, value] of [
+        ["Difficulté", row.level.difficulty],
+        ["Maîtrise", row.level.mastery],
+      ]) {
+        const metric = document.createElement("div");
+        metric.className = "score-level-metric";
+        const label = document.createElement("span");
+        label.textContent = caption;
+        const number = document.createElement("strong");
+        number.textContent = value + "/10";
+        metric.append(label, number);
+        stats.append(metric);
+      }
+      card.append(stats);
+      grid.append(card);
+    }
+    section.append(grid);
+    container.append(section);
+  }
+
   function render(container, game = null, chartContainer = null, selectedSubcategory = null) {
     container.replaceChildren();
     const records = read().filter(
@@ -515,6 +658,7 @@ window.ExerciseScores = (() => {
     );
     if (chartContainer) renderGraph(chartContainer, records, game);
     else renderGraph(container, records, game);
+    renderRewardLevels(chartContainer || container, records, game, selectedSubcategory);
     const title = document.createElement("h2");
     title.textContent =
       game === null

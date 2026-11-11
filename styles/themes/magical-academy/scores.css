@@ -208,6 +208,82 @@ html[data-theme="magical-academy"] body.academy-page .score-chart-panel p {
   font-size: var(--text-xs);
 }
 
+/* Difficulty and mastery are live values from RewardRules, directly below the chart. */
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-levels {
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid #d7c2a2;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-levels-title {
+  margin: 0 0 10px;
+  color: #304568;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 10px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-card {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #dec595;
+  border-radius: 12px;
+  background: #fff9eb;
+  box-shadow: 0 2px 5px #47331512;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-name {
+  margin: 0 0 8px;
+  color: #304568;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #586780;
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-metric strong {
+  color: #224979;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-heavy);
+  font-variant-numeric: tabular-nums;
+}
+html[data-theme="magical-academy"] body.academy-page .score-chart-panel p.score-levels-empty {
+  margin: 3px auto;
+  max-width: 32rem;
+  line-height: 1.5;
+}
+@media (max-width: 520px) {
+  html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-levels-grid {
+    gap: 7px;
+  }
+  html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-card {
+    padding: 8px;
+  }
+  html[data-theme="magical-academy"] body.academy-page .score-chart-panel .score-level-metric strong {
+    font-size: var(--text-md);
+  }
+}
+
 /* Score history: parchment entries and blue score medals, separate from the chart. */
 html[data-theme="magical-academy"] body.academy-page #history {
   margin: 17px 0 14px;
