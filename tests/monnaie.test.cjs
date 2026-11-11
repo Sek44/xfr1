@@ -92,6 +92,19 @@ test("coin and banknote artwork is SVG with the right amount written inside", ()
   }
 });
 
+test("compact cash controls have frame-free accessible coin buttons", () => {
+  const css = read("monnaie.css");
+  const controller = read("monnaie.js");
+  assert.match(css, /:is\(\.money-option--coin, \.money-picked--coin\) \{/);
+  assert.match(css, /width: 46px;\s*height: 46px;\s*min-height: 46px;/);
+  assert.match(css, /border: 0;\s*border-radius: 50%;\s*background: transparent;/);
+  assert.match(css, /\.money-grid--coins \{\s*grid-template-columns: repeat\(8,/);
+  assert.match(css, /\.money-grid--notes \{\s*grid-template-columns: repeat\(6,/);
+  assert.match(css, /\.money-count \{[\s\S]*?clip-path: inset\(50%\)/);
+  assert.match(controller, /Math\.round\(note\.width \* 0\.69\)/);
+  assert.match(controller, /button\.setAttribute\(\s*"aria-label"/);
+});
+
 test("Monnaie links, score filter and complete shared exercise integration exist", () => {
   const home = read("index.html");
   const page = read("monnaie.html");

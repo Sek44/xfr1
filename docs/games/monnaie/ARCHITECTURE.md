@@ -2,10 +2,10 @@
 
 ## Modules
 
-- `monnaie.html` : point d'entrée de l'exercice, bandeau commun, chargement des services et du thème ; `monnaie.css` : mise en page des billets/pièces, de la zone de sélection et des grilles responsives.
+- `monnaie.html` : point d'entrée de l'exercice, bandeau commun, chargement des services et du thème ; `monnaie.css` : mise en page compacte des billets/pièces, de la zone de sélection et des grilles responsives. Les SVG des pièces remplissent directement des boutons tactiles transparents de 46 px ; les boutons des billets conservent leur cadre. Les grilles passent de 4/3 à 8/6 colonnes sur écran large.
 - `monnaie-model.js` : dénominations réelles en **centimes entiers**, choix des dix questions, garde-fous de validité, ajout/retrait immuables et calcul du total. Ce modèle ne manipule pas le DOM et est également exporté pour les tests Node.
 - `monnaie-art.js` : représentation SVG des pièces circulaires (cuivre, jaune, bimétallique) et billets rectangulaires (couleur distinctive par valeur), libellés visibles, sans images distantes.
-- `monnaie.js` : contrôleur, affichage de la question et du panier, vérification, sauvegarde/reprise et navigation. Les boutons de dénomination restent dans le DOM entre deux ajouts consécutifs pour prendre en charge les taps rapides.
+- `monnaie.js` : contrôleur, affichage de la question et du panier, vérification, sauvegarde/reprise et navigation. Le billet de la question est réduit à 69 % de sa largeur de référence et le nombre d'éléments du panier reste annoncé au lecteur d'écran sans être affiché. Les boutons de dénomination restent dans le DOM entre deux ajouts consécutifs pour prendre en charge les taps rapides.
 - `game-common.js` : `ExerciseGame.progress()`, score du premier essai, validation, minuteur et écran de fin. `ExerciseGame.resultTracker("monnaie", …)` sauvegarde et crédite la série de façon idempotente.
 - `game-state.js`, `scores.js`, `score-view.js`, `daily-exercises.js` : état local, historique commun, consultation des scores en iframe et crédit quotidien. Le bandeau vient de `academy-header.js`, et les styles partagés de `styles/themes/magical-academy/components.css`.
 

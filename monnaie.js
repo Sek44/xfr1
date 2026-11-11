@@ -134,7 +134,7 @@
     );
     const paid = element("div", "money-paid");
     const note = model.NOTES.find((item) => item.cents === current.paid);
-    paid.style.setProperty("--banknote-width", (note.width + 20) + "px");
+    paid.style.setProperty("--banknote-width", Math.round(note.width * 0.69) + "px");
     paid.append(
       element("span", "money-caption", "Le client donne"),
       MonnaieArt.create(note),
