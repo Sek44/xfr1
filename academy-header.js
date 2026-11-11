@@ -46,7 +46,9 @@
     if (scores) {
       const link = document.createElement("a");
       link.className = "nav-link nav-icon academy-nav-button academy-nav-scores";
-      link.href = home ? "./scores.html" : "./scores.html?game=" + encodeURIComponent(game);
+      link.href = home
+        ? "./scores.html?from=home"
+        : "./scores.html?game=" + encodeURIComponent(game) + "&from=" + encodeURIComponent(game);
       link.setAttribute("aria-label", "Voir les scores");
       link.title = "Mes scores";
       nav.append(link);
