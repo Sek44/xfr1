@@ -28,6 +28,11 @@ window.RewardRules = (() => {
     return game + ":" + String(sub);
   }
   function difficulty(id) {
+    // A separate, publishable configuration makes public difficulty changes
+    // independent of the local player's mastery and score archive.
+    const published = window.RewardDifficultyLevels?.[id];
+    if (Number.isInteger(published) && published >= 1 && published <= 10)
+      return published;
     const [game, sub, level] = String(id).split(":");
     if (game === "francais") return CONFIG.french[sub] || 3;
     if (game === "conjugaison") return CONFIG.conjugation[sub] || 5;
@@ -48,7 +53,9 @@ window.RewardRules = (() => {
       Array.isArray(p.recent) && p.recent.length <= CONFIG.recentQuestions &&
       p.recent.every((x) => x === 0 || x === 1) &&
       Array.isArray(p.days) && p.days.length <= 1000 &&
-      p.days.every((d) => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d));
+      p.days.every((d) => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d)) &&
+      (p.manualMastery === undefined ||
+        (Number.isInteger(p.manualMastery) && p.manualMastery >= 0 && p.manualMastery <= 10));
   }
   function read() {
     try {
@@ -65,6 +72,9 @@ window.RewardRules = (() => {
   }
   function mastery(profile) {
     if (!profile) return 0;
+    if (Number.isInteger(profile.manualMastery) &&
+        profile.manualMastery >= 0 && profile.manualMastery <= 10)
+      return profile.manualMastery;
     const recent = profile.recent;
     const success = recent.length ?
       recent.reduce((sum, value) => sum + value, 0) / recent.length : 0;
@@ -78,6 +88,22 @@ window.RewardRules = (() => {
     const level = mastery(stored.categories[id]);
     return { key: id, mastery: level, difficulty: difficulty(id),
       maxSeconds: maxSeconds(id), dailyLimit: CONFIG.dailyLimits[level] };
+  }
+  // Manual overrides are local to this browser, without rewriting past scores
+  // or discarding the continuously collected mastery evidence.
+  function setMastery(id, value) {
+    if (!Object.hasOwn(window.RewardDifficultyLevels || {}, id) ||
+        (value !== null && (!Number.isInteger(value) || value < 0 || value > 10)))
+      return false;
+    const state = read();
+    if (!state) return false;
+    if (!state.categories[id] && value === null) return true;
+    const profile = state.categories[id] ||
+      (state.categories[id] = { total: 0, recent: [], days: [] });
+    if (value === null) delete profile.manualMastery;
+    else profile.manualMastery = value;
+    try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
+    catch { return false; }
   }
   function noteFactor(score, total, masteryLevel) {
     if (!total) return 0;
@@ -347,7 +373,7 @@ window.RewardRules = (() => {
 
   const api = { KEY, CONFIG, key, difficulty, maxSeconds, mastery, inspect,
     noteFactor, forecast, repriceParts, estimateHistoricalParts,
-    record, read, validAnswers, initializeLegacy };
+    record, read, validAnswers, initializeLegacy, setMastery };
   initializeLegacy(); // Runs once when any xfr1 page first loads.
   return api;
 })();

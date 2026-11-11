@@ -183,6 +183,26 @@ window.DailyExercises = (() => {
     }
   }
 
+  // Administrator-issued bonus is scoped to the current browser and day.
+  // Unique event tokens make a retry safe without consuming exercise credits.
+  function grantAdminBonus(seconds, token) {
+    if (!Number.isSafeInteger(seconds) || seconds < 60 || seconds > 7200 ||
+        seconds % 60 !== 0 || typeof token !== "string" ||
+        !/^[a-zA-Z0-9-]{8,80}$/.test(token)) return false;
+    const state = read();
+    if (!state) return false;
+    const event = "admin-bonus:" + token;
+    if (state.events.includes(event)) return true;
+    const previous = state.seconds === undefined ? state.minutes * 60 : state.seconds;
+    if (!Number.isSafeInteger(previous + seconds) ||
+        !Number.isSafeInteger((state.bonusSeconds || 0) + seconds)) return false;
+    state.seconds = previous + seconds;
+    state.minutes = Math.floor(state.seconds / 60);
+    state.bonusSeconds = (state.bonusSeconds || 0) + seconds;
+    state.events.push(event);
+    return write(state);
+  }
+
   // Exceptional 11 November gift: once per browser, without an exercise point.
   // Its seconds are additive and do not consume the normal earned-credit cap.
   function grantSpecialBonus() {
@@ -502,7 +522,7 @@ window.DailyExercises = (() => {
     });
   }
 
-  return { KEY, VERSION, MINUTES_PER_POINT, today, read, grantSpecialBonus,
+  return { KEY, VERSION, MINUTES_PER_POINT, today, read, grantSpecialBonus, grantAdminBonus,
     award, awardOnce,
     awardResultOnce, canStart, start, receipt, missionSummary,
     recordProgress, milestones, mount, mountStats };
