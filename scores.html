@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./school-base.css?v=20261107" />
     <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=width-lock-20261107" />
     <link rel="stylesheet" href="./styles/themes/magical-academy/components.css?v=20261107-css-consolidation" />
-    <link rel="stylesheet" href="./styles/themes/magical-academy/scores.css?v=20261107-history-cleanup" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/scores.css?v=20261111-subcategories" />
   </head>
   <body class="school-page academy-page scores-page">
     <main class="academy-global-frame">
@@ -29,6 +29,10 @@
           <a class="academy-tab" href="./scores.html?game=magic" data-game="magic">Mission magique</a>
         </div>
       </nav>
+      <div id="score-subcategory-filter" class="score-subcategory-filter" hidden>
+        <label for="score-subcategory">Sous-catégorie</label>
+        <select id="score-subcategory" aria-label="Choisir une sous-catégorie de scores"></select>
+      </div>
       <section
         id="score-chart"
         class="history-panel score-chart-panel"
@@ -38,7 +42,7 @@
     </main>
     <script src="./academy-header.js?v=1"></script>
     <script src="./app-confirm.js?v=20261018-confirm14"></script>
-    <script src="./scores.js?v=20261108-reliable-save"></script>
+    <script src="./scores.js?v=20261111-subcategories"></script>
     <script>
       "use strict";
       const game = new URLSearchParams(location.search).get("game");
@@ -109,10 +113,37 @@
             }
           });
       }
+      const scoreGame = selected === "calcul" ? "math" : selected;
+      const choices = ExerciseScores.subcategories(scoreGame);
+      const savedSub = params.get("sub");
+      const selectedSub = choices.some(({ value }) => value === savedSub)
+        ? savedSub : null;
+      if (choices.length) {
+        const filter = document.getElementById("score-subcategory-filter");
+        const selector = document.getElementById("score-subcategory");
+        for (const choice of [
+          { value: "", label: "Toutes les sous-catégories" },
+          ...choices,
+        ]) {
+          const option = document.createElement("option");
+          option.value = choice.value;
+          option.textContent = choice.label;
+          selector.append(option);
+        }
+        selector.value = selectedSub || "";
+        filter.hidden = false;
+        selector.addEventListener("change", () => {
+          const url = new URL(location.href);
+          if (selector.value) url.searchParams.set("sub", selector.value);
+          else url.searchParams.delete("sub");
+          location.assign(url.href);
+        });
+      }
       ExerciseScores.render(
         document.getElementById("history"),
-        selected === "calcul" ? "math" : selected,
+        scoreGame,
         document.getElementById("score-chart"),
+        selectedSub,
       );
     </script>
   </body>
