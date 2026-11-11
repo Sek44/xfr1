@@ -36,6 +36,7 @@ for (const [title, icon, game] of [
   ["Conjugaison", "conjugaison", "conjugaison"],
   ["Français", "francais", "francais"],
   ["Additions", "calcul", "calcul"],
+  ["Monnaie", "calcul", "monnaie"],
 ]) {
   test(title + " uses the reusable navigation with restart and scores", () => {
     const { nav, header } = buildHeader({
@@ -68,8 +69,8 @@ test("scores navigation retains scores-back and omits restart", () => {
   assert.equal(nav.children[2].className, "banner-spacer");
 });
 
-test("four classic pages share the theme and its header controller", () => {
-  for (const page of ["francais", "conjugaison", "calcul", "scores"]) {
+test("five classic pages share the theme and its header controller", () => {
+  for (const page of ["francais", "conjugaison", "calcul", "monnaie", "scores"]) {
     const html = read(page + ".html");
     assert.match(html, /class="school-page academy-page|class="school-page academy-page conjugaison-page/);
     assert.match(html, /data-academy-header/);
@@ -80,7 +81,7 @@ test("four classic pages share the theme and its header controller", () => {
 });
 
 test("game-specific pages use standard question and keyboard panels", () => {
-  for (const file of ["francais.js", "conjugaison.js", "calcul.js"]) {
+  for (const file of ["francais.js", "conjugaison.js", "calcul.js", "monnaie.js"]) {
     const js = read(file);
     assert.match(js, /academy-playing/);
     assert.match(js, /question-frame/);
@@ -177,7 +178,7 @@ test("French, Conjugaison and Scores share CSS-only sapphire-and-gold tabs", () 
   assert.ok(conjugaisonPage.includes('id="conjugaison-tabs"'));
   assert.ok(read("conjugaison.js").includes("GameUI.tabs("));
   assert.ok(scores.includes('class="filter academy-tabs academy-score-tabs"'));
-  assert.equal((scores.match(/class="academy-tab" href=/g) || []).length, 6);
+  assert.equal((scores.match(/class="academy-tab" href=/g) || []).length, 7);
   assert.ok(scores.includes('link.classList.add("active")'));
   assert.ok(scores.includes('link.setAttribute("aria-current", "page")'));
   assert.ok(read("francais.js").includes("GameUI.tabs("));
@@ -228,7 +229,7 @@ test("page-specific theme styles load after shared components", () => {
   const common = read("styles/themes/magical-academy/components.css");
   assert.equal(common.includes(".score-chart-panel"), false);
   assert.equal(common.includes(".academy-result::before"), false);
-  for (const page of ["francais", "conjugaison", "calcul"]) {
+  for (const page of ["francais", "conjugaison", "calcul", "monnaie"]) {
     const html = read(page + ".html");
     assert.ok(html.indexOf("magical-academy/components.css") < html.indexOf("magical-academy/results.css"), page);
     assert.equal(html.includes("magical-academy/scores.css"), false, page);
