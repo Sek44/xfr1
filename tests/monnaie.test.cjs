@@ -99,10 +99,12 @@ test("coin and banknote artwork is SVG with the right amount written inside", ()
     assert.equal(svg.attributes["aria-hidden"], "true");
     assert.ok(collect(svg).includes(item.label), item.label);
     if (item.cents === 1) {
-      assert.equal(svg.children[0].attributes["stroke-width"], "1.6");
+      assert.equal(svg.children[0].attributes["stroke-width"], "1.15");
+      assert.match(svg.attributes.class, /money-svg--cent/);
       assert.equal(svg.children.at(-1).attributes["font-size"], "37");
     } else if (item.cents === 100) {
       assert.equal(svg.children[0].attributes["stroke-width"], "3");
+      assert.match(svg.attributes.class, /money-svg--euro/);
     } else if (item.cents === 10000) {
       // A contrast panel separates the denomination from the architectural art.
       assert.ok(svg.children.some((part) =>
@@ -132,14 +134,94 @@ test("Monnaie answer is sorted, reserves two rows and removes note frames and vi
   const page = read("monnaie.html");
   assert.match(css, /\.money-caption--stacked \{[\s\S]*?white-space: pre-line/);
   assert.match(css, /\.money-paid \{[\s\S]*?flex-direction: row/);
-  assert.match(css, /\.money-selection \{[\s\S]*?min-height: 96px/);
+  assert.match(css, /\.money-selection \{[\s\S]*?height: 106px;[\s\S]*?min-height: 106px/);
+  assert.match(css, /\.money-selection \{[\s\S]*?overflow-y: auto/);
+  assert.match(css, /\.money-tray \{[\s\S]*?border-bottom: 1px solid/);
   assert.match(css, /:is\(\.money-option, \.money-picked\) \{[\s\S]*?border: 0;[\s\S]*?background: transparent;/);
   assert.match(controller, /"Le client\\ndonne"/);
   assert.match(controller, /selection = model\.sortSelection\(state\.selection\)/);
   assert.match(controller, /selection = model\.sortSelection\(updated\)/);
   assert.match(controller, /selection = model\.sortSelection\(model\.remove\(selection, index\)\)/);
   assert.doesNotMatch(controller, /"Mon rendu de monnaie"|"Pièces"|"Billets"/);
-  assert.match(page, /monnaie-art\.js\?v=20261111-layout2/);
+  assert.match(page, /monnaie-art\.js\?v=20261111-layout3/);
+});
+
+test("validated answer stays visible until next question and remains disabled", () => {
+  const nodes = Object.fromEntries(["score", "panel", "restart-series"].map((id) => [id, createNode(id)]));
+  let liveGame;
+  const stored = [];
+  function createNode(tag, className = "", text = "") {
+    return {
+      tag, className, textContent: text, attributes: {}, children: [], disabled: false,
+      style: { setProperty() {} },
+      classList: { toggle() {}, remove() {} },
+      setAttribute(key, value) { this.attributes[key] = value; },
+      getAttribute(key) { return this.attributes[key]; },
+      append(...items) { this.children.push(...items); },
+      replaceChildren(...items) { this.children = items; },
+    };
+  }
+  function descendants(element, output = []) {
+    output.push(element);
+    for (const child of element.children) descendants(child, output);
+    return output;
+  }
+  const sandbox = {
+    document: { getElementById: (id) => nodes[id] },
+    window: { addEventListener() {} },
+    GameUI: { element: createNode },
+    MonnaieModel: {
+      ...model,
+      generateQuestions: () => Array.from({ length: 10 }, (_, i) => ({ price: 300 + i, paid: 500 })),
+    },
+    MonnaieArt: { create: (item) => createNode("svg", "money-svg", item.label) },
+    GameState: { create: () => ({
+      load: () => null,
+      save: (data) => stored.push(data),
+      clear() {},
+    }) },
+    ScoreView: { bind() {} },
+    ExerciseGame: {
+      resultTracker: () => ({
+        fresh() {}, save() {}, snapshot: () => ({}), pending: false,
+      }),
+      create: (handlers) => {
+        liveGame = {
+          index: 0, total: 10, score: 0, correct: false, failed: false,
+          reset(total) { this.total = total; this.index = 0; this.correct = false; handlers.onChange(); },
+          validate(right) { this.correct = right; if (!right) this.failed = true; handlers.onChange(); },
+          next() { this.index++; this.correct = false; this.failed = false; handlers.onChange(); },
+          progress() {},
+          actionButton: () => createNode("button", "primary"),
+          snapshot() {
+            return { index: this.index, total: this.total, score: this.score,
+              correct: this.correct, failed: this.failed, remaining: null };
+          },
+          restartButton: () => ({ onclick() {} }),
+        };
+        return liveGame;
+      },
+    },
+  };
+  vm.runInNewContext(read("monnaie.js"), sandbox);
+  const all = () => descendants(nodes.panel);
+  const picked = () => all().filter((n) => n.className.includes("money-picked--coin"));
+  const addTwoEuro = all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 2 euros");
+  assert.ok(addTwoEuro);
+  assert.equal(picked().length, 0);
+  addTwoEuro.onclick();
+  assert.equal(picked().length, 1);
+
+  const verify = all().find((n) => n.className === "primary");
+  verify.onclick();
+  assert.equal(liveGame.correct, true);
+  assert.equal(picked().length, 1, "successful validation must retain the answer");
+  assert.equal(picked()[0].disabled, true, "validated answer must be locked");
+  assert.deepEqual(stored.at(-1).selection, [200]);
+
+  liveGame.next();
+  assert.equal(liveGame.index, 1);
+  assert.equal(picked().length, 0, "only navigation to the next question resets the answer");
 });
 
 test("Monnaie links, score filter and complete shared exercise integration exist", () => {

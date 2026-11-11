@@ -70,8 +70,10 @@ html[data-theme="magical-academy"] body.monnaie-page .money-controls {
   padding-bottom: 8px;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-tray {
-  padding: 4px 2px 2px;
+  margin-bottom: 3px;
+  padding: 4px 2px 9px;
   border: 0;
+  border-bottom: 1px solid #b99a71a8;
   background: transparent;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-selection {
@@ -81,15 +83,20 @@ html[data-theme="magical-academy"] body.monnaie-page .money-selection {
   align-items: flex-start;
   align-content: flex-start;
   gap: 4px 3px;
-  min-height: 96px; /* Two 46px rows reserved before anything is selected. */
-  padding: 2px 0;
+  box-sizing: border-box;
+  height: 106px; /* Exactly two 46px rows + gap + interior spacing. */
+  min-height: 106px;
+  padding: 3px 0;
+  overflow-y: auto; /* More than two rows scroll; controls never move. */
+  overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-empty {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 92px;
+  min-height: 100px;
   margin: 0;
   padding: 0 4px;
   color: #596783;
@@ -101,17 +108,15 @@ html[data-theme="magical-academy"] body.monnaie-page .money-grid {
   gap: 4px;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-grid--coins {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   justify-items: center;
+  gap: 2px;
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-grid--notes {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   justify-items: center;
 }
 @media (min-width: 560px) {
-  html[data-theme="magical-academy"] body.monnaie-page .money-grid--coins {
-    grid-template-columns: repeat(8, minmax(0, 1fr));
-  }
   html[data-theme="magical-academy"] body.monnaie-page .money-grid--notes {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -183,5 +188,5 @@ html[data-theme="magical-academy"] body.monnaie-page .money-controls .exercise-a
   html[data-theme="magical-academy"] body.monnaie-page .money-purchase { gap: 6px; }
   html[data-theme="magical-academy"] body.monnaie-page .money-caption { font-size: var(--text-xs); }
   html[data-theme="magical-academy"] body.monnaie-page .money-price-value { font-size: var(--type-question); }
-  html[data-theme="magical-academy"] body.monnaie-page .money-grid { gap: 3px; }
+  html[data-theme="magical-academy"] body.monnaie-page .money-grid--notes { gap: 3px; }
 }

@@ -157,7 +157,9 @@
     controls.append(tray);
 
     const button = game.actionButton();
-    function refreshSelection() {
+    // Rebuild the answer after every game state change, including validation.
+    // Only user edits reset retry feedback and write an extra saved snapshot.
+    function refreshSelection(edited = false) {
       chosen.replaceChildren();
       if (!selection.length) {
         chosen.append(element("p", "money-empty", "Choisis les pièces et billets à rendre."));
@@ -168,7 +170,7 @@
             if (game.correct) return;
             selection = model.sortSelection(model.remove(selection, index));
             showRetry = false;
-            refreshSelection();
+            refreshSelection(true);
           }, true));
         }
       }
@@ -177,11 +179,13 @@
           (selection.length > 1 ? "s" : "")
         : "Aucun élément sélectionné";
       button.disabled = !game.correct && !selection.length;
-      if (!game.correct) {
-        button.classList.remove("feedback-retry");
-        button.textContent = "Vérifier";
+      if (edited) {
+        if (!game.correct) {
+          button.classList.remove("feedback-retry");
+          button.textContent = "Vérifier";
+        }
+        persist();
       }
-      persist();
     }
 
     function palette(items, kind) {
@@ -196,7 +200,7 @@
           if (updated === selection) return;
           selection = model.sortSelection(updated);
           showRetry = false;
-          refreshSelection();
+          refreshSelection(true);
         }));
       }
       group.append(grid);
@@ -218,12 +222,9 @@
     actions.append(button);
     controls.append(actions);
     panel.append(controls);
-    // Keep the feedback set above on an incorrect attempt; on later edits,
-    // refreshSelection restores the neutral blue Vérifier state.
-    if (!selection.length) refreshSelection();
-    else count.textContent = selection.length + " élément" +
-      (selection.length > 1 ? "s" : "") + " sélectionné" +
-      (selection.length > 1 ? "s" : "");
+    // Validation re-renders the panel but must keep all submitted pieces
+    // visible (and disabled on success) until the next question begins.
+    refreshSelection();
   }
 
   document.getElementById("restart-series").onclick =

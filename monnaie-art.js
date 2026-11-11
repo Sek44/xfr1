@@ -18,51 +18,103 @@ window.MonnaieArt = (() => {
     return element;
   }
 
-  function coin(item) {
-    const value = item.cents;
-    const cent = value < 100;
-    const palette = value <= 5
-      ? ["#b66d3d", "#e8b183", "#8f5935", "#5a3520"]
-      : value <= 50
-        ? ["#c59c46", "#f0d78d", "#967430", "#5f491f"]
-        : value === 100
-          ? ["#d9b966", "#cfd7da", "#9d7e33", "#3f545d"]
-          : ["#bccbd2", "#efcf78", "#738890", "#604920"];
+  // Centimes have a dedicated, flatter SVG: a fine milled edge rather
+  // than the thick concentric or bimetallic rings of €1 and €2.
+  function centCoin(item) {
+    const copper = item.cents <= 5;
+    const edge = copper ? "#85502f" : "#94712c";
+    const surface = copper ? "#d39160" : "#dfbd66";
+    const shine = copper ? "#edb68b" : "#f1d88d";
+    const ink = copper ? "#583521" : "#655024";
     const svg = node("svg", {
-      viewBox: "0 0 100 100", class: "money-svg money-svg--coin",
+      viewBox: "0 0 100 100",
+      class: "money-svg money-svg--coin money-svg--cent",
       "aria-hidden": "true", focusable: "false",
     });
     svg.append(
-      // Centimes have more delicate edges; euro pieces retain a thicker ring.
       node("circle", {
-        cx: 50, cy: 50, r: 47, fill: palette[0], stroke: palette[2],
-        "stroke-width": cent ? 1.6 : 3,
+        cx: 50, cy: 50, r: 47, fill: surface, stroke: edge,
+        "stroke-width": 1.15,
+      }),
+      node("circle", {
+        cx: 50, cy: 50, r: 44, fill: "none", stroke: shine,
+        "stroke-width": .85, "stroke-opacity": ".9",
+      }),
+      node("circle", {
+        cx: 50, cy: 50, r: 40, fill: "none", stroke: edge,
+        "stroke-width": .7, "stroke-opacity": ".42",
+      }),
+      // Faint geographical engraving and a ring of small star-like dots
+      // recall euro cent coins without obscuring the educational label.
+      node("path", {
+        d: "M26 34Q38 18 52 27T73 36M28 64Q42 78 62 69T77 53",
+        fill: "none", stroke: edge, "stroke-opacity": ".22",
+        "stroke-width": 1.1, "stroke-linecap": "round",
+      }),
+    );
+    for (let n = 0; n < 12; n++) {
+      const angle = (n * Math.PI) / 6 - Math.PI / 2;
+      svg.append(node("circle", {
+        cx: (50 + 37 * Math.cos(angle)).toFixed(2),
+        cy: (50 + 37 * Math.sin(angle)).toFixed(2),
+        r: 1.05, fill: edge, "fill-opacity": ".55",
+      }));
+    }
+    svg.append(
+      node("text", {
+        x: 50, y: 60, "text-anchor": "middle",
+        "font-family": "Arial, sans-serif", "font-weight": 800,
+        "font-size": item.cents >= 10 ? 35 : 37,
+        "letter-spacing": "-1", fill: ink,
+        stroke: shine, "stroke-width": 1.7, "paint-order": "stroke",
+      }, item.label),
+    );
+    return svg;
+  }
+
+  function euroCoin(item) {
+    const palette = item.cents === 100
+      ? ["#d9b966", "#cfd7da", "#9d7e33", "#3f545d"]
+      : ["#bccbd2", "#efcf78", "#738890", "#604920"];
+    const svg = node("svg", {
+      viewBox: "0 0 100 100",
+      class: "money-svg money-svg--coin money-svg--euro",
+      "aria-hidden": "true", focusable: "false",
+    });
+    svg.append(
+      node("circle", {
+        cx: 50, cy: 50, r: 47, fill: palette[0],
+        stroke: palette[2], "stroke-width": 3,
       }),
       node("circle", {
         cx: 50, cy: 50, r: 43, fill: "none", stroke: "#fff7d0",
-        "stroke-opacity": ".53", "stroke-width": cent ? 1 : 1.6,
+        "stroke-opacity": ".53", "stroke-width": 1.6,
         "stroke-dasharray": "2 2.8",
       }),
       node("circle", {
-        cx: 50, cy: 50, r: 36, fill: palette[1], stroke: palette[2],
-        "stroke-width": cent ? 1.1 : 1.8,
+        cx: 50, cy: 50, r: 36, fill: palette[1],
+        stroke: palette[2], "stroke-width": 1.8,
       }),
       node("circle", {
-        cx: 50, cy: 50, r: 31.5, fill: "none", stroke: "#fff",
-        "stroke-opacity": ".28", "stroke-width": .9,
+        cx: 50, cy: 50, r: 31.5, fill: "none",
+        stroke: "#fff", "stroke-opacity": ".28", "stroke-width": .9,
       }),
       node("path", {
-        d: "M26 68Q40 77 57 72", fill: "none", stroke: "#fff",
-        "stroke-opacity": ".3", "stroke-width": 1.7, "stroke-linecap": "round",
+        d: "M26 68Q40 77 57 72", fill: "none",
+        stroke: "#fff", "stroke-opacity": ".3",
+        "stroke-width": 1.7, "stroke-linecap": "round",
       }),
       node("text", {
         x: 50, y: 60, "text-anchor": "middle",
         "font-family": "Arial, sans-serif", "font-weight": 800,
-        "font-size": value >= 10 && value < 100 ? 35 : 37,
-        "letter-spacing": "-1", fill: palette[3],
+        "font-size": 37, "letter-spacing": "-1", fill: palette[3],
       }, item.label),
     );
     return svg;
+  }
+
+  function coin(item) {
+    return item.cents < 100 ? centCoin(item) : euroCoin(item);
   }
 
   function note(item) {
