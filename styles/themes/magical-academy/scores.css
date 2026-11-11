@@ -1,41 +1,52 @@
-/* Secondary filter: keep the main game tabs compact, even on phones. */
+/* Secondary navigation: lavender buttons distinguish subcategories from blue games. */
 html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 9px 12px;
-  margin: 3px auto 15px;
-  padding: 0 10px;
+  gap: 7px;
+  margin: 1px auto 15px;
+  padding: 0 9px;
 }
 html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter[hidden] {
   display: none;
 }
-html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter label {
-  color: #fff3d5;
-  font-family: var(--font-ui);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
-  text-shadow: 0 2px 3px #06152f;
-}
-html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter select {
-  width: min(100%, 310px);
-  min-width: 0;
-  min-height: 42px;
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 39px;
+  max-width: 100%;
   padding: 7px 13px;
-  border: 1.5px solid #d5aa71;
+  border: 1.5px solid #d8b7d7;
   border-radius: 9px;
-  background: #fff8e9;
-  color: #24365c;
-  box-shadow: 0 2px 6px #06152f67;
+  background: linear-gradient(180deg, #71507f, #50365f);
+  box-shadow: inset 0 1px 0 #ffffff2a, 0 2px 5px #05142d7a;
+  color: #fff4fa;
   font-family: var(--font-ui);
-  font-size: var(--text-sm);
+  font-size: var(--type-score-tab);
   font-weight: var(--weight-bold);
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  touch-action: manipulation;
   cursor: pointer;
 }
-html[data-theme="magical-academy"] body.academy-page .score-subcategory-filter select:focus-visible {
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-tab:is(.active, [aria-current="page"]) {
+  border-color: #ffe3aa;
+  background: linear-gradient(180deg, #b58bc2, #8f619e);
+  box-shadow: inset 0 1px 0 #ffffff4d, 0 2px 6px #05142d85;
+  color: #fff;
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-tab:hover {
+  filter: brightness(1.12);
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-tab:focus-visible {
   outline: 3px solid #ffe2a0;
   outline-offset: 3px;
+}
+html[data-theme="magical-academy"] body.academy-page .score-subcategory-tab:active {
+  filter: brightness(.93);
 }
 
 /* Score-history base rules, formerly spread across shared and confirmation styles. */
