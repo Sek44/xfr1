@@ -199,8 +199,8 @@ test("gain ranges include threshold, cutoff and mission pack behaviour", () => {
   assert.equal(rules.gainRange(0, 2), null);
   assert.equal(rules.gainForScore(1, 2, 11), null);
   const admin = fs.readFileSync(path.join(root, "admin.js"), "utf8");
-  assert.match(admin, /space:base" \? 10/);
-  assert.match(admin, /magic:base" \? 20/);
+  assert.match(admin, /return "Gain " \+ compact\(range\.minSeconds\) \+ "-" \+ compact\(range\.maxSeconds\)/);
+  assert.doesNotMatch(admin, /réussites \/ palier|questions \/ série|point d’exercice|sans limite quotidienne d’essais/);
   assert.match(admin, /gainSummaryFor\(key, current\)/);
   const html = fs.readFileSync(path.join(root, "admin.html"), "utf8");
   assert.match(html, /admin-gains-matrix/);

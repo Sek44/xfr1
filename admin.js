@@ -39,26 +39,11 @@
   }
 
   function gainSummaryFor(key, info) {
-    if (!info) return "Gains indisponibles (stockage local inaccessible).";
+    if (!info) return "Gain indisponible";
     const range = window.RewardRules.gainRange(info.difficulty, info.mastery);
-    if (!range) return "Barème indisponible.";
-    const missionPoints = key === "space:base" ? 10 :
-      key === "magic:base" ? 20 : null;
-    const unit = missionPoints
-      ? missionPoints + " réussites / palier (1 point d’exercice)"
-      : "10 questions / série (1 point d’exercice)";
-    const daily = range.dailyLimit === null
-      ? "sans limite quotidienne d’essais"
-      : range.dailyLimit + (missionPoints ? " partie(s)" : " essai(s)") + "/jour";
-    if (!range.maxSeconds)
-      return "Gain min. / max. : 0 s / 0 s · " + unit + " · " + daily;
-    const requirement = missionPoints
-      ? "palier complet"
-      : "min. dès " + range.minScore + "/10 · max. dès " +
-        range.maxScore + "/10";
-    return "Gain min. / max. : " + formatGain(range.minSeconds) + " / " +
-      formatGain(range.maxSeconds) + " · " + requirement +
-      " · " + unit + " · " + daily;
+    if (!range) return "Gain indisponible";
+    const compact = (seconds) => formatGain(seconds).replace(/\s+/g, "");
+    return "Gain " + compact(range.minSeconds) + "-" + compact(range.maxSeconds);
   }
 
   function renderGainMatrix() {
