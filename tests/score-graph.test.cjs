@@ -445,7 +445,7 @@ test("single French subcategory shows its real difficulty and saved mastery belo
   assert.equal(f.chart.children[1].tagName, "svg");
   assert.equal(f.chart.children[2].className, "score-levels");
   assert.equal(levelCards(f).length, 1);
-  assert.deepEqual(levelValues(levelCards(f)[0]), ["2/10", "7/10"]);
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["2", "7"]);
   assert.equal(f.stored, original);
   assert.equal(f.writes, 0);
 });
@@ -462,13 +462,13 @@ test("French and conjugation Tout display separate configured categories", () =>
     levelValues(card),
   ]);
   assert.ok(french.some(([name, values]) => name.includes("g / gu / ge")
-    && values[0] === "3/10" && values[1] === "7/10"));
+    && values[0] === "3" && values[1] === "7"));
   assert.ok(french.some(([name, values]) => name.includes("c / ç")
-    && values[0] === "2/10" && values[1] === "0/10"));
+    && values[0] === "2" && values[1] === "0"));
   f.render("conjugaison", "all");
   const conjugation = levelCards(f);
   assert.equal(conjugation.length, 3);
-  assert.ok(conjugation.some((card) => levelValues(card).join(" / ") === "6/10 / 8/10"));
+  assert.ok(conjugation.some((card) => levelValues(card).join(" / ") === "6 / 8"));
   assert.ok(conjugation.some((card) => find(card, (node) => node.tagName === "h4")[0]
     .textContent.includes("Être et avoir")));
   assert.equal(f.writes, 0);
@@ -480,11 +480,11 @@ test("calcul uses the reward formula's numeric range and selected level", () => 
   });
   f.render("math", "Additions 1000-10000 / niveau 3");
   assert.equal(levelCards(f).length, 1);
-  assert.deepEqual(levelValues(levelCards(f)[0]), ["10/10", "10/10"]);
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["10", "10"]);
   f.render("math", "Additions Toutes catégories / niveau 2");
   assert.equal(levelCards(f).length, 4);
   assert.deepEqual(levelCards(f).map((card) => levelValues(card)[0]),
-    ["2/10", "4/10", "6/10", "9/10"]);
+    ["2", "4", "6", "9"]);
   assert.equal(f.writes, 0);
 });
 
@@ -495,8 +495,8 @@ test("uncategorized math history uses only known numeric categories and saved ma
   ], { "calcul:1000-10000:5": masteryProfile(40) });
   f.render("math");
   assert.equal(levelCards(f).length, 2);
-  assert.ok(levelCards(f).some((card) => levelValues(card)[0] === "3/10"));
-  assert.ok(levelCards(f).some((card) => levelValues(card)[0] === "10/10"));
+  assert.ok(levelCards(f).some((card) => levelValues(card)[0] === "3"));
+  assert.ok(levelCards(f).some((card) => levelValues(card)[0] === "10"));
 });
 
 test("Tous aggregates only exercise categories and never mission mastery", () => {
@@ -516,9 +516,9 @@ test("Tous aggregates only exercise categories and never mission mastery", () =>
 test("missions show their own difficulty and mastery even without scores", () => {
   const f = setup([], { "magic:base": masteryProfile(40) });
   f.render("magic");
-  assert.deepEqual(levelValues(levelCards(f)[0]), ["2/10", "8/10"]);
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["2", "8"]);
   f.render("space");
-  assert.deepEqual(levelValues(levelCards(f)[0]), ["1/10", "0/10"]);
+  assert.deepEqual(levelValues(levelCards(f)[0]), ["1", "0"]);
   assert.equal(f.writes, 0);
 });
 

@@ -637,7 +637,7 @@ window.ExerciseScores = (() => {
         const label = document.createElement("span");
         label.textContent = caption;
         const number = document.createElement("strong");
-        number.textContent = value + "/10";
+        number.textContent = String(value);
         metric.append(label, number);
         stats.append(metric);
       }
