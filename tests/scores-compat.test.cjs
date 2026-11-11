@@ -150,7 +150,9 @@ test("French Tout scores remain exercises and are visible in French history", ()
   assert.match(source, /record\.tab === "s"\) return "Français · s \/ ss"/);
   assert.equal(fixture.scores.save({ tab: "s", score: 9, total: 10 }), true);
   assert.equal(JSON.parse(fixture.stored)[0].scoreCategory, "exercise");
-  assert.match(source, /r\.tab === "g" \|\| r\.tab === "c" \|\| r\.tab === "s" \|\| r\.tab === "all"/);
+  assert.ok(fixture.scores.subcategories("francais").some(({ value }) => value === "all"),
+    "Tout remains a selectable French subcategory");
+  assert.match(source, /return frenchTabs\.some\(\(\{ value \}\) => value === record\.tab\)/);
 });
 
 test("conjugation score labels use short tab titles for old and new records", () => {
