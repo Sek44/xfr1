@@ -306,6 +306,7 @@
       persist();
     },
     resume: () => game.resume(),
+    subcategory: () => "Additions " + range + " / niveau " + category,
   });
   window.addEventListener("pagehide", () => {
     game.suspend();
