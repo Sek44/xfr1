@@ -168,3 +168,156 @@ test("broken mastery is never overwritten or rewarded", () => {
   assert.equal(api.items.get(api.rules.KEY), "{broken");
   assert.equal(api.daily.read().points, 0);
 });
+
+
+function legacy(records) {
+  const json = JSON.stringify(records);
+  const api = setup({ exercices_francais_scores: json });
+  assert.equal(api.items.get("exercices_francais_scores"), json,
+    "old score records must never be rewritten");
+  return api;
+}
+test("initial mastery is seeded from historical French, conjugation, math and money scores", () => {
+  const date = "2026-11-04T12:00:00.000Z";
+  const api = legacy([
+    { tab: "g", score: 9, total: 10, date },
+    { tab: "c", score: 7, total: 10, date },
+    { tab: "s", score: 10, total: 10, date },
+    { tab: "conjugaison", category: "Présent de l’indicatif · 1er groupe",
+      score: 8, total: 10, date },
+    { tab: "conjugaison", category: "Présent de l’indicatif · 2e groupe",
+      score: 9, total: 10, date },
+    { tab: "conjugaison", category: "Présent de l’indicatif · être et avoir",
+      score: 10, total: 10, date },
+    { tab: "math", category: "Additions 100-1000 / niveau 4",
+      score: 6, total: 10, date },
+    { tab: "monnaie", category: "Monnaie", score: 8, total: 10, date },
+  ]);
+  const categories = api.rules.read().categories;
+  for (const id of ["francais:g", "francais:c", "francais:s",
+    "conjugaison:present-1", "conjugaison:present-2",
+    "conjugaison:etre-avoir", "calcul:100-1000:4", "monnaie:base"])
+    assert.equal(categories[id].total, 10, id);
+  assert.equal(categories["francais:g"].recent.reduce((sum, x) => sum + x, 0), 9);
+  assert.equal(categories["calcul:100-1000:4"].recent.reduce((sum, x) => sum + x, 0), 6);
+  assert.equal(api.rules.read().legacyImport.series, 8);
+  assert.equal(api.daily.read().seconds, 0, "no backdated play-time credit");
+  assert.equal(api.daily.read().points, 0);
+});
+test("mixed legacy series distribute ten questions, not ten per category", () => {
+  const api = legacy([
+    { tab: "all", score: 9, total: 10, date: "2026-11-09T09:00:00Z" },
+    { tab: "conjugaison", category: "Tout", score: 8, total: 10,
+      date: "2026-11-10T09:00:00Z" },
+    { tab: "math", category: "Additions Toutes catégories / niveau 2",
+      score: 7, total: 10, date: "2026-11-09T10:00:00Z" },
+  ]);
+  const p = api.rules.read().categories;
+  const french = ["francais:g", "francais:c", "francais:s"];
+  const conjugation = ["conjugaison:present-1", "conjugaison:present-2"];
+  const math = ["0-10", "10-100", "100-1000", "1000-10000"]
+    .map((band) => "calcul:" + band + ":2");
+  for (const group of [french, conjugation, math])
+    assert.equal(group.reduce((sum, id) => sum + p[id].total, 0), 10);
+  assert.equal(p["conjugaison:etre-avoir"], undefined);
+  assert.equal(french.reduce((sum, id) =>
+    sum + p[id].recent.reduce((n, x) => n + x, 0), 0), 9);
+});
+test("older mixed French sessions do not create mastery for yet-unreleased s/ss", () => {
+  const api = legacy([
+    { tab: "all", score: 8, total: 10, date: "2026-11-06T11:00:00Z" },
+  ]);
+  const p = api.rules.read().categories;
+  assert.equal(p["francais:g"].total + p["francais:c"].total, 10);
+  assert.equal(p["francais:s"], undefined);
+});
+test("historical arcade wins use an estimated attempt count, not perfect scores", () => {
+  const api = legacy([
+    { tab: "space", score: 17, total: 1, mode: "arcade",
+      date: "2026-11-04T16:00:00Z" },
+    { tab: "magic", score: 34, total: 1, mode: "arcade",
+      date: "2026-11-05T16:00:00Z" },
+  ]);
+  assert.equal(api.rules.read().categories["space:base"].total, 20);
+  assert.equal(api.rules.read().categories["magic:base"].total, 40);
+  assert.equal(api.rules.read().categories["space:base"].recent.reduce(
+    (sum, value) => sum + value, 0), 17);
+  assert.equal(api.rules.read().categories["magic:base"].recent.reduce(
+    (sum, value) => sum + value, 0), 34);
+});
+test("import only pre-launch scores and retain unknown-date series conservatively", () => {
+  const api = legacy([
+    { tab: "g", score: 10, total: 10, date: "2026-11-12T08:00:00Z" },
+    { tab: "g", score: 7, total: 10, date: "2026-11-11T11:21:43Z" },
+    { tab: "g", score: 9, total: 10, date: "2026-11-04T08:00:00Z" },
+    { tab: "c", score: 10, total: 10 },
+  ]);
+  assert.equal(api.rules.read().categories["francais:g"].total, 10);
+  assert.equal(api.rules.read().categories["francais:c"].days.length, 1);
+  assert.equal(api.rules.read().legacyImport.series, 2);
+});
+test("seeded mastery already reflects long-term high historical performance", () => {
+  const history = Array.from({ length: 5 }, (_, i) => ({
+    tab: "monnaie", score: 10, total: 10,
+    date: ["2026-10-20", "2026-10-21", "2026-10-22"][i % 3] + "T10:00:00Z",
+  }));
+  const api = legacy(history);
+  assert.equal(api.rules.inspect("monnaie:base").mastery, 10);
+  assert.equal(api.daily.awardResultOnce("monnaie", "new-1",
+    outcome("monnaie:base", 10)).receipt.seconds, 0);
+  assert.equal(api.daily.canStart("monnaie", "new-2", ["monnaie:base"]).blocked, true);
+});
+test("existing live mastery stays newer than historical samples and is imported only once", () => {
+  const existing = {
+    version: 1, categories: {
+      "monnaie:base": { total: 5, recent: [1, 1, 1, 1, 1],
+        days: ["2026-11-11"] },
+    }, events: ["monnaie:live-1"],
+  };
+  const api = setup({
+    entrainement_mastery_v1: JSON.stringify(existing),
+    exercices_francais_scores: JSON.stringify([
+      { tab: "monnaie", score: 3, total: 10, date: "2026-10-20T10:00:00Z" },
+    ]),
+  });
+  const profile = api.rules.read().categories["monnaie:base"];
+  assert.equal(profile.total, 15);
+  assert.equal(profile.recent.length, 15);
+  assert.equal(profile.recent.slice(-5).join(""), "11111");
+  assert.equal(api.rules.read().events[0], "monnaie:live-1");
+  assert.equal(api.rules.initializeLegacy(), false);
+  assert.equal(api.rules.read().categories["monnaie:base"].total, 15);
+});
+test("corrupted archives or mastery cannot be overwritten by a migration", () => {
+  const malformed = setup({ exercices_francais_scores: "{broken" });
+  assert.equal(malformed.rules.read().legacyImport, undefined);
+  assert.equal(malformed.items.get("exercices_francais_scores"), "{broken");
+  const stored = "{broken";
+  const badMastery = setup({
+    entrainement_mastery_v1: stored,
+    exercices_francais_scores: JSON.stringify([
+      { tab: "g", score: 10, total: 10, date: "2026-10-20T10:00:00Z" },
+    ]),
+  });
+  assert.equal(badMastery.items.get("entrainement_mastery_v1"), stored);
+  assert.equal(badMastery.rules.read(), null);
+});
+test("failed legacy migration retries atomically when storage becomes available", () => {
+  const api = setup();
+  const original = api.storage.setItem;
+  const archive = JSON.stringify([
+    { tab: "c", score: 8, total: 10, date: "2026-10-20T10:00:00Z" },
+  ]);
+  api.items.set("exercices_francais_scores", archive);
+  api.storage.setItem = (key, value) => {
+    if (key === api.rules.KEY) throw Error("storage unavailable");
+    original(key, value);
+  };
+  assert.equal(api.rules.initializeLegacy(), false);
+  assert.equal(api.rules.read().categories["francais:c"], undefined);
+  api.storage.setItem = original;
+  assert.equal(api.rules.initializeLegacy(), true);
+  assert.equal(api.rules.initializeLegacy(), false);
+  assert.equal(api.rules.read().categories["francais:c"].total, 10);
+  assert.equal(api.items.get("exercices_francais_scores"), archive);
+});

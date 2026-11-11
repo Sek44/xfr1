@@ -6,6 +6,7 @@ window.RewardRules = (() => {
     minSeconds: 60, maxSeconds: 180, roundingSeconds: 15,
     dailySecondsCap: 3600, recentQuestions: 50,
     requiredQuestions: 50, requiredDays: 3,
+    legacyMissionAccuracy: 0.85,
     multipliers: [1, 1, 1, 1, 1, 1, 0.75, 0.5, 0.35, 0.15, 0],
     dailyLimits: [null, null, null, null, null, null, 6, 4, 3, 2, 1],
     french: { c: 2, g: 3, s: 4 },
@@ -13,6 +14,11 @@ window.RewardRules = (() => {
     mathRanges: { "0-10": 1, "10-100": 3, "100-1000": 5, "1000-10000": 8 },
     mission: { space: 1, magic: 2 },
   });
+  // Initial rewards deployment: historical scores before this point are
+  // estimates only, not a source of retroactive play-time credits.
+  const LEGACY_CUTOFF = Date.parse("2026-11-11T11:21:43Z");
+  const LEGACY_DAY_UNKNOWN = "2000-01-01";
+  const SCORE_KEY = "exercices_francais_scores";
   const today = () => {
     const d = new Date();
     return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"),
@@ -132,6 +138,177 @@ window.RewardRules = (() => {
     try { localStorage.setItem(KEY, JSON.stringify(stored)); return true; }
     catch { return false; }
   }
-  return { KEY, CONFIG, key, difficulty, maxSeconds, mastery, inspect,
-    noteFactor, forecast, record, read, validAnswers };
+
+  // The score archive stores only a series total, not its question-by-question
+  // successes. Reconstruct evenly spaced answers; this estimates competence
+  // without pretending to know their order. No historical minutes are awarded.
+  function historyCategory(record, date) {
+    const tab = record.tab;
+    if (tab === "g" || tab === "c" || tab === "s")
+      return [key("francais", tab)];
+    if (tab === "all") {
+      // The s/ss family was introduced on 2026-11-07.
+      return (date && date < "2026-11-07")
+        ? [key("francais", "g"), key("francais", "c")]
+        : [key("francais", "g"), key("francais", "c"), key("francais", "s")];
+    }
+    if (tab === "monnaie") return [key("monnaie")];
+    if (tab === "space" || tab === "magic")
+      return [key(tab)];
+    if (tab === "conjugaison") {
+      const name = typeof record.category === "string" ? record.category
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase() : "";
+      if (/tout|^all$/.test(name)) {
+        // The être/avoir mode appeared on November 11.
+        return date && date < "2026-11-11"
+          ? [key("conjugaison", "present-1"), key("conjugaison", "present-2")]
+          : [key("conjugaison", "present-1"),
+            key("conjugaison", "present-2"), key("conjugaison", "etre-avoir")];
+      }
+      if (/2e|2eme|second|groupe\s*2\b/.test(name))
+        return [key("conjugaison", "present-2")];
+      if (/etre|avoir/.test(name))
+        return [key("conjugaison", "etre-avoir")];
+      if (!name || /1er|premier|groupe\s*1\b/.test(name))
+        return [key("conjugaison", "present-1")];
+      return [];
+    }
+    if (tab === "math" || tab === "calcul") {
+      const name = typeof record.category === "string"
+        ? record.category.replace(/[\u2013\u2014]/g, "-") : "";
+      const match = name.match(/(?:^|\s)(0-10|10-100|100-1000|1000-10000|Toutes cat[eé]gories)\s*\/\s*niveau\s*([1-5])\b/i);
+      if (!match) return [];
+      const band = match[1];
+      const level = match[2];
+      return /^Toutes/i.test(band)
+        ? ["0-10", "10-100", "100-1000", "1000-10000"]
+          .map((range) => key("calcul", range + ":" + level))
+        : [key("calcul", band + ":" + level)];
+    }
+    return [];
+  }
+
+  // Distributed correctly/incorrectly outcomes approximate a historical
+  // aggregate mark without falsely treating every archived question as correct.
+  function estimatedCorrect(index, score, total) {
+    return Math.floor((index + 1) * score / total) >
+      Math.floor(index * score / total) ? 1 : 0;
+  }
+  function addEstimated(profile, score, count, day) {
+    if (!Number.isSafeInteger(profile.total + count)) return false;
+    profile.total += count;
+    for (let i = Math.max(0, count - CONFIG.recentQuestions); i < count; i++) {
+      profile.recent.push(estimatedCorrect(i, score, count));
+      if (profile.recent.length > CONFIG.recentQuestions) profile.recent.shift();
+    }
+    if (!profile.days.includes(day)) profile.days.push(day);
+    return true;
+  }
+
+  // This migration is atomic and marked in the existing mastery record. Later
+  // rewards keep accumulating normally. All imported samples precede live ones
+  // when their last-50-question windows are merged.
+  function initializeLegacy() {
+    const state = read();
+    if (!state || state.legacyImport?.version === 1) return false;
+    let records;
+    try {
+      const raw = localStorage.getItem(SCORE_KEY);
+      if (raw === null) return false;
+      records = JSON.parse(raw);
+      if (!Array.isArray(records)) return false;
+    } catch {
+      return false; // Never overwrite corrupted history or mastery storage.
+    }
+    const imported = Object.create(null);
+    let count = 0;
+    const ordered = records.slice().reverse();
+    for (let ordinal = 0; ordinal < ordered.length; ordinal++) {
+      const record = ordered[ordinal];
+      if (!record || typeof record !== "object" || Array.isArray(record)) continue;
+      let day = LEGACY_DAY_UNKNOWN;
+      if (typeof record.date === "string" && record.date.trim()) {
+        const ms = Date.parse(record.date);
+        if (Number.isFinite(ms)) {
+          if (ms >= LEGACY_CUTOFF) continue;
+          const date = new Date(ms);
+          day = [date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, "0"),
+            String(date.getDate()).padStart(2, "0")].join("-");
+        }
+        // Invalid or missing dates count as a single estimated practice day.
+      }
+      const categories = historyCategory(record, day === LEGACY_DAY_UNKNOWN ? null : day);
+      if (!categories.length) continue;
+      const isMission = record.tab === "space" || record.tab === "magic";
+      const score = Number(record.score);
+      if (record.score === null || record.score === "" ||
+          !Number.isSafeInteger(score) || score < 0) continue;
+      let total;
+      if (isMission) {
+        // Arcade histories count successes, not attempted shots. Use a
+        // conservative 85% estimated accuracy; never assume 100% perfection.
+        if (score === 0 || score > 10000) continue;
+        total = Math.ceil(score / CONFIG.legacyMissionAccuracy);
+      } else {
+        // Older exercise entries may lack a total; a series has 10 questions.
+        total = record.total === undefined || record.total === null
+          ? 10 : Number(record.total);
+        if (!Number.isSafeInteger(total) || total < 1 || total > 100 ||
+            score > total) continue;
+      }
+      const balanced = categories.map((id) => ({
+        id, score: 0, count: 0,
+      }));
+      // Interleave questions from the mixed-mode families, rather than
+      // crediting the same ten answers to each category.
+      if (balanced.length > 1) {
+        const start = ordinal % balanced.length;
+        for (let i = 0; i < total; i++) {
+          const slot = balanced[(start + i) % balanced.length];
+          slot.count++;
+          slot.score += estimatedCorrect(i, score, total);
+        }
+      } else {
+        balanced[0].count = total;
+        balanced[0].score = score;
+      }
+      for (const part of balanced) {
+        if (!part.count) continue;
+        const profile = imported[part.id] ||
+          (imported[part.id] = { total: 0, recent: [], days: [] });
+        if (!addEstimated(profile, part.score, part.count, day)) return false;
+      }
+      count++;
+    }
+    if (count === 0) return false;
+    for (const [id, historical] of Object.entries(imported)) {
+      const existing = state.categories[id];
+      if (!existing) {
+        state.categories[id] = historical;
+        continue;
+      }
+      if (!Number.isSafeInteger(historical.total + existing.total)) return false;
+      state.categories[id] = {
+        ...existing,
+        total: historical.total + existing.total,
+        recent: historical.recent.concat(existing.recent)
+          .slice(-CONFIG.recentQuestions),
+        days: [...new Set(historical.days.concat(existing.days))].slice(-1000),
+      };
+    }
+    state.legacyImport = { version: 1, series: count };
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  const api = { KEY, CONFIG, key, difficulty, maxSeconds, mastery, inspect,
+    noteFactor, forecast, record, read, validAnswers, initializeLegacy };
+  initializeLegacy(); // Runs once when any xfr1 page first loads.
+  return api;
 })();

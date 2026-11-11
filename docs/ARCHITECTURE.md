@@ -102,3 +102,25 @@ de maîtrise avec le même identifiant idempotent. Les reçus enrichissent l'éc
 de fin. `seconds` comptabilise le crédit exact et `minutes` expose les
 minutes entières aux consommateurs GMR. Les anciennes clés et scores ne
 sont pas réécrits pour rétroattribuer des minutes.
+
+
+## Initialisation de maîtrise à partir des scores historiques (2026-11-11)
+
+Le chargement de `reward-rules.js` déclenche `initializeLegacy()` sur toutes les pages,
+y compris `scores.html`. La migration lit en lecture seule
+`exercices_francais_scores` et considère seulement les résultats antérieurs au
+commit de lancement du barème (2026-11-11 11:21:43 UTC). Les catégories sont
+reconstituées via `tab` et `category`, sans changer les enregistrements existants.
+Les scores « Tout » sont répartis en *estimations de questions* entre les familles
+historiquement disponibles (et non répliqués dans chacune). Les missions ne
+conservent que les réussites : le nombre de tentatives est estimé avec un taux
+configurable par défaut de 85 %. Une date invalide ou absente ne représente
+qu'un seul jour fictif de pratique, jamais trois jours validés.
+
+Les échantillons historiques sont ajoutés avant les échantillons déjà acquis par
+le nouveau moteur, afin de préserver la pertinence des 50 dernières réponses.
+Le marqueur `entrainement_mastery_v1.legacyImport.version = 1` est écrit en
+même temps que la maîtrise ; il empêche une deuxième importation. Les erreurs
+de stockage permettent un essai ultérieur. Aucune minute rétroactive ni aucune
+modification de l'historique des scores n'est effectuée. Supprimer un ancien score
+après migration ne supprime pas une maîtrise déjà estimée.

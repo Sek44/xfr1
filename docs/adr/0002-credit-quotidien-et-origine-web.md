@@ -46,3 +46,21 @@ Le barème de difficulté, les seuils et les limites se règlent dans
 Les séries commencées sont comptées à la première réponse et les séries
 terminées participent à la progression même si elles ne créditent aucune minute.
 Le cap global est de 3600 secondes de crédits quotidiens.
+
+## Reprise des acquis historiques (2026-11-11)
+
+L'historique des résultats, dans `exercices_francais_scores`, précède la création
+des profils de maîtrise. `RewardRules.initializeLegacy()` fournit une estimation
+initiale des profils dans `entrainement_mastery_v1`, une seule fois grâce au
+marqueur `legacyImport.version=1`. Sont éligibles uniquement les scores
+antérieurs au 11 novembre 2026, 11:21:43 UTC. Les archives ne contiennent pas
+la vérité question par question : les bonnes réponses sont réparties de façon
+régulière, les catégories « Tout » de façon équilibrée et les missions à partir
+d'un taux de réussite de 85 % (paramétrable). Les profils existants sont
+conservés et leur fenêtre de réponses récentes reste chronologiquement après
+les estimations historiques. Les dates absentes sont regroupées en un seul
+jour indicatif afin de ne pas surévaluer l'assiduité.
+
+Ce mécanisme n'écrit jamais dans l'archive des scores et ne verse jamais de
+crédit rétroactif. Si le stockage est inaccessible ou corrompu, l'import échoue
+sans marquer son exécution, pour être retenté lors d'un prochain chargement.

@@ -11,6 +11,12 @@ Every site change must remain compatible with all existing user scores in localS
 - If stored JSON is unreadable, do not overwrite it when saving a new score.
 - Verify mixed legacy/current records when changing storage or display.
 
+## Initial historical mastery estimate
+- On page load, `RewardRules.initializeLegacy()` imports eligible entries from `exercices_francais_scores` into `entrainement_mastery_v1` once, using `legacyImport.version` as an idempotent marker.
+- Never mutate or reserialize the historical score key; never grant old minutes, reset daily counts, or double-count new scores on/after the rewards cutover timestamp.
+- Preserve previously recorded live mastery and append its recent answers *after* estimated historical answers. Treat « Tout » scores proportionally; missing mission errors require a conservative estimated success rate.
+- If archive/mastery JSON is malformed, inaccessible or the migration write fails, keep originals unchanged and allow an automatic retry.
+
 ## Daily exercise credits
 
 - Preserve the shared key `entrainement_daily_exercises_v1` and its versioned contract (`date`, `points`, `minutes`, `progress`, `events`). Optional `seconds`, `starts`, `receipts` extend it without breaking GMR; mastery is a separate `entrainement_mastery_v1` key. Other pages/projects on the same origin may depend on it. Do not conflate these credits with the historical score list.
