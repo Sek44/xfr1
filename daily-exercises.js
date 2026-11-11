@@ -421,6 +421,12 @@ window.DailyExercises = (() => {
     };
   }
 
+  // Display partial minutes without rounding away earned seconds.
+  function formatCredit(seconds) {
+    return Math.floor(seconds / 60) + " min" +
+      (seconds % 60 ? " " + (seconds % 60) + " s" : "");
+  }
+
   // A shared subscription mechanism keeps both the legacy text summary and
   // the structured homepage metrics updated on focus, storage events and midnight.
   function watch(update) {
@@ -442,7 +448,7 @@ window.DailyExercises = (() => {
       element.textContent = state
         ? state.points + " exercice" + (state.points === 1 ? "" : "s") +
           " terminé" + (state.points === 1 ? "" : "s") +
-          " aujourd’hui · " + state.minutes + " min de jeu autorisées"
+          " aujourd’hui · " + formatCredit(state.seconds ?? state.minutes * 60) + " de jeu autorisées"
         : "Compteur quotidien indisponible (stockage local inaccessible).";
     });
   }
@@ -455,7 +461,9 @@ window.DailyExercises = (() => {
       pointsElement.textContent = state
         ? state.points + " exercice" + (state.points === 1 ? "" : "s")
         : "— exercices";
-      minutesElement.textContent = state ? state.minutes + " min de jeu" : "— min de jeu";
+      minutesElement.textContent = state
+        ? formatCredit(state.seconds ?? state.minutes * 60) + " de jeu"
+        : "— min de jeu";
       if (errorElement) {
         errorElement.hidden = Boolean(state);
         errorElement.textContent = state
