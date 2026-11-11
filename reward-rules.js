@@ -55,7 +55,9 @@ window.RewardRules = (() => {
       Array.isArray(p.days) && p.days.length <= 1000 &&
       p.days.every((d) => typeof d === "string" && /^\d{4}-\d{2}-\d{2}$/.test(d)) &&
       (p.manualMastery === undefined ||
-        (Number.isInteger(p.manualMastery) && p.manualMastery >= 0 && p.manualMastery <= 10));
+        (Number.isInteger(p.manualMastery) && p.manualMastery >= 0 && p.manualMastery <= 10)) &&
+      (p.masteryBonus === undefined ||
+        (Number.isInteger(p.masteryBonus) && p.masteryBonus >= -10 && p.masteryBonus <= 10));
   }
   function read() {
     try {
@@ -70,11 +72,9 @@ window.RewardRules = (() => {
       return state;
     } catch { return null; }
   }
-  function mastery(profile) {
+  // Evidence-based estimate is independent from a local bonus.
+  function automaticMastery(profile) {
     if (!profile) return 0;
-    if (Number.isInteger(profile.manualMastery) &&
-        profile.manualMastery >= 0 && profile.manualMastery <= 10)
-      return profile.manualMastery;
     const recent = profile.recent;
     const success = recent.length ?
       recent.reduce((sum, value) => sum + value, 0) / recent.length : 0;
@@ -82,15 +82,42 @@ window.RewardRules = (() => {
     const days = Math.min(1, profile.days.length / CONFIG.requiredDays);
     return Math.max(0, Math.min(10, Math.round(10 * success * experience * days)));
   }
+  function mastery(profile) {
+    if (!profile) return 0;
+    // Older fixed mastery values remain valid until explicitly converted.
+    if (Number.isInteger(profile.manualMastery) &&
+        profile.manualMastery >= 0 && profile.manualMastery <= 10)
+      return profile.manualMastery;
+    return Math.max(0, Math.min(10,
+      automaticMastery(profile) + (profile.masteryBonus || 0)));
+  }
   function inspect(id) {
     const stored = read();
     if (!stored) return null;
-    const level = mastery(stored.categories[id]);
-    return { key: id, mastery: level, difficulty: difficulty(id),
-      maxSeconds: maxSeconds(id), dailyLimit: CONFIG.dailyLimits[level] };
+    const profile = stored.categories[id];
+    const level = mastery(profile);
+    return { key: id, mastery: level, automaticMastery: automaticMastery(profile),
+      masteryBonus: profile?.masteryBonus || 0,
+      legacyManualMastery: profile?.manualMastery,
+      difficulty: difficulty(id), maxSeconds: maxSeconds(id),
+      dailyLimit: CONFIG.dailyLimits[level] };
   }
-  // Manual overrides are local to this browser, without rewriting past scores
-  // or discarding the continuously collected mastery evidence.
+  // Positive or negative persistent adjustment to the evolving base mastery.
+  function setMasteryBonus(id, bonus) {
+    if (!Object.hasOwn(window.RewardDifficultyLevels || {}, id) ||
+        !Number.isInteger(bonus) || bonus < -10 || bonus > 10) return false;
+    const stored = read();
+    if (!stored) return false;
+    if (!stored.categories[id] && bonus === 0) return true;
+    const profile = stored.categories[id] ||
+      (stored.categories[id] = { total: 0, recent: [], days: [] });
+    delete profile.manualMastery;
+    if (bonus === 0) delete profile.masteryBonus;
+    else profile.masteryBonus = bonus;
+    try { localStorage.setItem(KEY, JSON.stringify(stored)); return true; }
+    catch { return false; }
+  }
+  // Compatibility with previously written absolute overrides.
   function setMastery(id, value) {
     if (!Object.hasOwn(window.RewardDifficultyLevels || {}, id) ||
         (value !== null && (!Number.isInteger(value) || value < 0 || value > 10)))
@@ -101,7 +128,10 @@ window.RewardRules = (() => {
     const profile = state.categories[id] ||
       (state.categories[id] = { total: 0, recent: [], days: [] });
     if (value === null) delete profile.manualMastery;
-    else profile.manualMastery = value;
+    else {
+      profile.manualMastery = value;
+      delete profile.masteryBonus;
+    }
     try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
     catch { return false; }
   }
@@ -371,9 +401,10 @@ window.RewardRules = (() => {
     }
   }
 
-  const api = { KEY, CONFIG, key, difficulty, maxSeconds, mastery, inspect,
-    noteFactor, forecast, repriceParts, estimateHistoricalParts,
-    record, read, validAnswers, initializeLegacy, setMastery };
+  const api = { KEY, CONFIG, key, difficulty, maxSeconds, automaticMastery,
+    mastery, inspect, noteFactor, forecast, repriceParts,
+    estimateHistoricalParts, record, read, validAnswers, initializeLegacy,
+    setMastery, setMasteryBonus };
   initializeLegacy(); // Runs once when any xfr1 page first loads.
   return api;
 })();

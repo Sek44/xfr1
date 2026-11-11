@@ -89,6 +89,7 @@ test("broken local storage is not overwritten by admin mutations", () => {
     entrainement_daily_exercises_v1: "{broken",
   });
   assert.equal(rules.setMastery("monnaie:base", 6), false);
+  assert.equal(rules.setMasteryBonus("monnaie:base", -2), false);
   assert.equal(daily.grantAdminBonus(60, "test-unique-1"), false);
   assert.equal(data.get(rules.KEY), "{broken");
   assert.equal(data.get(daily.KEY), "{broken");
@@ -102,4 +103,52 @@ test("the administration page has no public navigation link, and every game load
     assert.ok(html.indexOf("reward-difficulties.js") < html.indexOf("reward-rules.js"));
   }
   assert.match(fs.readFileSync(path.join(root, "admin.html"), "utf8"), /name="robots" content="noindex,nofollow"/);
+});
+
+test("signed bonus follows changing automatic mastery, clamps range and preserves scores", () => {
+  const { rules, data } = fixture();
+  const key = "francais:c";
+  const archive = '[{"tab":"c","score":8,"unknown":"preserve"}]';
+  data.set("exercices_francais_scores", archive);
+  assert.equal(rules.inspect(key).automaticMastery, 0);
+  assert.equal(rules.setMasteryBonus(key, 3), true);
+  assert.equal(rules.inspect(key).mastery, 3);
+  assert.equal(rules.record("new-questions", Array.from({ length: 50 },
+    () => ({ key, correct: true }))), true);
+  assert.equal(rules.inspect(key).automaticMastery, 3);
+  assert.equal(rules.inspect(key).mastery, 6);
+  assert.equal(rules.setMasteryBonus(key, -10), true);
+  assert.equal(rules.inspect(key).mastery, 0);
+  assert.equal(rules.setMasteryBonus(key, 10), true);
+  assert.equal(rules.inspect(key).mastery, 10);
+  assert.equal(rules.setMasteryBonus(key, 0), true);
+  assert.equal(rules.inspect(key).mastery, 3);
+  assert.equal("masteryBonus" in rules.read().categories[key], false);
+  assert.equal(data.get("exercices_francais_scores"), archive);
+  assert.equal(rules.setMasteryBonus(key, -11), false);
+  assert.equal(rules.setMasteryBonus(key, 11), false);
+  assert.equal(rules.setMasteryBonus(key, 1.5), false);
+  assert.equal(rules.setMasteryBonus("unknown:key", 2), false);
+});
+
+test("an older fixed mastery remains until explicitly converted to a signed bonus", () => {
+  const { rules } = fixture();
+  const key = "conjugaison:present-1";
+  assert.equal(rules.setMastery(key, 8), true);
+  assert.equal(rules.inspect(key).legacyManualMastery, 8);
+  assert.equal(rules.inspect(key).mastery, 8);
+  assert.equal(rules.setMasteryBonus(key, -2), true);
+  assert.equal(rules.read().categories[key].manualMastery, undefined);
+  assert.equal(rules.inspect(key).mastery, 0);
+  assert.equal(rules.inspect(key).masteryBonus, -2);
+});
+
+test("admin shows read-only difficulty and only an official GitHub edit link", () => {
+  const html = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+  const script = fs.readFileSync(path.join(root, "admin.js"), "utf8");
+  assert.match(html, /github\.com\/Sek44\/xfr1\/edit\/main\/reward-difficulties\.js/);
+  assert.doesNotMatch(html, /github-token|github-save|github-copy/);
+  assert.doesNotMatch(script, /github-token|Bearer|Authorization|fetch\(|saveGitHub|configSource|copyConfig/);
+  assert.match(script, /setMasteryBonus/);
+  assert.match(script, /createElement\("output"\)/);
 });

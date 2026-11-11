@@ -1,9 +1,8 @@
 "use strict";
 (() => {
   // Public by design: this password is only a guard against accidental access.
-  // GitHub itself validates repository writes; localStorage is not protected.
+  // The local player state is browser-editable; GitHub updates only happen on GitHub.
   const ADMIN_PASSWORD = "xfr1-administration";
-  const GITHUB_FILE = "https://api.github.com/repos/Sek44/xfr1/contents/reward-difficulties.js";
   const GROUPS = [
     { label: "Orthographe", entries: [
       ["francais:c", "c / ç"], ["francais:g", "g / gue / ge"],
@@ -26,8 +25,6 @@
   ];
 
   const element = (id) => document.getElementById(id);
-  const difficultyInputs = new Map();
-  const published = { ...window.RewardDifficultyLevels };
   let pendingBonusToken = null;
 
   function status(id, message, error = false) {
@@ -36,89 +33,82 @@
     output.dataset.error = String(error);
   }
 
-  function readDifficultyInputs() {
-    const values = {};
-    for (const [key, input] of difficultyInputs) {
-      if (!/^(?:[1-9]|10)$/.test(input.value))
-        throw new Error("La difficulté de « " + key + " » doit être comprise entre 1 et 10.");
-      values[key] = Number(input.value);
-    }
-    return values;
-  }
-
-  function configSource(values) {
-    return '"use strict";\n' +
-      "// Shared difficulty settings. Edit here or publish through admin.html.\n" +
-      "// Each key identifies a playable subcategory; values range from 1 to 10.\n" +
-      "window.RewardDifficultyLevels = Object.freeze(" +
-      JSON.stringify(values, null, 2) + ");\n";
-  }
-
-  function updateDirtyIndicator() {
-    try {
-      const modified = JSON.stringify(readDifficultyInputs()) !== JSON.stringify(published);
-      status("difficulty-status", modified
-        ? "Difficultés modifiées : elles ne seront appliquées qu’après publication sur GitHub."
-        : "Difficultés identiques à la configuration publiée.");
-    } catch (error) {
-      status("difficulty-status", error.message, true);
-    }
-  }
-
   function createCategoryRow(key, label) {
     const row = document.createElement("div");
     row.className = "admin-level-row";
 
-    const name = document.createElement("label");
+    const name = document.createElement("span");
+    name.className = "admin-level-name";
     name.textContent = label;
-    const difficulty = document.createElement("input");
-    difficulty.type = "number";
-    difficulty.min = "1";
-    difficulty.max = "10";
-    difficulty.step = "1";
-    difficulty.value = String(published[key]);
-    difficulty.setAttribute("aria-label", "Difficulté : " + label);
-    name.htmlFor = "difficulty-" + key.replace(/[^a-z0-9]/g, "-");
-    difficulty.id = name.htmlFor;
-    difficultyInputs.set(key, difficulty);
-    difficulty.addEventListener("input", updateDirtyIndicator);
+    const level = window.RewardRules.inspect(key);
 
-    const mastery = document.createElement("select");
-    mastery.setAttribute("aria-label", "Maîtrise : " + label);
-    const auto = document.createElement("option");
-    auto.value = "auto";
-    auto.textContent = "Auto (" + (window.RewardRules.inspect(key)?.mastery ?? "—") + ")";
-    mastery.append(auto);
-    for (let level = 0; level <= 10; level++) {
+    const difficulty = document.createElement("output");
+    difficulty.className = "admin-level-difficulty";
+    difficulty.dataset.caption = "Difficulté";
+    difficulty.setAttribute("aria-label", "Difficulté : " + label);
+    difficulty.textContent = String(level?.difficulty ?? "—");
+
+    const automatic = document.createElement("output");
+    automatic.className = "admin-level-auto";
+    automatic.dataset.caption = "Auto";
+    automatic.setAttribute("aria-label", "Maîtrise automatique : " + label);
+    automatic.textContent = String(level?.automaticMastery ?? "—");
+
+    const bonusField = document.createElement("div");
+    bonusField.className = "admin-level-bonus";
+    bonusField.dataset.caption = "Bonus";
+    const bonus = document.createElement("select");
+    bonus.setAttribute("aria-label", "Bonus de maîtrise : " + label);
+    for (let value = -10; value <= 10; value++) {
       const option = document.createElement("option");
-      option.value = String(level);
-      option.textContent = String(level);
-      mastery.append(option);
+      option.value = String(value);
+      option.textContent = value > 0 ? "+" + value : String(value);
+      bonus.append(option);
     }
-    const profile = window.RewardRules.read()?.categories[key];
-    mastery.value = Number.isInteger(profile?.manualMastery)
-      ? String(profile.manualMastery) : "auto";
-    let saved = mastery.value;
-    mastery.addEventListener("change", () => {
-      const level = mastery.value === "auto" ? null : Number(mastery.value);
-      if (!window.RewardRules.setMastery(key, level)) {
-        mastery.value = saved;
-        status("mastery-status", "Échec de l’enregistrement local. Vérifiez le stockage du navigateur.", true);
+    if (Number.isInteger(level?.legacyManualMastery)) {
+      const legacy = document.createElement("option");
+      legacy.value = "legacy";
+      legacy.textContent = "Fixe " + level.legacyManualMastery;
+      bonus.append(legacy);
+      bonus.value = "legacy";
+    } else bonus.value = String(level?.masteryBonus || 0);
+    bonusField.append(bonus);
+
+    const effective = document.createElement("output");
+    effective.className = "admin-level-effective";
+    effective.dataset.caption = "Actuel";
+    effective.setAttribute("aria-label", "Maîtrise actuelle : " + label);
+    effective.textContent = String(level?.mastery ?? "—");
+
+    let previous = bonus.value;
+    bonus.addEventListener("change", () => {
+      const adjustment = Number(bonus.value);
+      if (!Number.isInteger(adjustment) ||
+          !window.RewardRules.setMasteryBonus(key, adjustment)) {
+        bonus.value = previous;
+        status("mastery-status",
+          "Échec de l’enregistrement local. Vérifiez le stockage du navigateur.", true);
         return;
       }
-      saved = mastery.value;
-      const effective = window.RewardRules.inspect(key)?.mastery;
-      status("mastery-status", "Maîtrise enregistrée pour « " + label +
-        " » : " + effective + (level === null ? " (automatique)." : " (forcée)."));
+      const legacy = bonus.querySelector('option[value="legacy"]');
+      if (legacy) legacy.remove();
+      previous = bonus.value;
+      const current = window.RewardRules.inspect(key);
+      automatic.textContent = String(current.automaticMastery);
+      effective.textContent = String(current.mastery);
+      status("mastery-status", "Bonus de maîtrise enregistré pour « " + label +
+        " » : " + (adjustment > 0 ? "+" : "") + adjustment +
+        " (auto " + current.automaticMastery + " → actuel " + current.mastery + ").");
       renderLocalData();
     });
 
-    row.append(name, difficulty, mastery);
+    row.append(name, difficulty, automatic, bonusField, effective);
     return row;
   }
 
   function renderCategories() {
     const root = element("admin-category-list");
+    root.replaceChildren();
     for (const group of GROUPS) {
       const section = document.createElement("section");
       section.className = "admin-group";
@@ -126,7 +116,7 @@
       title.textContent = group.label;
       const headings = document.createElement("div");
       headings.className = "admin-level-header";
-      for (const label of ["Exercice", "Difficulté", "Maîtrise"]) {
+      for (const label of ["Exercice", "Difficulté", "Auto", "Bonus", "Actuel"]) {
         const text = document.createElement("span");
         text.textContent = label;
         headings.append(text);
@@ -135,70 +125,6 @@
       for (const [key, label] of group.entries)
         section.append(createCategoryRow(key, label));
       root.append(section);
-    }
-    updateDirtyIndicator();
-  }
-
-  function parseGitHubConfig(source) {
-    const match = source.match(/window\.RewardDifficultyLevels\s*=\s*Object\.freeze\((\{[\s\S]*?\})\);/);
-    if (!match) throw new Error("Format de configuration GitHub non reconnu.");
-    return JSON.parse(match[1]);
-  }
-
-  async function saveGitHub() {
-    let levels;
-    try { levels = readDifficultyInputs(); }
-    catch (error) { status("difficulty-status", error.message, true); return; }
-    const token = element("github-token").value.trim();
-    if (!token) {
-      status("difficulty-status", "Renseignez un jeton GitHub pour publier directement, ou utilisez l’éditeur GitHub.", true);
-      return;
-    }
-    const button = element("github-save");
-    button.disabled = true;
-    status("difficulty-status", "Enregistrement GitHub en cours…");
-    try {
-      const headers = {
-        Accept: "application/vnd.github+json",
-        Authorization: "Bearer " + token,
-        "X-GitHub-Api-Version": "2022-11-28",
-      };
-      const read = await fetch(GITHUB_FILE + "?ref=main", {
-        method: "GET", headers, cache: "no-store",
-      });
-      if (!read.ok) throw new Error("Impossible de lire le dépôt (HTTP " + read.status + ").");
-      const remote = await read.json();
-      const source = atob(remote.content.replace(/\s/g, ""));
-      if (JSON.stringify(parseGitHubConfig(source)) !== JSON.stringify(published))
-        throw new Error("La configuration GitHub a changé. Rechargez cette page avant de publier.");
-      const update = await fetch(GITHUB_FILE, {
-        method: "PUT",
-        headers: { ...headers, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: "Admin: update exercise difficulty levels",
-          content: btoa(configSource(levels)),
-          sha: remote.sha,
-          branch: "main",
-        }),
-      });
-      if (!update.ok) throw new Error("Publication refusée par GitHub (HTTP " + update.status + ").");
-      Object.assign(published, levels);
-      status("difficulty-status", "Modifications enregistrées sur GitHub. Elles seront actives après le déploiement et le rechargement des pages.");
-    } catch (error) {
-      status("difficulty-status", error.message || "Échec de la publication.", true);
-    } finally {
-      element("github-token").value = "";
-      button.disabled = false;
-    }
-  }
-
-  async function copyConfig() {
-    try {
-      const source = configSource(readDifficultyInputs());
-      await navigator.clipboard.writeText(source);
-      status("difficulty-status", "Configuration copiée. Collez-la dans le fichier ouvert avec « Modifier dans GitHub », puis validez le commit.");
-    } catch (error) {
-      status("difficulty-status", "Copie impossible : " + error.message, true);
     }
   }
 
@@ -315,8 +241,6 @@
   }
 
   element("login-form").addEventListener("submit", login);
-  element("github-save").addEventListener("click", saveGitHub);
-  element("github-copy").addEventListener("click", copyConfig);
   element("bonus-form").addEventListener("submit", grantBonus);
   element("admin-refresh").addEventListener("click", renderLocalData);
 })();

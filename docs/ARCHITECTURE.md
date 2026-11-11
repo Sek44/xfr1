@@ -130,29 +130,29 @@ après migration ne supprime pas une maîtrise déjà estimée.
 ## Administration locale et configuration des difficultés
 
 La page `admin.html` n'est liée depuis aucune navigation publique. Elle
-demande un mot de passe constant présent **en clair** dans `admin.js` : il
-ne constitue pas une authentification réelle sur GitHub Pages, où tous les
-fichiers HTML/JS sont publics et les protections côté client contournables.
-La page est également marquée `noindex,nofollow`.
+demande un mot de passe en clair dans `admin.js` : il ne constitue pas une
+authentification sur GitHub Pages, dont les ressources sont publiques.
+La page porte `noindex,nofollow`.
 
-Les 29 niveaux publiés sont définis dans `reward-difficulties.js`, chargé
-avant `reward-rules.js` sur toutes les pages. Chaque niveau représente une
-sous-catégorie jouable, y compris les 20 combinaisons plage/niveau de Calcul.
-Une difficulté modifiée dans l'interface n'est **pas** stockée localement :
-elle est publiée dans le dépôt avec l'API GitHub Contents et un jeton personnel
-`Contents: read/write` saisi ponctuellement (jamais persisté), ou manuellement
-via l'éditeur GitHub qui demande la connexion habituelle. L'API lit le SHA et
-refuse de remplacer une configuration modifiée entre-temps. Le déploiement et
-le rechargement appliquent les nouveaux niveaux à tous les joueurs ; les scores
-historiques restent inchangés.
+Les 29 niveaux de difficulté sont définis dans `reward-difficulties.js`,
+chargé avant `reward-rules.js` sur chaque page. L'administration affiche
+ces valeurs **en lecture seule** et fournit uniquement un lien vers l'éditeur
+natif GitHub de ce fichier, sans saisie de jeton ni requête d'écriture API.
+GitHub gère l'authentification, la modification et le commit ; les joueurs
+obtiennent les nouveaux niveaux après déploiement et rechargement.
 
-Sur l'appareil présent, `RewardRules.setMastery(id, niveau|null)` enregistre
-un `manualMastery` optionnel dans le profil de maîtrise et garde les preuves
-de pratique (total/recent/days), qui continuent d'évoluer. Choisir « Auto »
-supprime uniquement l'override. `DailyExercises.grantAdminBonus(secondes,
-jeton)` ajoute un bonus ponctuel, idempotent et limité à 120 minutes par
-action, dans `seconds`, `minutes` et `bonusSeconds` du contrat quotidien
-déjà partagé avec GMR. Ce bonus ne consomme pas le plafond des gains
-d'exercices, ne crée ni point ni score, et expire au changement de date locale.
-Une lecture JSON repliable expose les clés du site dans le localStorage du
-navigateur, sans téléverser les données du joueur.
+La maîtrise effective pour les crédits, les plafonds d'essais et les scores
+est `clamp(automaticMastery(profile) + masteryBonus, 0, 10)`.
+Le niveau de base continue d'évoluer selon les résultats et les jours joués,
+même si un bonus fixe (de −10 à +10) est enregistré dans
+`entrainement_mastery_v1.categories[id].masteryBonus`. Choisir 0 dans
+l'interface supprime l'ajustement. L'API
+`RewardRules.setMasteryBonus(id, entier)` ne modifie ni les scores,
+ni les preuves de pratique. Les anciens profils utilisant
+`manualMastery` restent lisibles jusqu'à ce que l'administrateur choisisse
+un bonus sur cette catégorie (conversion explicite).
+
+`DailyExercises.grantAdminBonus(secondes, jeton)` ajoute des minutes locales
+idempotentes et limitées à 120 minutes par action au contrat quotidien partagé
+avec GMR, en dehors du plafond des exercices. L'historique des scores et les
+données de joueur ne sont pas envoyés à GitHub.
