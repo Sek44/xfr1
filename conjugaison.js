@@ -232,6 +232,7 @@
   scoreView = ScoreView.bind({
     suspend: () => { game.suspend(); persist(); },
     resume: () => game.resume(),
+    subcategory: () => mode,
   });
   window.addEventListener("pagehide", () => { game.suspend(); persist(); });
   window.addEventListener("pageshow", (event) => { if (event.persisted) game.resume(); });
