@@ -227,6 +227,40 @@ test("shared final result uses an accessible trophy card and restarts without ch
   assert.equal(finishes, 1);
 });
 
+
+test("difficulty and mastery levels have no /10 suffix on every result screen", () => {
+  const f = setup();
+  const game = f.context.ExerciseGame.create({
+    onChange() {},
+    onFinish() {},
+  });
+  game.reset(1);
+  game.validate(true);
+  game.next();
+  const panel = new Node("div");
+  game.finish(panel, () => {}, null, {
+    seconds: 75,
+    parts: [
+      { mastery: 7, currentMastery: 8, remaining: 3 },
+      { mastery: 5, currentMastery: 6, remaining: null },
+    ],
+  });
+  const card = panel.children[0];
+  const reward = findByClass(card, "academy-result-reward");
+  assert.equal(reward.children[0].textContent, "Temps gagné : 1 min 15 s");
+  assert.equal(reward.children[1].textContent,
+    "Maîtrise 8 · 3 séries restantes aujourd’hui · Maîtrise 6");
+  assert.doesNotMatch(reward.children[1].textContent, /\/\s*10\b/);
+});
+
+test("mission end overlays display bare mastery levels as well", () => {
+  for (const mission of ["space.js", "magic.js"]) {
+    const source = fs.readFileSync(path.join(__dirname, "..", mission), "utf8");
+    assert.match(source, /" · Maîtrise " \+ summary\.mastery \+/);
+    assert.doesNotMatch(source, /" · Maîtrise " \+ summary\.mastery \+ "\/10"/);
+  }
+});
+
 test("numeric controls use identical commands with game-specific labels, limits and disabled state", () => {
   const { context } = setup(),
     ui = context.GameUI,

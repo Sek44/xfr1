@@ -242,7 +242,7 @@
     $("result").textContent = game.score + " point" +
       (game.score === 1 ? "" : "s") +
       (summary ? " · Temps gagné : " + duration +
-        " · Maîtrise " + summary.mastery + "/10" +
+        " · Maîtrise " + summary.mastery +
         (summary.remaining === null ? "" :
           " · " + summary.remaining + " partie(s) restante(s) aujourd’hui") : "");
     $("start").textContent = pendingResult ? "Réessayer l’enregistrement" : "Rejouer 🚀";

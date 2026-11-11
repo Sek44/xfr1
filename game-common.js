@@ -195,7 +195,7 @@ window.ExerciseGame = (() => {
         if (reward.parts && reward.parts.length) {
           const mastery = document.createElement("p");
           mastery.textContent = reward.parts.map((p) =>
-            "Maîtrise " + (p.currentMastery ?? p.mastery) + "/10" +
+            "Maîtrise " + (p.currentMastery ?? p.mastery) +
             (p.remaining === null ? "" : " · " + p.remaining +
               " série" + (p.remaining === 1 ? "" : "s") + " restante" +
               (p.remaining === 1 ? "" : "s") + " aujourd’hui")).join(" · ");
