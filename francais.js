@@ -452,6 +452,7 @@
       persist();
     },
     resume: () => game.resume(),
+    subcategory: () => tab,
   });
   window.addEventListener("pagehide", () => {
     game.suspend();
