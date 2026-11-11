@@ -84,6 +84,20 @@ test("customer reacts humorously to missing or excess change without revealing t
   assert.equal(model.customerRemark(question, []), "");
 });
 
+test("customer asks for change as soon as a new question starts", () => {
+  const question = { price: 105, paid: 500 };
+  const greeting = model.customerWaiting(question);
+  assert.ok(greeting.length > 0);
+  assert.equal(model.customerWaiting({ ...question }), greeting,
+    "greeting should stay fixed across redraws and reloads");
+  assert.equal(model.customerWaiting({ price: 500, paid: 500 }), "");
+  const reactions = new Set();
+  for (let price = 100; price < 500; price++)
+    reactions.add(model.customerWaiting({ price, paid: 500 }));
+  assert.ok(reactions.has("J'attends ma monnaie !"));
+  assert.ok(reactions.size >= 5, "different questions should vary waiting phrases");
+});
+
 test("correct change receives varied, stable and cheerful customer replies", () => {
   const question = { price: 105, paid: 500 };
   assert.equal(model.customerRemark(question, [200, 100, 50, 20, 20, 5]), "");
@@ -296,8 +310,16 @@ test("validated answer stays visible until next question and remains disabled", 
   const picked = () => all().filter((n) => n.className.includes("money-picked--coin"));
   const addTwoEuro = all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 2 euros");
   assert.ok(addTwoEuro);
+  const remark = () => descendants(all().find((n) => n.className === "money-customer-remark"))
+    .map((n) => n.textContent).filter(Boolean).join(" ");
+  assert.equal(remark(), model.customerWaiting({ price: 300, paid: 500 }),
+    "customer speaks before any coin is selected");
+  assert.equal(all().filter((n) => n.className === "money-customer-svg").length, 1,
+    "customer portrait is visible immediately");
   assert.equal(picked().length, 0);
   addTwoEuro.onclick();
+  assert.equal(remark(), model.customerWaiting({ price: 300, paid: 500 }),
+    "customer waits throughout unvalidated edits");
   assert.equal(picked().length, 1);
 
   const verify = all().find((n) => n.className === "primary");
@@ -306,8 +328,6 @@ test("validated answer stays visible until next question and remains disabled", 
   assert.equal(picked().length, 1, "successful validation must retain the answer");
   assert.equal(picked()[0].disabled, true, "validated answer must be locked");
   assert.deepEqual(stored.at(-1).selection, [200]);
-  const remark = () => descendants(all().find((n) => n.className === "money-customer-remark"))
-    .map((n) => n.textContent).filter(Boolean).join(" ");
   assert.match(remark(), /merci|Parfait|juste|Impeccable|bravo|œil|manque rien/i,
     "a correct answer receives a cheerful customer response");
   assert.equal(all().filter((n) => n.className === "money-customer-svg").length, 1);
@@ -315,8 +335,11 @@ test("validated answer stays visible until next question and remains disabled", 
   liveGame.next();
   assert.equal(liveGame.index, 1);
   assert.equal(picked().length, 0, "only navigation to the next question resets the answer");
+  assert.equal(remark(), model.customerWaiting({ price: 301, paid: 500 }),
+    "the next question must immediately show its waiting message");
+  assert.equal(all().filter((n) => n.className === "money-customer-svg").length, 1);
 
-  // A missing amount triggers a customer comment. Editing clears it;
+  // A missing amount triggers a customer comment. Editing restores waiting feedback;
   // an excessive amount then triggers a different comment.
   const addOneEuro = all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 1 euro");
   addOneEuro.onclick();
@@ -324,7 +347,8 @@ test("validated answer stays visible until next question and remains disabled", 
   assert.match(remark(), /manque|voler/);
   assert.equal(all().filter((n) => n.className === "money-customer-svg").length, 1);
   all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 2 euros").onclick();
-  assert.equal(remark(), "", "changing the answer hides the customer remark");
+  assert.equal(remark(), model.customerWaiting({ price: 301, paid: 500 }),
+    "changing the answer restores the waiting phrase");
   all().find((n) => n.className === "primary").onclick();
   assert.match(remark(), /généreux|chance|trop/);
 });
