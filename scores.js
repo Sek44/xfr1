@@ -421,20 +421,96 @@ window.ExerciseScores = (() => {
     }
     container.append(svg);
   }
-  function render(container, game = null, chartContainer = null) {
+  // History stores the French choice in "tab", but Conjugaison and Calcul
+  // store their level in "category". Normalize only for filtering: never
+  // migrate or alter a saved score, including older Conjugaison labels.
+  const frenchTabs = [
+    { value: "g", label: "g / gu / ge" },
+    { value: "c", label: "c / ç" },
+    { value: "s", label: "s / ss" },
+    { value: "all", label: "Tout (mélangé)" },
+  ];
+  const conjugaisonTabs = [
+    {
+      value: "present-1",
+      label: "Présent - 1er",
+      aliases: [
+        "Présent de l’indicatif · 1er groupe",
+        "Présent · 1er groupe",
+        "Présent - 1er",
+      ],
+    },
+    {
+      value: "present-2",
+      label: "Présent - 2e",
+      aliases: [
+        "Présent de l’indicatif · 2e groupe",
+        "Présent · 2e groupe",
+        "Présent - 2e",
+      ],
+    },
+    {
+      value: "etre-avoir",
+      label: "Être et avoir",
+      aliases: ["Présent de l’indicatif · être et avoir", "Être et avoir"],
+    },
+    { value: "all", label: "Tout (mélangé)", aliases: ["Tout"] },
+  ];
+  function matchesGame(record, game) {
+    if (game === null) return scoreCategory(record) === "exercise";
+    if (game === "francais")
+      return frenchTabs.some(({ value }) => value === record.tab);
+    return record.tab === game;
+  }
+  function subcategory(record, game) {
+    if (game === "francais") return record.tab;
+    if (game === "conjugaison") {
+      const saved = record.category || "Présent de l’indicatif · 1er groupe";
+      const known = conjugaisonTabs.find(
+        ({ aliases }) => aliases.includes(saved),
+      );
+      return known ? known.value : saved;
+    }
+    if (game === "math")
+      return typeof record.category === "string" && record.category.trim()
+        ? record.category
+        : "(sans catégorie)";
+    return null;
+  }
+  function subcategories(game) {
+    if (game === "francais")
+      return frenchTabs.map(({ value, label }) => ({ value, label }));
+    if (game === "conjugaison") {
+      const known = conjugaisonTabs.map(({ value, label }) => ({ value, label }));
+      const extra = [...new Set(
+        read()
+          .filter((record) => matchesGame(record, game))
+          .map((record) => subcategory(record, game))
+          .filter((value) => !known.some((entry) => entry.value === value)),
+      )].sort((a, b) => a.localeCompare(b, "fr"));
+      return known.concat(extra.map((value) => ({ value, label: value })));
+    }
+    if (game === "math") {
+      return [...new Set(
+        read()
+          .filter((record) => matchesGame(record, game))
+          .map((record) => subcategory(record, game)),
+      )]
+        .sort((a, b) => a.localeCompare(b, "fr", { numeric: true }))
+        .map((value) => ({
+          value,
+          label: value.replace(/^Additions\s+/i, ""),
+        }));
+    }
+    return [];
+  }
+  function render(container, game = null, chartContainer = null, selectedSubcategory = null) {
     container.replaceChildren();
     const records = read().filter(
-      (r) =>
-        (game === null && scoreCategory(r) === "exercise") ||
-        (game === "conjugaison"
-          ? r.tab === "conjugaison"
-          : game === "math"
-          ? r.tab === "math"
-          : game === "monnaie"
-            ? r.tab === "monnaie"
-            : game === "space" || game === "magic"
-            ? r.tab === game
-            : r.tab === "g" || r.tab === "c" || r.tab === "s" || r.tab === "all"),
+      (record) =>
+        matchesGame(record, game) &&
+        (selectedSubcategory === null ||
+          subcategory(record, game) === selectedSubcategory),
     );
     if (chartContainer) renderGraph(chartContainer, records, game);
     else renderGraph(container, records, game);
@@ -497,7 +573,7 @@ window.ExerciseScores = (() => {
       });
       if (!confirmed) return;
       const removed = remove(record);
-      render(container, game, chartContainer);
+      render(container, game, chartContainer, selectedSubcategory);
       if (!removed) {
         const error = document.createElement("p");
         error.className = "history-error";
@@ -592,5 +668,5 @@ window.ExerciseScores = (() => {
     scroll.append(table);
     container.append(scroll);
   }
-  return { read, save, render, encourage, time, remove };
+  return { read, save, render, subcategories, encourage, time, remove };
 })();
