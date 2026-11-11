@@ -1,7 +1,7 @@
 "use strict";
 // Keep the game alive so its exact state survives a scores visit.
 window.ScoreView = (() => {
-  function bind({ suspend = () => {}, resume = () => {} } = {}) {
+  function bind({ suspend = () => {}, resume = () => {}, subcategory = () => null } = {}) {
     let frame = null,
       animations = [];
     function hide() {
@@ -46,6 +46,17 @@ window.ScoreView = (() => {
       )
         return;
       event.preventDefault();
+      // Capture the live exercise setting, not the last saved score. A mixed
+      // "Tout" session remains its own filter instead of guessing its contents.
+      const activeSubcategory = subcategory();
+      if (typeof activeSubcategory === "string" && activeSubcategory)
+        url.searchParams.set("sub", activeSubcategory);
+      // Keep the original page for back navigation, including mission links.
+      if (!url.searchParams.has("from")) {
+        const page = location.pathname.split("/").pop().replace(/\.html$/, "");
+        if (["francais", "conjugaison", "calcul", "monnaie", "space", "magic"].includes(page))
+          url.searchParams.set("from", page);
+      }
       history.pushState(
         { ...history.state, exerciseScores: url.href },
         "",
