@@ -116,10 +116,10 @@ test("mission packs have adjustable difficulty and keep their progress", () => {
   assert.equal(daily.recordProgress("space", 10, 10, "space-1"), 1);
   assert.equal(daily.recordProgress("magic", 20, 20, "magic-1"), 1);
   assert.equal(daily.read().points, 2);
-  assert.equal(daily.read().seconds, 600);
+  assert.equal(daily.read().seconds, 180);
   assert.equal(daily.read().minutes, 3);
   assert.equal(daily.recordProgress("magic", 20, 20, "magic-1"), 0);
-  assert.equal(daily.read().seconds, 135);
+  assert.equal(daily.read().seconds, 180);
 });
 test("mission launch cap is separate from packs and survives retries", () => {
   const api = setup();
