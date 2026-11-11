@@ -84,6 +84,44 @@ test("customer reacts humorously to missing or excess change without revealing t
   assert.equal(model.customerRemark(question, []), "");
 });
 
+test("correct change receives varied, stable and cheerful customer replies", () => {
+  const question = { price: 105, paid: 500 };
+  assert.equal(model.customerRemark(question, [200, 100, 50, 20, 20, 5]), "");
+  assert.ok(model.customerThanks(question).includes("!"));
+  assert.equal(model.customerThanks(question), model.customerThanks({ ...question }),
+    "the same purchase must keep its compliment on re-render");
+  assert.equal(model.customerThanks({ price: 500, paid: 500 }), "");
+  const reactions = new Set();
+  for (let price = 100; price < 500; price++)
+    reactions.add(model.customerThanks({ price, paid: 500 }));
+  assert.ok(reactions.size >= 5, "show a variety of positive responses");
+  assert.ok([...reactions].includes("Le compte est bon, merci !"));
+});
+
+test("customer portraits are varied, stable across redraws and decorative SVG", () => {
+  const createNode = (name) => ({
+    name, attributes: {}, children: [],
+    setAttribute(key, value) { this.attributes[key] = value; },
+    append(...children) { this.children.push(...children); },
+  });
+  const sandbox = { window: {}, document: { createElementNS: (_, name) => createNode(name) } };
+  vm.runInNewContext(read("monnaie-customers.js"), sandbox);
+  const customers = sandbox.window.MonnaieCustomers;
+  const seen = new Set();
+  for (let price = 100; price < 500; price++) {
+    const question = { price, paid: 500 };
+    const chosen = customers.choose(question);
+    seen.add(chosen.id);
+    assert.equal(customers.choose({ ...question }).id, chosen.id);
+    const portrait = customers.create(question);
+    assert.equal(portrait.name, "svg");
+    assert.equal(portrait.attributes.class, "money-customer-svg");
+    assert.equal(portrait.attributes["aria-hidden"], "true");
+    assert.ok(portrait.children.length > 5);
+  }
+  assert.ok(seen.size >= 5, "different questions should show different clients");
+});
+
 test("price-matched shop illustrations are deterministic, varied and accessible SVG", () => {
   const createNode = (name) => ({
     name, attributes: {}, children: [],
@@ -184,7 +222,7 @@ test("Monnaie answer is sorted, reserves two rows and removes note frames and vi
   assert.match(page, /monnaie-objects\.js\?v=20261111-objects1/);
   assert.match(css, /\.money-price-line \{[\s\S]*?display: flex/);
   assert.match(css, /\.money-object-svg \{[\s\S]*?width: min\(46px, 100%\)/);
-  assert.match(css, /\.money-customer-remark \{[\s\S]*?min-height: 22px/);
+  assert.match(css, /\.money-customer-remark \{[\s\S]*?min-height: 42px/);
   assert.match(controller, /MonnaieObjects\.choose\(current\)/);
   assert.match(controller, /model\.customerRemark\(current, selection\)/);
 });
@@ -221,6 +259,9 @@ test("validated answer stays visible until next question and remains disabled", 
     MonnaieObjects: {
       choose: () => ({ id: "apple", name: "une pomme" }),
       create: () => createNode("svg", "money-object-svg"),
+    },
+    MonnaieCustomers: {
+      create: () => createNode("svg", "money-customer-svg"),
     },
     GameState: { create: () => ({
       load: () => null,
@@ -265,6 +306,11 @@ test("validated answer stays visible until next question and remains disabled", 
   assert.equal(picked().length, 1, "successful validation must retain the answer");
   assert.equal(picked()[0].disabled, true, "validated answer must be locked");
   assert.deepEqual(stored.at(-1).selection, [200]);
+  const remark = () => descendants(all().find((n) => n.className === "money-customer-remark"))
+    .map((n) => n.textContent).filter(Boolean).join(" ");
+  assert.match(remark(), /merci|Parfait|juste|Impeccable|bravo|œil|manque rien/i,
+    "a correct answer receives a cheerful customer response");
+  assert.equal(all().filter((n) => n.className === "money-customer-svg").length, 1);
 
   liveGame.next();
   assert.equal(liveGame.index, 1);
@@ -275,8 +321,8 @@ test("validated answer stays visible until next question and remains disabled", 
   const addOneEuro = all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 1 euro");
   addOneEuro.onclick();
   all().find((n) => n.className === "primary").onclick();
-  const remark = () => all().find((n) => n.className === "money-customer-remark").textContent;
   assert.match(remark(), /manque|voler/);
+  assert.equal(all().filter((n) => n.className === "money-customer-svg").length, 1);
   all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 2 euros").onclick();
   assert.equal(remark(), "", "changing the answer hides the customer remark");
   all().find((n) => n.className === "primary").onclick();
@@ -295,6 +341,7 @@ test("Monnaie links, score filter and complete shared exercise integration exist
   assert.match(page, /score-view\.js/);
   assert.match(page, /monnaie-model\.js/);
   assert.match(page, /monnaie-art\.js/);
+  assert.match(page, /monnaie-customers\.js/);
   assert.match(controller, /ExerciseGame\.resultTracker/);
   assert.match(controller, /GameState\.create\("monnaie"\)/);
   assert.match(controller, /ScoreView\.bind/);
