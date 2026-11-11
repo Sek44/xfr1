@@ -76,7 +76,7 @@ test("each page imports each JavaScript and CSS file only once", () => {
 });
 
 test("classic pages load navigation and score styles only from the active theme", () => {
-  for (const page of ["index", "francais", "conjugaison", "calcul", "scores"]) {
+  for (const page of ["index", "francais", "conjugaison", "calcul", "monnaie", "scores"]) {
     const html = fs.readFileSync(path.join(root, page + ".html"), "utf8");
     assert.doesNotMatch(html, /(?:exercise-header|scores-base)\.css/);
     assert.match(html, /magical-academy\/components\.css/);
@@ -105,7 +105,7 @@ test("score-only CSS stays in Scores, and the shared scores iframe retains its s
     assert.equal(confirmation.includes(selector), false, selector + " is not a dialog rule");
     assert.ok(scores.includes(selector), selector + " belongs to scores.css");
   }
-  for (const page of ["francais", "conjugaison", "calcul", "magic", "space"]) {
+  for (const page of ["francais", "conjugaison", "calcul", "monnaie", "magic", "space"]) {
     assert.equal(fs.readFileSync(path.join(root, page + ".html"), "utf8").includes("scores-overlay.css"), false, page);
   }
 });

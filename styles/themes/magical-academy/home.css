@@ -372,6 +372,9 @@ html[data-theme="magical-academy"] .activity-conjugation .activity-icon {
 html[data-theme="magical-academy"] .activity-math .activity-icon {
   background-image: url("./assets/home-calcul.webp");
 }
+html[data-theme="magical-academy"] .activity-monnaie .activity-icon {
+  background-image: url("./assets/home-monnaie.svg");
+}
 html[data-theme="magical-academy"] .activity-space .activity-icon {
   background-image: url("./assets/home-rocket.webp");
 }

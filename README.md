@@ -1,12 +1,13 @@
 # Entraînement
 
-Site statique d'exercices de français, de calcul et de deux missions ludiques, publié sur GitHub Pages. Aucun serveur, bundler ni dépendance d'exécution n'est nécessaire.
+Site statique d'exercices de français, de mathématiques et de deux missions ludiques, publié sur GitHub Pages. Aucun serveur, bundler ni dépendance d'exécution n'est nécessaire.
 
 ## Activités
 
 - **Orthographe** (`francais.html`) : g/gu/ge, c/ç, s/ss, ou mode « Tout ».
 - **Conjugaison** (`conjugaison.html`) : présent des 1er et 2e groupes, ou mode « Tout ».
 - **Calcul** (`calcul.html`) : additions par plage de valeurs et difficulté.
+- **Monnaie** (`monnaie.html`) : rendre la monnaie avec des pièces et billets en euros, sans total affiché.
 - **Mission calcul** (`space.html`) : jeu spatial avec calculs.
 - **Mission magique** (`magic.html`) : jeu de forêt avec calculs.
 - **Scores** (`scores.html`) : historique et courbes, consultables pendant une partie.
@@ -19,9 +20,10 @@ Site statique d'exercices de français, de calcul et de deux missions ludiques, 
 | `styles/themes/magical-academy/theme.css` | Palette, scène de fond, cadre extérieur partagé |
 | `styles/themes/magical-academy/components.css`, `academy-header.js` | Navigation et composants communs aux exercices et Scores |
 | `styles/themes/magical-academy/results.css`, `styles/themes/magical-academy/scores.css` | Écran de résultat partagé et styles propres à la page Scores |
-| `styles/themes/magical-academy/assets/` | Ressources WebP de production |
+| `styles/themes/magical-academy/assets/` | Ressources graphiques de production (WebP, SVG) |
 | `game-common.js`, `game-ui.js`, `exercise-weighting.js` | Sessions, corrections, saisie et pondération |
-| `francais.js`, `francais-data.js`, `conjugaison.js`, `conjugaison-data.js`, `calcul.js` | Contrôleurs et banques de questions distincts |
+| `francais.js`, `francais-data.js`, `conjugaison.js`, `conjugaison-data.js`, `calcul.js` | Contrôleurs et banques de questions distincts
+| `monnaie.js`, `monnaie-model.js`, `monnaie-art.js`, `monnaie.css` | Contrôleur, modèle en centimes, rendu SVG et disposition de Monnaie |
 | `space-engine.js`, `space-enemies.js`, `space.js` | Mission calcul |
 | `magic-engine.js`, `magic.js` | Mission magique |
 | `scores.js`, `score-view.js`, `game-state.js` | Historique, visite Scores et reprise |
@@ -32,7 +34,7 @@ Les scripts communs exposent leurs API sur `window`. Les contrôleurs restent da
 
 ## Progression et stockage
 
-Une série terminée d'Orthographe, Conjugaison ou Calcul rapporte **1 point d'exercice**, quel que soit le score. Mission calcul rapporte **1 point par 10 calculs réussis**, Mission magique **1 point par 20 calculs réussis**. Chaque point accorde actuellement **3 minutes** de jeu autorisées. Les reliquats des missions sont gardés pour la journée locale.
+Une série terminée d'Orthographe, Conjugaison, Calcul ou Monnaie rapporte **1 point d'exercice**, quel que soit le score. Mission calcul rapporte **1 point par 10 calculs réussis**, Mission magique **1 point par 20 calculs réussis**. Chaque point accorde actuellement **3 minutes** de jeu autorisées. Les reliquats des missions sont gardés pour la journée locale.
 
 Le contrat stable `entrainement_daily_exercises_v1` comporte `version`, `date`, `points`, `minutes`, `progress` et `events`. Il peut être lu depuis d'autres pages de la **même origine** web, qui doivent vérifier la date locale. Il indique le temps autorisé, pas le temps consommé.
 

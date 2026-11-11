@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Pièces et billet en euros">
+  <rect x="9" y="15" width="85" height="49" rx="6" fill="#6c9acb" stroke="#284f7f" stroke-width="3" transform="rotate(-8 50 40)"/>
+  <rect x="16" y="22" width="70" height="34" rx="4" fill="none" stroke="#dceaf9" stroke-width="2" transform="rotate(-8 50 40)"/>
+  <text x="54" y="46" font-size="23" font-family="Arial,sans-serif" font-weight="bold" text-anchor="middle" fill="#1d426c" transform="rotate(-8 50 40)">20€</text>
+  <circle cx="41" cy="69" r="26" fill="#c7d1d4" stroke="#788b90" stroke-width="3"/>
+  <circle cx="41" cy="69" r="20" fill="#e9ca6b" stroke="#917634" stroke-width="2"/>
+  <text x="41" y="76" font-family="Arial,sans-serif" font-weight="bold" font-size="20" text-anchor="middle" fill="#5c4820">2€</text>
+  <circle cx="75" cy="77" r="17" fill="#e1b765" stroke="#9b772c" stroke-width="2.5"/>
+  <circle cx="75" cy="77" r="12" fill="#f2d98d" stroke="#b59146" stroke-width="1.5"/>
+  <text x="75" y="81" font-family="Arial,sans-serif" font-weight="bold" font-size="13" text-anchor="middle" fill="#62491e">50c</text>
+</svg>

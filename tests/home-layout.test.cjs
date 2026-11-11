@@ -132,8 +132,8 @@ test("Scores uses the shared header and the two-layer WebP icon", () => {
   }
 });
 
-test("home has five compact activities and no unused preference controls", () => {
-  assert.equal((html.match(/class="activity-card activity-/g) || []).length, 5);
+test("home has six compact activities and no unused preference controls", () => {
+  assert.equal((html.match(/class="activity-card activity-/g) || []).length, 6);
   assert.equal((html.match(/data-academy-header/g) || []).length, 1);
   assert.ok(css.includes('html[data-theme="magical-academy"] .activity-card { min-height: 73px; }'));
   assert.ok(css.includes("width: calc(100% - 28px);"));

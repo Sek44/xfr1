@@ -7,7 +7,7 @@ window.ExerciseScores = (() => {
   function scoreCategory(record) {
     if (record.tab === "space" || record.tab === "magic" || record.mode === "arcade")
       return "mission";
-    if (["g", "c", "s", "all", "math", "conjugaison"].includes(record.tab))
+    if (["g", "c", "s", "all", "math", "monnaie", "conjugaison"].includes(record.tab))
       return "exercise";
     return record.scoreCategory === "mission" ? "mission" : "exercise";
   }
@@ -113,6 +113,7 @@ window.ExerciseScores = (() => {
     if (record.tab === "space") return "Mission calcul";
     if (record.tab === "magic") return "Mission magique";
     if (record.tab === "math") return record.category || "Additions";
+    if (record.tab === "monnaie") return "Monnaie";
     if (record.tab === "conjugaison") {
       // Older scores retain their original saved categories; only the
       // presentation changes so historical records are never rewritten.
@@ -429,7 +430,9 @@ window.ExerciseScores = (() => {
           ? r.tab === "conjugaison"
           : game === "math"
           ? r.tab === "math"
-          : game === "space" || game === "magic"
+          : game === "monnaie"
+            ? r.tab === "monnaie"
+            : game === "space" || game === "magic"
             ? r.tab === game
             : r.tab === "g" || r.tab === "c" || r.tab === "s" || r.tab === "all"),
     );
@@ -443,7 +446,9 @@ window.ExerciseScores = (() => {
           ? "Mes résultats en conjugaison"
           : game === "math"
           ? "Mes résultats en calcul"
-          : game === "space"
+          : game === "monnaie"
+            ? "Mes résultats en monnaie"
+            : game === "space"
             ? "Mes missions spatiales"
             : game === "magic"
               ? "Mes aventures magiques"

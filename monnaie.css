@@ -1,0 +1,185 @@
+/* Monnaie: only money-specific layouts; the ornate frames and action button
+   are shared with the other classic exercises. */
+html[data-theme="magical-academy"] body.monnaie-page .money-question {
+  padding-top: 22px;
+  padding-bottom: 20px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-purchase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  gap: 12px;
+  color: #20365a;
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.monnaie-page :is(.money-price, .money-paid) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 10px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-caption {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-price-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 5.6vw, 2.4rem);
+  color: #134f8b;
+  white-space: nowrap;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-paid .money-svg--note {
+  width: min(100%, var(--banknote-width));
+  height: auto;
+  filter: drop-shadow(0 3px 2px #57452a5c);
+}
+html[data-theme="magical-academy"] body.monnaie-page .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-tray {
+  padding: 10px;
+  border: 1.5px dashed #bb9964;
+  border-radius: 15px;
+  background: #fffaf0a8;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-heading {
+  margin: 0 0 7px;
+  color: #23365a;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 3.6vw, 1.22rem);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-selection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 60px;
+  padding: 3px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-empty {
+  margin: 0;
+  padding: 12px 4px;
+  color: #596783;
+  font-size: var(--text-sm);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-count {
+  margin: 6px 0 0;
+  color: #52627c;
+  font-size: var(--text-xs);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-subheading {
+  margin: 2px 0 6px;
+  color: #293c5c;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-grid {
+  display: grid;
+  gap: 6px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-grid--coins {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-grid--notes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-picked) {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  padding: 4px;
+  border: 1.5px solid #d9ba87;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fffdf7, #f1e2c4);
+  box-shadow: inset 0 1px #fff, 0 2px 2px #65513431;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-option {
+  width: 100%;
+  min-height: 70px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-option--note {
+  min-height: 73px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-option--coin .money-svg {
+  width: min(var(--coin-size), 100%);
+  height: auto;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-option--note .money-svg {
+  display: block;
+  width: min(100%, var(--banknote-width));
+  height: auto;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-picked {
+  min-height: 51px;
+  border-color: #6d9fba;
+  background: linear-gradient(180deg, #eef9ff, #dbeefb);
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-picked--coin {
+  width: 55px;
+  height: 55px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-picked--coin .money-svg {
+  width: min(var(--coin-size), 100%);
+  height: auto;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-picked--note {
+  width: 94px;
+  height: 55px;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-picked--note .money-svg {
+  width: 100%;
+  height: auto;
+}
+html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-picked):not(:disabled):active {
+  transform: translateY(1px);
+  background: #e4d4ad;
+  box-shadow: inset 0 1px 3px #806b4c60;
+}
+html[data-theme="magical-academy"] body.monnaie-page :is(.money-option, .money-picked):disabled {
+  cursor: default;
+  opacity: .76;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-svg {
+  display: block;
+  flex: 0 1 auto;
+  overflow: visible;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-controls .exercise-actions {
+  margin-top: 4px;
+}
+@media (max-width: 420px) {
+  html[data-theme="magical-academy"] body.monnaie-page .money-question {
+    padding-inline: 13px;
+  }
+  html[data-theme="magical-academy"] body.monnaie-page .money-purchase { gap: 7px; }
+  html[data-theme="magical-academy"] body.monnaie-page .money-caption { font-size: var(--text-xs); }
+  html[data-theme="magical-academy"] body.monnaie-page .money-price-value { font-size: clamp(1.45rem, 6.2vw, 1.85rem); }
+  html[data-theme="magical-academy"] body.monnaie-page .money-option { min-height: 62px; }
+  html[data-theme="magical-academy"] body.monnaie-page .money-option--note { min-height: 64px; }
+  html[data-theme="magical-academy"] body.monnaie-page .money-grid { gap: 5px; }
+  html[data-theme="magical-academy"] body.monnaie-page .money-tray { padding: 8px 5px; }
+}
