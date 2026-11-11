@@ -156,7 +156,7 @@ test("failed mastery persistence retries without repeating a credited award", ()
   const answers = outcome("monnaie:base", 10);
   assert.equal(daily.awardResultOnce("monnaie", "retry", answers).ok, false);
   assert.equal(daily.read().points, 1);
-  assert.equal(daily.read().seconds, 180);
+  assert.equal(daily.read().seconds, 600);
   storage.setItem = setter;
   assert.equal(daily.awardResultOnce("monnaie", "retry", answers).ok, true);
   assert.equal(daily.read().points, 1);
