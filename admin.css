@@ -146,9 +146,17 @@
   font-weight: var(--weight-bold);
 }
 
+.admin-exercise {
+  border-bottom: 1px solid #e1d5c5;
+}
 .admin-level-row {
   padding: 6px 0;
-  border-bottom: 1px solid #e1d5c5;
+}
+.admin-gain-summary {
+  margin: 0 0 11px;
+  color: #495d75;
+  font-size: var(--text-xs);
+  line-height: 1.45;
 }
 
 .admin-level-name {
@@ -235,4 +243,49 @@
     font-size: var(--text-xs);
     font-weight: var(--weight-normal);
   }
+}
+
+
+.admin-matrix-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid #d6c5a9;
+  border-radius: 10px;
+}
+.admin-matrix {
+  width: 100%;
+  min-width: 1020px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.admin-matrix th,
+.admin-matrix td {
+  padding: 9px 7px;
+  border-right: 1px solid #e6dcca;
+  border-bottom: 1px solid #e6dcca;
+  text-align: center;
+}
+.admin-matrix thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #e9d7b4;
+  color: #172c54;
+}
+.admin-matrix th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #f5e8d1;
+}
+.admin-matrix thead th:first-child {
+  z-index: 3;
+  background: #e9d7b4;
+}
+.admin-matrix tbody tr:nth-child(even) td {
+  background: #fffdf7;
 }

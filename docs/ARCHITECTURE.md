@@ -156,3 +156,20 @@ un bonus sur cette catégorie (conversion explicite).
 idempotentes et limitées à 120 minutes par action au contrat quotidien partagé
 avec GMR, en dehors du plafond des exercices. L'historique des scores et les
 données de joueur ne sont pas envoyés à GitHub.
+
+La page d'administration présente sous chaque sous-catégorie les gains
+minimum positif et maximum, les seuils de bonnes réponses pour les séries
+classiques (10 questions), la taille des paliers des missions (10 réussites
+pour Mission calcul, 20 pour Mission magique), le point d'exercice obtenu
+et les limites quotidiennes d'essais ou de parties. Un tableau final croise
+les 10 difficultés avec les 11 maîtrises de 0 à 10 ; les cellules indiquent
+le gain minimum positif et maximum pour une série homogène de 10 réponses.
+L'affichage est recalculé dès que le bonus de maîtrise change.
+
+Le calcul de présentation `RewardRules.gainForScore()` réutilise les
+multiplicateurs, la fonction de note et l'arrondi aux 15 secondes du moteur.
+`gainRange()` fournit les bornes et seuils associés. Le tableau représente
+les récompenses *théoriques*, avant plafonnement à 3 600 s/jour de crédits
+d'exercices et avant limitation des tentatives. Une série « Tout » peut mêler
+des catégories et utilise alors le calcul pondéré et l'arrondi final de
+`forecast()`, donc peut diverger des cellules unitaires.

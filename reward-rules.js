@@ -42,10 +42,13 @@ window.RewardRules = (() => {
     if (game === "monnaie") return 10;
     return CONFIG.mission[game] || 3;
   }
-  function maxSeconds(id) {
+  function maximumSecondsForDifficulty(level) {
     return Math.round((CONFIG.minSeconds +
-      (CONFIG.maxSeconds - CONFIG.minSeconds) * (difficulty(id) - 1) / 9) /
+      (CONFIG.maxSeconds - CONFIG.minSeconds) * (level - 1) / 9) /
       CONFIG.roundingSeconds) * CONFIG.roundingSeconds;
+  }
+  function maxSeconds(id) {
+    return maximumSecondsForDifficulty(difficulty(id));
   }
   function empty() { return { version: 1, categories: {}, events: [] }; }
   function validEntry(p) {
@@ -140,6 +143,35 @@ window.RewardRules = (() => {
     const note = 10 * score / total;
     if (masteryLevel > 5) return note >= 9 ? 1 : 0;
     return note < 5 ? 0 : note < 7 ? 0.5 : note < 9 ? 0.75 : 1;
+  }
+  // Reward preview for a single category. Mixed sessions are weighted by
+  // question count and rounded once at the end, so their totals can differ.
+  function gainForScore(difficultyLevel, masteryLevel, score, total = 10) {
+    if (!Number.isInteger(difficultyLevel) || difficultyLevel < 1 ||
+        difficultyLevel > 10 || !Number.isInteger(masteryLevel) ||
+        masteryLevel < 0 || masteryLevel > 10 ||
+        !Number.isInteger(total) || total < 1 || total > 100 ||
+        !Number.isInteger(score) || score < 0 || score > total) return null;
+    const seconds = maximumSecondsForDifficulty(difficultyLevel) *
+      noteFactor(score, total, masteryLevel) * CONFIG.multipliers[masteryLevel];
+    return Math.round(seconds / CONFIG.roundingSeconds) * CONFIG.roundingSeconds;
+  }
+  function gainRange(difficultyLevel, masteryLevel) {
+    const max = gainForScore(difficultyLevel, masteryLevel, 10, 10);
+    if (max === null) return null;
+    let firstScore = null;
+    let min = 0;
+    for (let score = 0; score <= 10; score++) {
+      const seconds = gainForScore(difficultyLevel, masteryLevel, score, 10);
+      if (seconds > 0) {
+        firstScore = score;
+        min = seconds;
+        break;
+      }
+    }
+    return { minSeconds: min, maxSeconds: max, minScore: firstScore,
+      maxScore: max > 0 ? 9 : null,
+      dailyLimit: CONFIG.dailyLimits[masteryLevel] };
   }
   function validAnswers(answers) {
     return Array.isArray(answers) && answers.length > 0 && answers.length <= 100 &&
@@ -402,7 +434,7 @@ window.RewardRules = (() => {
   }
 
   const api = { KEY, CONFIG, key, difficulty, maxSeconds, automaticMastery,
-    mastery, inspect, noteFactor, forecast, repriceParts,
+    mastery, inspect, noteFactor, gainForScore, gainRange, forecast, repriceParts,
     estimateHistoricalParts, record, read, validAnswers, initializeLegacy,
     setMastery, setMasteryBonus };
   initializeLegacy(); // Runs once when any xfr1 page first loads.

@@ -152,3 +152,56 @@ test("admin shows read-only difficulty and only an official GitHub edit link", (
   assert.match(script, /setMasteryBonus/);
   assert.match(script, /createElement\("output"\)/);
 });
+
+test("gain matrix cells match repricing for every published difficulty, mastery and score", () => {
+  const { rules, window } = fixture();
+  for (const [id, difficulty] of Object.entries(window.RewardDifficultyLevels)) {
+    for (let mastery = 0; mastery <= 10; mastery++) {
+      const range = rules.gainRange(difficulty, mastery);
+      let first = null;
+      let minimum = null;
+      let max = 0;
+      for (let score = 0; score <= 10; score++) {
+        const amount = rules.gainForScore(difficulty, mastery, score);
+        const original = rules.repriceParts([
+          { key: id, mastery, score, total: 10 },
+        ]);
+        assert.equal(amount, original,
+          "Mismatch " + id + ", mastery " + mastery + ", score " + score);
+        if (amount > 0 && first === null) {
+          first = score;
+          minimum = amount;
+        }
+        max = Math.max(max, amount);
+      }
+      assert.equal(range.minSeconds, minimum ?? 0);
+      assert.equal(range.maxSeconds, max);
+      assert.equal(range.minScore, first);
+      assert.equal(range.maxScore, max > 0 ? 9 : null);
+      assert.equal(range.dailyLimit, rules.CONFIG.dailyLimits[mastery]);
+    }
+  }
+});
+
+test("gain ranges include threshold, cutoff and mission pack behaviour", () => {
+  const { rules } = fixture();
+  assert.equal(rules.gainForScore(1, 0, 4), 0);
+  assert.equal(rules.gainForScore(1, 0, 5), 30);
+  assert.equal(rules.gainForScore(1, 0, 9), 60);
+  assert.equal(rules.gainForScore(10, 0, 5), 300);
+  assert.equal(rules.gainForScore(10, 0, 9), 600);
+  assert.equal(rules.gainForScore(10, 6, 8), 0);
+  assert.equal(rules.gainForScore(10, 6, 9), 450);
+  assert.equal(rules.gainForScore(1, 9, 9), 15);
+  assert.equal(rules.gainForScore(10, 10, 10), 0);
+  assert.equal(rules.gainRange(10, 10).minScore, null);
+  assert.equal(rules.gainRange(10, 10).dailyLimit, 1);
+  assert.equal(rules.gainRange(0, 2), null);
+  assert.equal(rules.gainForScore(1, 2, 11), null);
+  const admin = fs.readFileSync(path.join(root, "admin.js"), "utf8");
+  assert.match(admin, /space:base" \? 10/);
+  assert.match(admin, /magic:base" \? 20/);
+  assert.match(admin, /gainSummaryFor\(key, current\)/);
+  const html = fs.readFileSync(path.join(root, "admin.html"), "utf8");
+  assert.match(html, /admin-gains-matrix/);
+});

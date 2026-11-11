@@ -33,6 +33,72 @@
     output.dataset.error = String(error);
   }
 
+  function formatGain(seconds) {
+    if (seconds === 0) return "0 s";
+    return window.DailyExercises.formatCredit(seconds);
+  }
+
+  function gainSummaryFor(key, info) {
+    if (!info) return "Gains indisponibles (stockage local inaccessible).";
+    const range = window.RewardRules.gainRange(info.difficulty, info.mastery);
+    if (!range) return "Barème indisponible.";
+    const missionPoints = key === "space:base" ? 10 :
+      key === "magic:base" ? 20 : null;
+    const unit = missionPoints
+      ? missionPoints + " réussites / palier (1 point d’exercice)"
+      : "10 questions / série (1 point d’exercice)";
+    const daily = range.dailyLimit === null
+      ? "sans limite quotidienne d’essais"
+      : range.dailyLimit + (missionPoints ? " partie(s)" : " essai(s)") + "/jour";
+    if (!range.maxSeconds)
+      return "Gain min. / max. : 0 s / 0 s · " + unit + " · " + daily;
+    const requirement = missionPoints
+      ? "palier complet"
+      : "min. dès " + range.minScore + "/10 · max. dès " +
+        range.maxScore + "/10";
+    return "Gain min. / max. : " + formatGain(range.minSeconds) + " / " +
+      formatGain(range.maxSeconds) + " · " + requirement +
+      " · " + unit + " · " + daily;
+  }
+
+  function renderGainMatrix() {
+    const table = element("admin-gains-matrix");
+    table.replaceChildren();
+    const header = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    for (const text of ["Diff. / Maîtr.", ...Array.from({ length: 11 }, (_, i) => String(i))]) {
+      const cell = document.createElement("th");
+      cell.scope = "col";
+      cell.textContent = text;
+      headRow.append(cell);
+    }
+    header.append(headRow);
+    table.append(header);
+
+    const body = document.createElement("tbody");
+    for (let difficulty = 1; difficulty <= 10; difficulty++) {
+      const row = document.createElement("tr");
+      const name = document.createElement("th");
+      name.scope = "row";
+      name.textContent = String(difficulty);
+      row.append(name);
+      for (let mastery = 0; mastery <= 10; mastery++) {
+        const range = window.RewardRules.gainRange(difficulty, mastery);
+        const cell = document.createElement("td");
+        cell.textContent = range.maxSeconds
+          ? formatGain(range.minSeconds) + " – " + formatGain(range.maxSeconds)
+          : "0 s";
+        cell.title = range.maxSeconds
+          ? "Difficulté " + difficulty + " · maîtrise " + mastery +
+            " · " + range.minScore + "/10 pour le gain minimum et 9/10 pour le maximum"
+          : "Aucun crédit à maîtrise 10";
+        row.append(cell);
+      }
+      body.append(row);
+    }
+    table.append(body);
+  }
+
   function createCategoryRow(key, label) {
     const row = document.createElement("div");
     row.className = "admin-level-row";
@@ -80,6 +146,12 @@
     effective.setAttribute("aria-label", "Maîtrise actuelle : " + label);
     effective.textContent = String(level?.mastery ?? "—");
 
+    const wrapper = document.createElement("div");
+    wrapper.className = "admin-exercise";
+    const gain = document.createElement("p");
+    gain.className = "admin-gain-summary";
+    gain.textContent = gainSummaryFor(key, level);
+
     let previous = bonus.value;
     bonus.addEventListener("change", () => {
       const adjustment = Number(bonus.value);
@@ -96,6 +168,7 @@
       const current = window.RewardRules.inspect(key);
       automatic.textContent = String(current.automaticMastery);
       effective.textContent = String(current.mastery);
+      gain.textContent = gainSummaryFor(key, current);
       status("mastery-status", "Bonus de maîtrise enregistré pour « " + label +
         " » : " + (adjustment > 0 ? "+" : "") + adjustment +
         " (auto " + current.automaticMastery + " → actuel " + current.mastery + ").");
@@ -103,7 +176,8 @@
     });
 
     row.append(name, difficulty, automatic, bonusField, effective);
-    return row;
+    wrapper.append(row, gain);
+    return wrapper;
   }
 
   function renderCategories() {
@@ -238,6 +312,7 @@
     element("admin-dashboard").hidden = false;
     renderCategories();
     renderLocalData();
+    renderGainMatrix();
   }
 
   element("login-form").addEventListener("submit", login);
