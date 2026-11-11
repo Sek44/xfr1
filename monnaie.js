@@ -184,9 +184,18 @@
         ? selection.length + " élément" + (selection.length > 1 ? "s" : "") + " sélectionné" +
           (selection.length > 1 ? "s" : "")
         : "Aucun élément sélectionné";
-      remark.textContent = showRetry && !game.correct
-        ? model.customerRemark(current, selection) : "";
-      remark.classList.toggle("is-visible", !!remark.textContent);
+      const customerMessage = game.correct
+        ? model.customerThanks(current)
+        : showRetry ? model.customerRemark(current, selection) : "";
+      remark.replaceChildren();
+      if (customerMessage) {
+        remark.append(
+          MonnaieCustomers.create(current),
+          element("span", "money-customer-text", customerMessage),
+        );
+      }
+      remark.classList.toggle("is-visible", !!customerMessage);
+      remark.classList.toggle("is-success", game.correct && !!customerMessage);
       button.disabled = !game.correct && !selection.length;
       if (edited) {
         if (!game.correct) {
