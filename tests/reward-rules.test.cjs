@@ -31,12 +31,12 @@ function seed(api, key, answers = 50, days = 3, incorrect = 0) {
   api.items.set(api.rules.KEY, JSON.stringify({
     version: 1, categories: { [key]: profile }, events: [] }));
 }
-test("difficulty 1 to 10 maps to one to three minutes", () => {
+test("difficulty 1 to 10 maps to one to ten minutes", () => {
   const { rules } = setup();
   assert.equal(rules.difficulty("calcul:0-10:1"), 1);
   assert.equal(rules.maxSeconds("calcul:0-10:1"), 60);
   assert.equal(rules.difficulty("monnaie:base"), 10);
-  assert.equal(rules.maxSeconds("monnaie:base"), 180);
+  assert.equal(rules.maxSeconds("monnaie:base"), 600);
   assert.equal(rules.difficulty("conjugaison:present-2"), 6);
 });
 test("new reward credits seconds, keeps old public minutes and never duplicates", () => {
@@ -45,10 +45,10 @@ test("new reward credits seconds, keeps old public minutes and never duplicates"
   const answers = outcome(key, 9);
   const first = daily.awardResultOnce("monnaie", "session-1", answers);
   assert.equal(first.ok, true);
-  assert.equal(first.receipt.seconds, 180);
+  assert.equal(first.receipt.seconds, 600);
   assert.equal(daily.read().points, 1);
-  assert.equal(daily.read().minutes, 3);
-  assert.equal(daily.read().seconds, 180);
+  assert.equal(daily.read().minutes, 10);
+  assert.equal(daily.read().seconds, 600);
   assert.equal(daily.awardResultOnce("monnaie", "session-1", answers).ok, true);
   assert.equal(daily.read().points, 1);
   assert.equal(rules.read().categories[key].total, 10);
@@ -60,11 +60,11 @@ test("score threshold 9 and mastery 6 reduce credit to 75 percent", () => {
   seed(api, key, 50, 3, 20);
   assert.equal(api.rules.inspect(key).mastery, 6);
   assert.equal(api.rules.forecast(outcome(key, 8)).seconds, 0);
-  assert.equal(api.rules.forecast(outcome(key, 9)).seconds, 135);
-  assert.equal(api.daily.awardResultOnce("monnaie", "high-note", outcome(key, 9)).receipt.seconds, 135);
+  assert.equal(api.rules.forecast(outcome(key, 9)).seconds, 450);
+  assert.equal(api.daily.awardResultOnce("monnaie", "high-note", outcome(key, 9)).receipt.seconds, 450);
   assert.equal(api.daily.awardResultOnce("monnaie", "low-note", outcome(key, 8)).receipt.seconds, 0);
-  assert.equal(api.daily.read().minutes, 2);
-  assert.equal(api.daily.read().seconds, 135);
+  assert.equal(api.daily.read().minutes, 7);
+  assert.equal(api.daily.read().seconds, 450);
 });
 test("daily attempts count from first answer and are not duplicated on resume", () => {
   const api = setup();
@@ -95,7 +95,7 @@ test("mixed sessions preserve separate category mastery and proportional credits
   const result = daily.awardResultOnce("francais", "mixed", answers);
   assert.equal(result.ok, true);
   assert.equal(result.receipt.parts.length, 2);
-  assert.equal(result.receipt.seconds, 90);
+  assert.equal(result.receipt.seconds, 150);
   assert.equal(rules.read().categories["francais:c"].total, 5);
   assert.equal(rules.read().categories["francais:g"].total, 5);
 });
@@ -108,16 +108,16 @@ test("old daily records retain historical minutes until first variable reward", 
   assert.equal(api.daily.read().minutes, 6);
   const added = api.daily.awardResultOnce("monnaie", "later", outcome("monnaie:base", 10));
   assert.equal(added.ok, true);
-  assert.equal(api.daily.read().seconds, 540);
-  assert.equal(api.daily.read().minutes, 9);
+  assert.equal(api.daily.read().seconds, 960);
+  assert.equal(api.daily.read().minutes, 16);
 });
 test("mission packs have adjustable difficulty and keep their progress", () => {
   const { daily } = setup();
   assert.equal(daily.recordProgress("space", 10, 10, "space-1"), 1);
   assert.equal(daily.recordProgress("magic", 20, 20, "magic-1"), 1);
   assert.equal(daily.read().points, 2);
-  assert.equal(daily.read().seconds, 135);
-  assert.equal(daily.read().minutes, 2);
+  assert.equal(daily.read().seconds, 600);
+  assert.equal(daily.read().minutes, 3);
   assert.equal(daily.recordProgress("magic", 20, 20, "magic-1"), 0);
   assert.equal(daily.read().seconds, 135);
 });
