@@ -87,7 +87,7 @@
     mastery.setAttribute("aria-label", "Maîtrise : " + label);
     const auto = document.createElement("option");
     auto.value = "auto";
-    auto.textContent = "Auto";
+    auto.textContent = "Auto (" + (window.RewardRules.inspect(key)?.mastery ?? "—") + ")";
     mastery.append(auto);
     for (let level = 0; level <= 10; level++) {
       const option = document.createElement("option");
