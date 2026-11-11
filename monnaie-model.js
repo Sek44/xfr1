@@ -123,6 +123,24 @@
     return choices[(question.price + selection.length) % choices.length];
   }
 
+  // The customer speaks immediately, before any change is selected.
+  // Using the question keeps the same message across redraws and reloads.
+  function customerWaiting(question) {
+    if (!validQuestion(question)) return "";
+    const choices = [
+      "J'attends ma monnaie !",
+      "Et ma monnaie, s'il vous plaît ?",
+      "Je peux récupérer ma monnaie ?",
+      "Vous avez ma monnaie ?",
+      "Je vous laisse compter !",
+      "Prenez votre temps, je patiente !",
+      "Je suis prêt à récupérer ma monnaie !",
+    ];
+    const hash = (Math.imul(question.price, 374761393) ^
+      Math.imul(question.paid, 668265263)) >>> 0;
+    return choices[hash % choices.length];
+  }
+
   // The compliment varies between questions but is stable while the
   // same validated answer is displayed or restored after a reload.
   function customerThanks(question) {
@@ -147,7 +165,7 @@
 
   const api = Object.freeze({
     COINS, NOTES, MAX_PIECES, makeQuestion, validQuestion,
-    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, customerRemark, customerThanks, format,
+    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, customerRemark, customerWaiting, customerThanks, format,
   });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (root) root.MonnaieModel = api;
