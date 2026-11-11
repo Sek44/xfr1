@@ -4,6 +4,11 @@ window.DailyExercises = (() => {
   const KEY = "entrainement_daily_exercises_v1";
   const VERSION = 1;
   const MINUTES_PER_POINT = 3;
+  const SPECIAL_BONUS = Object.freeze({
+    date: "2026-11-11",
+    seconds: 5 * 60,
+    event: "bonus:2026-11-11:5min",
+  });
 
   function today() {
     const date = new Date();
@@ -27,6 +32,7 @@ window.DailyExercises = (() => {
       sessions: {},
       receipts: {},
       rewardScaleVersion: 2,
+      bonusSeconds: 0,
     };
   }
 
@@ -41,6 +47,9 @@ window.DailyExercises = (() => {
       state.minutes >= 0 &&
       (state.seconds === undefined || (Number.isSafeInteger(state.seconds) && state.seconds >= 0)) &&
       (state.rewardScaleVersion === undefined || state.rewardScaleVersion === 2) &&
+      (state.bonusSeconds === undefined ||
+        (Number.isSafeInteger(state.bonusSeconds) && state.bonusSeconds >= 0 &&
+          (state.seconds === undefined || state.bonusSeconds <= state.seconds))) &&
       (state.starts === undefined || (state.starts && typeof state.starts === "object" &&
         !Array.isArray(state.starts) && Object.values(state.starts).every((value) =>
           Array.isArray(value) && value.every((id) => typeof id === "string")))) &&
@@ -80,7 +89,9 @@ window.DailyExercises = (() => {
           !Number.isSafeInteger(tracked + receipt.seconds)) return null;
       tracked += receipt.seconds;
     }
-    let legacySeconds = oldSeconds - tracked;
+    // The one-day gift is outside the normal earned-minute ceiling.
+    const bonusSeconds = state.bonusSeconds || 0;
+    let legacySeconds = oldSeconds - bonusSeconds - tracked;
     if (!Number.isSafeInteger(legacySeconds) || legacySeconds < 0) return null;
 
     // Before variable rewards, each finished classic series earned 180 s.
@@ -134,8 +145,8 @@ window.DailyExercises = (() => {
       receipt.seconds = amount;
       seconds += amount;
     }
-    state.seconds = seconds;
-    state.minutes = Math.floor(seconds / 60);
+    state.seconds = seconds + bonusSeconds;
+    state.minutes = Math.floor(state.seconds / 60);
     state.rewardScaleVersion = 2;
     return write(state) ? state : null;
   }
@@ -170,6 +181,22 @@ window.DailyExercises = (() => {
     } catch {
       return null;
     }
+  }
+
+  // Exceptional 11 November gift: once per browser, without an exercise point.
+  // Its seconds are additive and do not consume the normal earned-credit cap.
+  function grantSpecialBonus() {
+    if (today() !== SPECIAL_BONUS.date) return false;
+    const state = read();
+    if (!state) return false;
+    if (state.events.includes(SPECIAL_BONUS.event)) return true;
+    const previous = state.seconds === undefined ? state.minutes * 60 : state.seconds;
+    if (!Number.isSafeInteger(previous + SPECIAL_BONUS.seconds)) return false;
+    state.seconds = previous + SPECIAL_BONUS.seconds;
+    state.minutes = Math.floor(state.seconds / 60);
+    state.bonusSeconds = (state.bonusSeconds || 0) + SPECIAL_BONUS.seconds;
+    state.events.push(SPECIAL_BONUS.event);
+    return write(state);
   }
 
   // Distinguish a duplicate, a new credit and a failed persistence attempt.
@@ -277,7 +304,8 @@ window.DailyExercises = (() => {
     if (!forecast) return { ok: false };
     const previous = state.seconds === undefined ? state.minutes * 60 : state.seconds;
     const amount = reservation.blocked ? 0 : Math.max(0, Math.min(
-      forecast.seconds, rules.CONFIG.dailySecondsCap - previous));
+      forecast.seconds,
+      rules.CONFIG.dailySecondsCap - (previous - (state.bonusSeconds || 0))));
     if (!Number.isSafeInteger(state.points + 1) ||
         !Number.isSafeInteger(previous + amount)) return { ok: false };
     state.points++;
@@ -332,7 +360,8 @@ window.DailyExercises = (() => {
         const allowed = info.dailyLimit === null || ids.length < info.dailyLimit;
         if (allowed) ids.push(creditId);
         const amount = allowed ? Math.max(0, Math.min(
-          forecast.seconds, rules.CONFIG.dailySecondsCap - seconds)) : 0;
+          forecast.seconds,
+          rules.CONFIG.dailySecondsCap - (seconds - (state.bonusSeconds || 0)))) : 0;
         seconds += amount;
         stored[creditId] = { seconds: amount, parts: forecast.parts,
           eligible: allowed };
@@ -473,7 +502,8 @@ window.DailyExercises = (() => {
     });
   }
 
-  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, awardOnce,
+  return { KEY, VERSION, MINUTES_PER_POINT, today, read, grantSpecialBonus,
+    award, awardOnce,
     awardResultOnce, canStart, start, receipt, missionSummary,
     recordProgress, milestones, mount, mountStats };
 })();
