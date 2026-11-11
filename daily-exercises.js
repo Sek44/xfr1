@@ -20,8 +20,11 @@ window.DailyExercises = (() => {
       date: today(),
       points: 0,
       minutes: 0,
+      seconds: 0,
       progress: {},
       events: [],
+      starts: {},
+      receipts: {},
     };
   }
 
@@ -34,6 +37,12 @@ window.DailyExercises = (() => {
       state.points >= 0 &&
       Number.isSafeInteger(state.minutes) &&
       state.minutes >= 0 &&
+      (state.seconds === undefined || (Number.isSafeInteger(state.seconds) && state.seconds >= 0)) &&
+      (state.starts === undefined || (state.starts && typeof state.starts === "object" &&
+        !Array.isArray(state.starts) && Object.values(state.starts).every((value) =>
+          Array.isArray(value) && value.every((id) => typeof id === "string")))) &&
+      (state.receipts === undefined || (state.receipts && typeof state.receipts === "object" &&
+        !Array.isArray(state.receipts))) &&
       state.progress &&
       typeof state.progress === "object" &&
       !Array.isArray(state.progress) &&
@@ -63,7 +72,11 @@ window.DailyExercises = (() => {
       // Never destroy unreadable or unsupported data.
       if (!valid(state)) return null;
       if (state.date === today()) {
-        // Existing daily points immediately use the current conversion ratio.
+        // Older records keep the historical 3 min / point conversion.
+        // Once seconds exists, minutes are no longer inferred from points.
+        if (state.seconds !== undefined) {
+          return state.minutes === Math.floor(state.seconds / 60) ? state : null;
+        }
         const minutes = state.points * MINUTES_PER_POINT;
         if (!Number.isSafeInteger(minutes)) return null;
         if (state.minutes !== minutes) {
@@ -92,6 +105,7 @@ window.DailyExercises = (() => {
         !Number.isSafeInteger(state.minutes + MINUTES_PER_POINT)) return "failed";
     state.points++;
     state.minutes += MINUTES_PER_POINT;
+    if (state.seconds !== undefined) state.seconds += MINUTES_PER_POINT * 60;
     if (event) state.events.push(event);
     return write(state) ? "added" : "failed";
   }
@@ -106,6 +120,76 @@ window.DailyExercises = (() => {
     return commitAward(game, token) !== "failed";
   }
 
+
+  // Check and reserve daily attempts by stable exercise subcategory.
+  // Merely opening an exercise does not count: the controller calls start()
+  // on the first answer. A resumed session reuses the same token.
+  function checkStart(game, token, keys, commit) {
+    if (typeof game !== "string" || !game || typeof token !== "string" || !token ||
+        !Array.isArray(keys) || !keys.length || !keys.every((k) => typeof k === "string"))
+      return { ok: false, blocked: false };
+    const state = read();
+    const rules = window.RewardRules;
+    if (!state || !rules) return { ok: false, blocked: false };
+    const event = game + ":" + token;
+    const starts = state.starts || {};
+    const distinct = [...new Set(keys)];
+    for (const id of distinct) {
+      const info = rules.inspect(id);
+      if (!info) return { ok: false, blocked: false };
+      const ids = starts[id] || [];
+      if (!ids.includes(event) && info.dailyLimit !== null &&
+          ids.length >= info.dailyLimit) return { ok: false, blocked: true };
+    }
+    if (commit) {
+      state.starts = starts;
+      for (const id of distinct) {
+        if (!starts[id]) starts[id] = [];
+        if (!starts[id].includes(event)) starts[id].push(event);
+      }
+      if (!write(state)) return { ok: false, blocked: false };
+    }
+    return { ok: true, blocked: false };
+  }
+  const canStart = (game, token, keys) => checkStart(game, token, keys, false);
+  const start = (game, token, keys) => checkStart(game, token, keys, true);
+
+  function receipt(game, token) {
+    const state = read();
+    return state?.receipts?.[game + ":" + token] || null;
+  }
+  function awardResultOnce(game, token, answers) {
+    const rules = window.RewardRules;
+    if (!rules || !rules.validAnswers(answers)) return { ok: false };
+    const event = game + ":" + token;
+    let state = read();
+    if (!state) return { ok: false };
+    if (state.events.includes(event)) {
+      return { ok: rules.record(event, answers), receipt: state.receipts?.[event] || null };
+    }
+    const keys = [...new Set(answers.map((a) => a.key))];
+    // A saved score may be retried after the browser was closed.
+    const reservation = start(game, token, keys);
+    if (!reservation.ok && !reservation.blocked) return { ok: false };
+    state = read();
+    if (!state) return { ok: false };
+    const forecast = rules.forecast(answers);
+    if (!forecast) return { ok: false };
+    const previous = state.seconds === undefined ? state.minutes * 60 : state.seconds;
+    const amount = reservation.blocked ? 0 : Math.max(0, Math.min(
+      forecast.seconds, rules.CONFIG.dailySecondsCap - previous));
+    if (!Number.isSafeInteger(state.points + 1) ||
+        !Number.isSafeInteger(previous + amount)) return { ok: false };
+    state.points++;
+    state.seconds = previous + amount;
+    state.minutes = Math.floor(state.seconds / 60);
+    state.receipts = state.receipts || {};
+    state.receipts[event] = { seconds: amount, parts: forecast.parts };
+    state.events.push(event);
+    if (!write(state)) return { ok: false };
+    return { ok: rules.record(event, answers), receipt: state.receipts[event] };
+  }
+
   // Preserve partial arcade series across different sessions of the same game.
   // The event token makes a replay after a refresh idempotent.
   function commitProgress(game, count, perPoint, token) {
@@ -116,7 +200,13 @@ window.DailyExercises = (() => {
     const state = read();
     if (!state) return { ok: false, completed: 0 };
     const event = game + ":" + token;
-    if (state.events.includes(event)) return { ok: true, completed: 0 };
+    if (state.events.includes(event)) {
+      if (!window.RewardRules) return { ok: true, completed: 0 };
+      const receipts = Object.keys(state.receipts || {}).filter((id) => id.startsWith(event + "#"));
+      const answers = Array.from({ length: perPoint }, () =>
+        ({ key: window.RewardRules.key(game), correct: true }));
+      return { ok: receipts.every((id) => window.RewardRules.record(id, answers)), completed: 0 };
+    }
     const previous = state.progress[game] || 0;
     if (!Number.isSafeInteger(previous + count)) return { ok: false, completed: 0 };
     const completed = Math.floor((previous + count) / perPoint);
@@ -124,8 +214,39 @@ window.DailyExercises = (() => {
         !Number.isSafeInteger(state.minutes + completed * MINUTES_PER_POINT))
       return { ok: false, completed: 0 };
     state.progress[game] = (previous + count) % perPoint;
+    if (window.RewardRules) {
+      const rules = window.RewardRules;
+      const id = rules.key(game);
+      const answers = Array.from({ length: perPoint }, () => ({ key: id, correct: true }));
+      const stored = state.receipts || (state.receipts = {});
+      const starts = state.starts || (state.starts = {});
+      const ids = starts[id] || (starts[id] = []);
+      const awarded = [];
+      let seconds = state.seconds === undefined ? state.minutes * 60 : state.seconds;
+      for (let i = 0; i < completed; i++) {
+        const creditId = event + "#" + i;
+        const info = rules.inspect(id);
+        const forecast = rules.forecast(answers);
+        if (!info || !forecast) return { ok: false, completed: 0 };
+        const allowed = info.dailyLimit === null || ids.length < info.dailyLimit;
+        if (allowed) ids.push(creditId);
+        const amount = allowed ? Math.max(0, Math.min(
+          forecast.seconds, rules.CONFIG.dailySecondsCap - seconds)) : 0;
+        seconds += amount;
+        stored[creditId] = { seconds: amount, parts: forecast.parts };
+        awarded.push(creditId);
+      }
+      state.seconds = seconds;
+      state.minutes = Math.floor(seconds / 60);
+      state.points += completed;
+      state.events.push(event);
+      if (!write(state)) return { ok: false, completed: 0 };
+      const ok = awarded.every((creditId) => rules.record(creditId, answers));
+      return { ok, completed: ok ? completed : 0 };
+    }
     state.points += completed;
     state.minutes += completed * MINUTES_PER_POINT;
+    if (state.seconds !== undefined) state.seconds += completed * MINUTES_PER_POINT * 60;
     state.events.push(event);
     return { ok: write(state), completed };
   }
@@ -242,5 +363,6 @@ window.DailyExercises = (() => {
     });
   }
 
-  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, awardOnce, recordProgress, milestones, mount, mountStats };
+  return { KEY, VERSION, MINUTES_PER_POINT, today, read, award, awardOnce,
+    awardResultOnce, canStart, start, receipt, recordProgress, milestones, mount, mountStats };
 })();

@@ -27,7 +27,7 @@ Site statique d'exercices de français, de mathématiques et de deux missions lu
 | `space-engine.js`, `space-enemies.js`, `space.js` | Mission calcul |
 | `magic-engine.js`, `magic.js` | Mission magique |
 | `scores.js`, `score-view.js`, `game-state.js` | Historique, visite Scores et reprise |
-| `daily-exercises.js`, `app-confirm.js` | Crédit quotidien et confirmations |
+| `reward-rules.js`, `daily-exercises.js`, `app-confirm.js` | Difficulté, maîtrise, crédits quotidiens et confirmations |
 | `tests/` | Vérifications automatisées |
 
 Les scripts communs exposent leurs API sur `window`. Les contrôleurs restent dans des portées privées. Les fichiers source des jeux sont à la racine du dépôt ; chaque page charge ses dépendances avant son contrôleur.
@@ -36,7 +36,7 @@ Les scripts communs exposent leurs API sur `window`. Les contrôleurs restent da
 
 Une série terminée d'Orthographe, Conjugaison, Calcul ou Monnaie rapporte **1 point d'exercice**, quel que soit le score. Mission calcul rapporte **1 point par 10 calculs réussis**, Mission magique **1 point par 20 calculs réussis**. Chaque point accorde actuellement **3 minutes** de jeu autorisées. Les reliquats des missions sont gardés pour la journée locale.
 
-Le contrat stable `entrainement_daily_exercises_v1` comporte `version`, `date`, `points`, `minutes`, `progress` et `events`. Il peut être lu depuis d'autres pages de la **même origine** web, qui doivent vérifier la date locale. Il indique le temps autorisé, pas le temps consommé.
+Le contrat stable `entrainement_daily_exercises_v1` conserve `version`, `date`, `points`, `minutes`, `progress` et `events`. Le champ optionnel `seconds` comptabilise les gains exacts ; `starts` et `receipts` conservent les limites et les justificatifs de crédit. La maîtrise permanente est enregistrée séparément dans `entrainement_mastery_v1`. Il peut être lu depuis d'autres pages de la **même origine** web, qui doivent vérifier la date locale. Il indique le temps autorisé, pas le temps consommé.
 
 L'historique des scores reste stocké sous `exercices_francais_scores` ; ne jamais effacer les données existantes ni leurs champs inconnus. Les heures absentes sont affichées `00:00` si aucune date utilisable n'existe. Les sessions doivent rester reprenables après consultation des scores ou rechargement, sans double sauvegarde. Voir [AGENTS.md](AGENTS.md) et l'[architecture](docs/ARCHITECTURE.md).
 

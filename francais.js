@@ -110,6 +110,12 @@
   const result = ExerciseGame.resultTracker(
     "francais", storedGame, ({ score, total }) => ({ tab, score, total }),
   );
+  const rewardCategory = (index) => window.RewardRules
+    ? RewardRules.key("francais", categoryFor(questions[index])) : "francais:base";
+  function configureRewards() {
+    result.configure?.(questions.map((_, index) => rewardCategory(index)));
+  }
+  configureRewards();
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
@@ -124,6 +130,8 @@
       render();
       persist();
     },
+    categoryForQuestion: rewardCategory,
+    onAttempt: () => result.begin?.() !== false,
     onFinish: (outcome) => result.save(outcome),
   });
   const make = GameUI.element;
@@ -230,6 +238,7 @@
       return false;
     tab = state.tab;
     questions = state.questions;
+    configureRewards();
     selected = state.selected;
     lastQuestionIndex = state.progress.index;
     // Legacy sessions count the current word once when first restored.
@@ -261,6 +270,7 @@
     lastQuestionIndex = 0;
     countedThrough = -1;
     questions = shuffleSession(tab);
+    configureRewards();
     game.reset(questions.length);
   }
   function switchTab(t) {
@@ -314,11 +324,16 @@
       game.finish(panel, restart, result.pending ? {
         message: result.message,
         retry: () => {
-          result.save({ score: game.score, total: game.total });
+          result.save({ score: game.score, total: game.total, answers: game.answers });
           render();
           persist();
         },
-      } : null);
+      } : null, result.reward?.());
+      return;
+    }
+    if (result.allowed?.() === false) {
+      panel.append(GameUI.element("p", "academy-reward-unavailable",
+        "Cet exercice a atteint sa limite quotidienne, ou le stockage des récompenses est indisponible."));
       return;
     }
     const data = sets[categoryFor(questions[game.index])];

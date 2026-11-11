@@ -1,7 +1,7 @@
 "use strict";
 window.ExerciseGame = (() => {
   const DELAY_MS = 3000;
-  function create({ onChange, onFinish }) {
+  function create({ onChange, onFinish, categoryForQuestion = null, onAttempt = null }) {
     let index = 0,
       score = 0,
       failed = false,
@@ -10,7 +10,8 @@ window.ExerciseGame = (() => {
       timer = null,
       deadline = 0,
       remaining = null,
-      action = null;
+      action = null,
+      answers = [];
     function cancel() {
       if (timer !== null) {
         clearTimeout(timer);
@@ -43,10 +44,19 @@ window.ExerciseGame = (() => {
       failed = false;
       correct = false;
       total = count;
+      answers = [];
       onChange();
     }
     function validate(isRight) {
-      if (correct) return;
+      if (correct) return false;
+      const firstAttempt = !answers[index];
+      if (firstAttempt && onAttempt && onAttempt(index) === false) {
+        onChange();
+        return false;
+      }
+      if (firstAttempt && categoryForQuestion) {
+        answers[index] = { key: categoryForQuestion(index), correct: Boolean(isRight) };
+      }
       if (isRight) {
         correct = true;
         if (!failed) score++;
@@ -54,6 +64,7 @@ window.ExerciseGame = (() => {
         schedule(DELAY_MS);
       } else failed = true;
       onChange();
+      return true;
     }
     function next() {
       if (!correct) return;
@@ -61,7 +72,7 @@ window.ExerciseGame = (() => {
       index++;
       failed = false;
       correct = false;
-      if (index === total) onFinish({ score, total });
+      if (index === total) onFinish({ score, total, answers: answers.slice() });
       onChange();
     }
     // The countdown resumes from the saved remainder, not elapsed wall-clock time.
@@ -72,6 +83,7 @@ window.ExerciseGame = (() => {
         failed,
         correct,
         total,
+        answers: answers.slice(),
         remaining: correct
           ? timer !== null
             ? Math.max(0, deadline - Date.now())
@@ -107,6 +119,11 @@ window.ExerciseGame = (() => {
       failed = state.failed;
       correct = state.correct;
       total = state.total;
+      answers = Array.isArray(state.answers) &&
+        state.answers.length <= total &&
+        state.answers.every((a) => !a ||
+          (typeof a.key === "string" && typeof a.correct === "boolean"))
+          ? state.answers.slice() : [];
       remaining = correct ? state.remaining : null;
       onChange();
       resume();
@@ -133,7 +150,7 @@ window.ExerciseGame = (() => {
     }
     // One final-result card across Français, Calcul and Conjugaison.
     // The ornate parchment and button appearance live in results.css.
-    function finish(container, restart, pending = null) {
+    function finish(container, restart, pending = null, reward = null) {
       container.replaceChildren();
 
       const card = document.createElement("section");
@@ -166,6 +183,25 @@ window.ExerciseGame = (() => {
       message.className = "encouragement academy-result-message";
       message.textContent = ExerciseScores.encourage(score, total);
 
+      const rewardBox = document.createElement("div");
+      rewardBox.className = "academy-result-reward";
+      if (reward) {
+        const gain = document.createElement("strong");
+        gain.textContent = "Temps gagné : " + (reward.seconds >= 60
+          ? Math.floor(reward.seconds / 60) + " min" +
+            (reward.seconds % 60 ? " " + reward.seconds % 60 + " s" : "")
+          : reward.seconds + " s");
+        rewardBox.append(gain);
+        if (reward.parts && reward.parts.length) {
+          const mastery = document.createElement("p");
+          mastery.textContent = reward.parts.map((p) =>
+            "Maîtrise " + (p.currentMastery ?? p.mastery) + "/10" +
+            (p.remaining === null ? "" : " · " + p.remaining +
+              " série" + (p.remaining === 1 ? "" : "s") + " restante" +
+              (p.remaining === 1 ? "" : "s") + " aujourd’hui")).join(" · ");
+          rewardBox.append(mastery);
+        }
+      }
       const actions = document.createElement("div");
       actions.className = "academy-result-actions";
       const button = document.createElement("button");
@@ -196,9 +232,13 @@ window.ExerciseGame = (() => {
         retry.textContent = "Réessayer l’enregistrement";
         retry.onclick = pending.retry;
         actions.prepend(retry);
-        card.append(trophy, heading, result, message, warning, actions);
+        card.append(trophy, heading, result, message);
+        if (reward) card.append(rewardBox);
+        card.append(warning, actions);
       } else {
-        card.append(trophy, heading, result, message, actions);
+        card.append(trophy, heading, result, message);
+        if (reward) card.append(rewardBox);
+        card.append(actions);
       }
       container.append(card);
     }
@@ -319,6 +359,9 @@ window.ExerciseGame = (() => {
       get total() {
         return total;
       },
+      get answers() {
+        return answers.slice();
+      },
     };
   }
   // Score and daily-credit retries share a stable series ID.
@@ -326,33 +369,67 @@ window.ExerciseGame = (() => {
     let resultId = GameState.newSessionId();
     let pending = false;
     let message = "";
-
-    function save(result) {
-      const scoreSaved = ExerciseScores.save({
-        ...buildRecord(result),
-        resultId,
-      });
+    let categories = [game + ":base"];
+    function configure(keys) {
+      if (Array.isArray(keys) && keys.length)
+        categories = [...new Set(keys.filter((key) => typeof key === "string"))];
+    }
+    function allowed() {
       const daily = window.DailyExercises;
-      const creditSaved = scoreSaved && (!daily ||
-        (typeof daily.awardOnce === "function"
-          ? daily.awardOnce(game, resultId)
-          : daily.award(game, resultId)));
+      if (!daily?.canStart) return true;
+      return daily.canStart(game, resultId, categories).ok;
+    }
+    function begin() {
+      const daily = window.DailyExercises;
+      return !daily?.start || daily.start(game, resultId, categories).ok;
+    }
+    function fallbackAnswers(result) {
+      const correct = Math.max(0, Math.min(result.total, result.score));
+      return Array.from({ length: result.total }, (_, index) =>
+        ({ key: categories[index % categories.length], correct: index < correct }));
+    }
+    function save(result) {
+      const record = { ...buildRecord(result), resultId };
+      const scoreSaved = ExerciseScores.save(record);
+      const daily = window.DailyExercises;
+      const answers = Array.isArray(result.answers) &&
+        result.answers.length === result.total && result.answers.every(Boolean)
+        ? result.answers : fallbackAnswers(result);
+      const awarded = scoreSaved && daily?.awardResultOnce
+        ? daily.awardResultOnce(game, resultId, answers)
+        : { ok: scoreSaved && (!daily ||
+          (typeof daily.awardOnce === "function"
+            ? daily.awardOnce(game, resultId)
+            : daily.award(game, resultId))) };
+      const creditSaved = Boolean(awarded.ok);
       pending = !(scoreSaved && creditSaved);
       message = !scoreSaved
         ? "Le score n’a pas pu être enregistré. Vérifie le stockage du navigateur et réessaie."
         : !creditSaved
-          ? "Le score est enregistré, mais le crédit quotidien n’a pas pu être ajouté. Réessaie."
+          ? "Le score est enregistré, mais le crédit quotidien ou la maîtrise n’a pas pu être ajouté. Réessaie."
           : "";
       if (!pending) storage.clear();
       return !pending;
     }
-
+    function reward() {
+      const daily = window.DailyExercises;
+      const receipt = daily?.receipt?.(game, resultId);
+      if (!receipt) return null;
+      const state = daily.read();
+      const parts = (receipt.parts || []).map((part) => {
+        const info = window.RewardRules?.inspect(part.key);
+        const starts = state?.starts?.[part.key] || [];
+        return { ...part, currentMastery: info?.mastery ?? part.mastery,
+          remaining: info?.dailyLimit == null
+            ? null : Math.max(0, info.dailyLimit - starts.length) };
+      });
+      return { seconds: receipt.seconds, parts };
+    }
     function fresh() {
       resultId = GameState.newSessionId();
       pending = false;
       message = "";
     }
-
     function restore(state) {
       if (state?.pendingResult === true &&
           (typeof state.resultId !== "string" || !state.resultId ||
@@ -365,11 +442,8 @@ window.ExerciseGame = (() => {
         : "";
       return true;
     }
-
     return {
-      save,
-      fresh,
-      restore,
+      save, fresh, restore, configure, allowed, begin, reward,
       snapshot: () => ({ resultId, pendingResult: pending }),
       get pending() { return pending; },
       get message() { return message; },

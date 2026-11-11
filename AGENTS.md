@@ -13,8 +13,8 @@ Every site change must remain compatible with all existing user scores in localS
 
 ## Daily exercise credits
 
-- Preserve the shared key `entrainement_daily_exercises_v1` and its versioned contract (`date`, `points`, `minutes`, `progress`, `events`). Other pages/projects on the same origin may depend on it. Do not conflate these credits with the historical score list.
-- Keep each game’s award rule in its controller, using `DailyExercises.award` for completed sessions or `DailyExercises.milestones` for open-ended games. Rewards must not duplicate after reload; partial arcade progress is shared across sessions of the same game for the current browser-local day only.
+- Preserve the shared key `entrainement_daily_exercises_v1` and its versioned contract (`date`, `points`, `minutes`, `progress`, `events`). Optional `seconds`, `starts`, `receipts` extend it without breaking GMR; mastery is a separate `entrainement_mastery_v1` key. Other pages/projects on the same origin may depend on it. Do not conflate these credits with the historical score list.
+- Centralize adjustable difficulty, mastery, score thresholds, daily attempt caps and minute conversion in `reward-rules.js`. Classic games use `ExerciseGame.resultTracker` with per-question stable subcategory keys and first-answer daily reservations. Missions retain `DailyExercises.milestones` for their completed-question thresholds. Never duplicate receipts or mastery after reload; partial arcade progress is shared across sessions of the same game for the browser-local day only.
 - Preserve compatibility with older in-progress sessions that lack `rewardProgress`; never grant retroactive credits from an old score.
 - Treat an out-of-date localStorage record as zero on external readers; the browser cannot run xfr1 at midnight when its pages are closed.
 

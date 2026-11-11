@@ -48,6 +48,11 @@
       score, total,
     }),
   );
+  const rewardCategory = (index) => window.RewardRules
+    ? RewardRules.key("calcul", (questions[index].band || range) + ":" + category) : "calcul:base";
+  function configureRewards() {
+    result.configure?.(questions.map((_, index) => rewardCategory(index)));
+  }
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
@@ -58,6 +63,8 @@
       render();
       persist();
     },
+    categoryForQuestion: rewardCategory,
+    onAttempt: () => result.begin?.() !== false,
     onFinish: (outcome) => result.save(outcome),
   });
   const el = (id) => document.getElementById(id);
@@ -103,6 +110,7 @@
     range = state.range;
     category = state.category;
     questions = state.questions;
+    configureRewards();
     answer = state.answer;
     lastQuestionIndex = state.progress.index;
     return game.restore(state.progress);
@@ -135,8 +143,11 @@
         key = a + "," + b;
       if (seen.has(key) || a < min || a > max || a + b > max) continue;
       seen.add(key);
-      questions.push({ a, b, result: a + b });
+      const band = Object.keys(ranges).find((name) =>
+        ranges[name] && ranges[name][0] === min && ranges[name][1] === max) || range;
+      questions.push({ a, b, result: a + b, band });
     }
+    configureRewards();
     game.reset(questions.length);
   }
   function verify() {
@@ -218,14 +229,19 @@
       game.finish(p, newSession, result.pending ? {
         message: result.message,
         retry: () => {
-          result.save({ score: game.score, total: game.total });
+          result.save({ score: game.score, total: game.total, answers: game.answers });
           render();
           persist();
         },
-      } : null);
+      } : null, result.reward?.());
       return;
     }
 
+    if (result.allowed?.() === false) {
+      p.append(GameUI.element("p", "academy-reward-unavailable",
+        "Cet exercice a atteint sa limite quotidienne, ou le stockage des récompenses est indisponible."));
+      return;
+    }
     const equation = document.createElement("div");
     equation.className = "equation-row";
     const q = document.createElement("div");

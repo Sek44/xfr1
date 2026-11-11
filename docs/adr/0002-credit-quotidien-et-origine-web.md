@@ -28,3 +28,21 @@ Les lectures externes doivent vérifier la date ; un navigateur fermé ne peut p
 - Une suppression des données du navigateur efface le compteur. Une modification manuelle du stockage n'est pas protégée : le quota est un mécanisme local, pas une sécurité anti-contournement.
 - Les séries incomplètes sont conservées **par jeu** pendant la journée et perdues le lendemain ; les anciennes parties sauvegardées restent lisibles sans crédits rétroactifs.
 - Le crédit `minutes` indique le quota gagné, **pas** le temps consommé. Les jeux externes décideront de l'utilisation de ce quota lors de leur intégration.
+
+## Barème progressif (2026-11-11)
+
+La clé historique `entrainement_daily_exercises_v1` conserve tous ses champs publics.
+Les crédits récents utilisent `seconds` en entier et `minutes = floor(seconds / 60)`,
+compatibles avec les consommateurs GMR. Ne plus recalculer les minutes à partir
+des seuls points dès que `seconds` est présent ; les anciennes données sans
+`seconds` conservent leur conversion historique. Les champs facultatifs
+`starts` et `receipts` empêchent de rejouer une série ou de dépasser la limite
+quotidienne. La maîtrise durable (`entrainement_mastery_v1`) a son propre
+journal idempotent ; un échec d'écriture entraîne une reprise du checkpoint,
+jamais un deuxième versement.
+
+Le barème de difficulté, les seuils et les limites se règlent dans
+`reward-rules.js`. Chaque sous-catégorie de « Tout » conserve sa propre maîtrise.
+Les séries commencées sont comptées à la première réponse et les séries
+terminées participent à la progression même si elles ne créditent aucune minute.
+Le cap global est de 3600 secondes de crédits quotidiens.

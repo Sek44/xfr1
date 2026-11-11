@@ -31,6 +31,12 @@
   feedbackStatus.setAttribute("aria-atomic", "true");
   document.querySelector("main").append(feedbackStatus);
   let showRetry = false;
+  const rewardCategory = (index) => window.RewardRules
+    ? RewardRules.key("conjugaison", questions[index].type === "ir" ?
+    "present-2" : questions[index].type === "aux" ? "etre-avoir" : "present-1") : "conjugaison:base";
+  function configureRewards() {
+    result.configure?.(questions.map((_, index) => rewardCategory(index)));
+  }
   const game = ExerciseGame.create({
     onChange() {
       if (lastIndex !== game.index) {
@@ -45,6 +51,8 @@
       render();
       persist();
     },
+    categoryForQuestion: rewardCategory,
+    onAttempt: () => result.begin?.() !== false,
     onFinish(outcome) {
       result.save(outcome);
     },
@@ -76,6 +84,7 @@
         !result.restore(state)) return false;
     mode = state.mode;
     questions = state.questions;
+    configureRewards();
     answer = state.answer;
     lastIndex = state.progress.index;
     countedThrough = Number.isInteger(state.countedThrough)
@@ -89,6 +98,7 @@
     lastIndex = 0;
     countedThrough = -1;
     questions = tracker.choose(ConjugaisonData.possibleQuestions(mode), SESSION_SIZE);
+    configureRewards();
     game.reset(SESSION_SIZE);
   }
   function switchMode(nextMode) {
@@ -144,11 +154,16 @@
       game.finish(panel, restart, result.pending ? {
         message: result.message,
         retry: () => {
-          result.save({ score: game.score, total: game.total });
+          result.save({ score: game.score, total: game.total, answers: game.answers });
           render();
           persist();
         },
-      } : null);
+      } : null, result.reward?.());
+      return;
+    }
+    if (result.allowed?.() === false) {
+      panel.append(GameUI.element("p", "academy-reward-unavailable",
+        "Cet exercice a atteint sa limite quotidienne, ou le stockage des récompenses est indisponible."));
       return;
     }
     const q = questions[game.index];

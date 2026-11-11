@@ -13,6 +13,11 @@
       score, total,
     }),
   );
+  const rewardCategory = (index) => window.RewardRules
+    ? RewardRules.key("monnaie") : "monnaie:base";
+  function configureRewards() {
+    result.configure?.(questions.map((_, index) => rewardCategory(index)));
+  }
   const game = ExerciseGame.create({
     onChange: () => {
       if (game.index !== lastQuestionIndex) {
@@ -23,6 +28,8 @@
       render();
       persist();
     },
+    categoryForQuestion: rewardCategory,
+    onAttempt: () => result.begin?.() !== false,
     onFinish: (outcome) => result.save(outcome),
   });
   const el = (id) => document.getElementById(id);
@@ -54,6 +61,7 @@
           state.pendingResult !== true) ||
         !result.restore(state)) return false;
     questions = state.questions;
+    configureRewards();
     selection = model.sortSelection(state.selection);
     lastQuestionIndex = state.progress.index;
     showRetry = state.progress.failed && !state.progress.correct;
@@ -63,6 +71,7 @@
   function newSession() {
     result.fresh();
     questions = model.generateQuestions();
+    configureRewards();
     selection = [];
     showRetry = false;
     lastQuestionIndex = 0;
@@ -114,14 +123,19 @@
       game.finish(panel, newSession, result.pending ? {
         message: result.message,
         retry: () => {
-          result.save({ score: game.score, total: game.total });
+          result.save({ score: game.score, total: game.total, answers: game.answers });
           render();
           persist();
         },
-      } : null);
+      } : null, result.reward?.());
       return;
     }
 
+    if (result.allowed?.() === false) {
+      panel.append(GameUI.element("p", "academy-reward-unavailable",
+        "Cet exercice a atteint sa limite quotidienne, ou le stockage des récompenses est indisponible."));
+      return;
+    }
     const current = questions[game.index];
     const questionFrame = element("section", "question-frame money-question");
     questionFrame.setAttribute("aria-label", "Achat et paiement");
