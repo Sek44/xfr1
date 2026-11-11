@@ -20,6 +20,24 @@ html[data-theme="magical-academy"] body.monnaie-page .money-price {
   justify-content: center;
   gap: 4px;
 }
+/* Small purchase illustration next to the actual price, not the banknote. */
+html[data-theme="magical-academy"] body.monnaie-page .money-price-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-object-svg {
+  display: block;
+  flex: 0 1 46px;
+  width: min(46px, 100%);
+  min-width: 27px;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 2px 1px #55472b33);
+}
 html[data-theme="magical-academy"] body.monnaie-page .money-paid {
   display: flex;
   flex-direction: row;
@@ -84,10 +102,11 @@ html[data-theme="magical-academy"] body.monnaie-page .money-selection {
   align-content: flex-start;
   gap: 4px 3px;
   box-sizing: border-box;
-  height: 106px; /* Exactly two 46px rows + gap + interior spacing. */
-  min-height: 106px;
+  height: auto;
+  min-height: 106px; /* Two rows before anything is added. */
+  max-height: 206px; /* Grow to four 46px rows, then scroll. */
   padding: 3px 0;
-  overflow-y: auto; /* More than two rows scroll; controls never move. */
+  overflow-y: auto; /* Fifth row and beyond scroll inside the answer. */
   overflow-x: hidden;
   overscroll-behavior: contain;
 }
@@ -102,6 +121,24 @@ html[data-theme="magical-academy"] body.monnaie-page .money-empty {
   color: #596783;
   font-size: var(--text-sm);
   text-align: center;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-customer-remark {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  min-height: 22px;
+  padding: 1px 4px;
+  text-align: center;
+  color: #7e3a4f;
+  font-family: var(--font-ui);
+  font-style: italic;
+  font-size: var(--text-sm);
+  line-height: 1.2;
+}
+html[data-theme="magical-academy"] body.monnaie-page .money-customer-remark.is-visible {
+  font-weight: var(--weight-bold);
 }
 html[data-theme="magical-academy"] body.monnaie-page .money-grid {
   display: grid;
@@ -187,6 +224,12 @@ html[data-theme="magical-academy"] body.monnaie-page .money-controls .exercise-a
   }
   html[data-theme="magical-academy"] body.monnaie-page .money-purchase { gap: 6px; }
   html[data-theme="magical-academy"] body.monnaie-page .money-caption { font-size: var(--text-xs); }
-  html[data-theme="magical-academy"] body.monnaie-page .money-price-value { font-size: var(--type-question); }
+  html[data-theme="magical-academy"] body.monnaie-page .money-price-value {
+    font-size: clamp(1.05rem, 5.2vw, var(--type-question));
+  }
+  html[data-theme="magical-academy"] body.monnaie-page .money-object-svg {
+    width: 30px;
+    flex-basis: 30px;
+  }
   html[data-theme="magical-academy"] body.monnaie-page .money-grid--notes { gap: 3px; }
 }

@@ -128,10 +128,13 @@
 
     const purchase = element("div", "money-purchase");
     const price = element("div", "money-price");
-    price.append(
-      element("span", "money-caption", "Prix de l’achat"),
+    const priceLine = element("div", "money-price-line");
+    const object = MonnaieObjects.choose(current);
+    priceLine.append(
+      MonnaieObjects.create(object),
       element("strong", "money-price-value", model.format(current.price)),
     );
+    price.append(element("span", "money-caption", "Prix de l’achat"), priceLine);
     const paid = element("div", "money-paid");
     const note = model.NOTES.find((item) => item.cents === current.paid);
     paid.style.setProperty("--banknote-width", Math.round(note.width * 0.69) + "px");
@@ -150,10 +153,13 @@
     const chosen = element("div", "money-selection");
     chosen.setAttribute("role", "group");
     chosen.setAttribute("aria-label", "Pièces et billets à rendre au client");
+    const remark = element("p", "money-customer-remark");
+    remark.setAttribute("role", "status");
+    remark.setAttribute("aria-live", "polite");
     const count = element("p", "money-count");
     count.setAttribute("role", "status");
     count.setAttribute("aria-live", "polite");
-    tray.append(chosen, count);
+    tray.append(chosen, remark, count);
     controls.append(tray);
 
     const button = game.actionButton();
@@ -178,6 +184,9 @@
         ? selection.length + " élément" + (selection.length > 1 ? "s" : "") + " sélectionné" +
           (selection.length > 1 ? "s" : "")
         : "Aucun élément sélectionné";
+      remark.textContent = showRetry && !game.correct
+        ? model.customerRemark(current, selection) : "";
+      remark.classList.toggle("is-visible", !!remark.textContent);
       button.disabled = !game.correct && !selection.length;
       if (edited) {
         if (!game.correct) {

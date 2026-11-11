@@ -76,6 +76,43 @@ test("validation uses integer cents with no floating-point rounding or partial c
   assert.equal(model.format(1), "0,01 €");
 });
 
+test("customer reacts humorously to missing or excess change without revealing the sum", () => {
+  const question = { price: 105, paid: 500 }; // 3.95 euros to return.
+  assert.match(model.customerRemark(question, [200]), /manque|voler/);
+  assert.match(model.customerRemark(question, [500]), /généreux|chance|trop/);
+  assert.equal(model.customerRemark(question, [200, 100, 50, 20, 20, 5]), "");
+  assert.equal(model.customerRemark(question, []), "");
+});
+
+test("price-matched shop illustrations are deterministic, varied and accessible SVG", () => {
+  const createNode = (name) => ({
+    name, attributes: {}, children: [],
+    setAttribute(key, value) { this.attributes[key] = value; },
+    append(...children) { this.children.push(...children); },
+  });
+  const sandbox = { window: {}, document: { createElementNS: (_, name) => createNode(name) } };
+  vm.runInNewContext(read("monnaie-objects.js"), sandbox);
+  const objects = sandbox.window.MonnaieObjects;
+  const used = new Set();
+  for (let price = 100; price <= 19999; price += 73) {
+    const paid = model.NOTES.find((note) => note.cents > price).cents;
+    const question = { price, paid };
+    const item = objects.choose(question);
+    assert.ok(price >= item.min && price <= item.max, item.name);
+    assert.equal(objects.choose(question).id, item.id, "reloading must preserve the illustration");
+    const svg = objects.create(item);
+    assert.equal(svg.name, "svg");
+    assert.equal(svg.attributes.role, "img");
+    assert.equal(svg.attributes["aria-label"], item.name);
+    assert.ok(svg.children.length > 2);
+    used.add(item.id);
+  }
+  assert.ok(used.size >= 10, "use diverse objects across the price range");
+  for (const item of objects.ITEMS) {
+    assert.ok(objects.create(item).children.length > 2, item.id);
+  }
+});
+
 test("coin and banknote artwork is SVG with the right amount written inside", () => {
   const createNode = (name) => ({
     name, attributes: {}, children: [], textContent: "",
@@ -134,7 +171,7 @@ test("Monnaie answer is sorted, reserves two rows and removes note frames and vi
   const page = read("monnaie.html");
   assert.match(css, /\.money-caption--stacked \{[\s\S]*?white-space: pre-line/);
   assert.match(css, /\.money-paid \{[\s\S]*?flex-direction: row/);
-  assert.match(css, /\.money-selection \{[\s\S]*?height: 106px;[\s\S]*?min-height: 106px/);
+  assert.match(css, /\.money-selection \{[\s\S]*?height: auto;[\s\S]*?min-height: 106px;[\s\S]*?max-height: 206px/);
   assert.match(css, /\.money-selection \{[\s\S]*?overflow-y: auto/);
   assert.match(css, /\.money-tray \{[\s\S]*?border-bottom: 1px solid/);
   assert.match(css, /:is\(\.money-option, \.money-picked\) \{[\s\S]*?border: 0;[\s\S]*?background: transparent;/);
@@ -144,6 +181,12 @@ test("Monnaie answer is sorted, reserves two rows and removes note frames and vi
   assert.match(controller, /selection = model\.sortSelection\(model\.remove\(selection, index\)\)/);
   assert.doesNotMatch(controller, /"Mon rendu de monnaie"|"Pièces"|"Billets"/);
   assert.match(page, /monnaie-art\.js\?v=20261111-layout3/);
+  assert.match(page, /monnaie-objects\.js\?v=20261111-objects1/);
+  assert.match(css, /\.money-price-line \{[\s\S]*?display: flex/);
+  assert.match(css, /\.money-object-svg \{[\s\S]*?width: min\(46px, 100%\)/);
+  assert.match(css, /\.money-customer-remark \{[\s\S]*?min-height: 22px/);
+  assert.match(controller, /MonnaieObjects\.choose\(current\)/);
+  assert.match(controller, /model\.customerRemark\(current, selection\)/);
 });
 
 test("validated answer stays visible until next question and remains disabled", () => {
@@ -175,6 +218,10 @@ test("validated answer stays visible until next question and remains disabled", 
       generateQuestions: () => Array.from({ length: 10 }, (_, i) => ({ price: 300 + i, paid: 500 })),
     },
     MonnaieArt: { create: (item) => createNode("svg", "money-svg", item.label) },
+    MonnaieObjects: {
+      choose: () => ({ id: "apple", name: "une pomme" }),
+      create: () => createNode("svg", "money-object-svg"),
+    },
     GameState: { create: () => ({
       load: () => null,
       save: (data) => stored.push(data),
@@ -222,6 +269,18 @@ test("validated answer stays visible until next question and remains disabled", 
   liveGame.next();
   assert.equal(liveGame.index, 1);
   assert.equal(picked().length, 0, "only navigation to the next question resets the answer");
+
+  // A missing amount triggers a customer comment. Editing clears it;
+  // an excessive amount then triggers a different comment.
+  const addOneEuro = all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 1 euro");
+  addOneEuro.onclick();
+  all().find((n) => n.className === "primary").onclick();
+  const remark = () => all().find((n) => n.className === "money-customer-remark").textContent;
+  assert.match(remark(), /manque|voler/);
+  all().find((n) => n.attributes["aria-label"] === "Ajouter la pièce de 2 euros").onclick();
+  assert.equal(remark(), "", "changing the answer hides the customer remark");
+  all().find((n) => n.className === "primary").onclick();
+  assert.match(remark(), /généreux|chance|trop/);
 });
 
 test("Monnaie links, score filter and complete shared exercise integration exist", () => {

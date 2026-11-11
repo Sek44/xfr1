@@ -102,13 +102,34 @@
       selection.length > 0 && sum(selection) === question.paid - question.price;
   }
 
+  // A humorous comment from the customer, tailored to the direction
+  // of the mistake without revealing the correct change.
+  function customerRemark(question, selection) {
+    if (!validQuestion(question) || !validSelection(selection) || !selection.length)
+      return "";
+    const difference = sum(selection) - (question.paid - question.price);
+    if (difference === 0) return "";
+    const tooMuch = [
+      "Oh, vous êtes généreux !",
+      "Tout ça pour moi ? Quelle chance !",
+      "Vous êtes sûr ? C'est trop !",
+    ];
+    const tooLittle = [
+      "Ah mais il en manque !",
+      "Vous voulez me voler ?",
+      "Hé, il manque des pièces !",
+    ];
+    const choices = difference > 0 ? tooMuch : tooLittle;
+    return choices[(question.price + selection.length) % choices.length];
+  }
+
   function format(cents) {
     return (cents / 100).toFixed(2).replace(".", ",") + " €";
   }
 
   const api = Object.freeze({
     COINS, NOTES, MAX_PIECES, makeQuestion, validQuestion,
-    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, format,
+    generateQuestions, validSelection, add, sortSelection, remove, sum, isCorrect, customerRemark, format,
   });
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (root) root.MonnaieModel = api;
