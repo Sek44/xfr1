@@ -22,7 +22,7 @@ La répartition détaillée des feuilles CSS et leur ordre de priorité sont dé
 | `exercise-weighting.js` | `ExerciseWeighting` : compteurs d'apparition/erreur et tirage pondéré sans remise |
 | `francais-data.js` | `FrancaisData.sets` : triplets de phrases et familles `g`, `c`, `s`, consommés sans transformation par `francais.js` ; les sessions anciennes gardent leur format. |
 | `monnaie-model.js` / `monnaie-art.js` | Prix, dénominations en centimes, vérification exacte, SVG des pièces et billets |
-| `conjugaison-data.js` | `ConjugaisonData` : banques de verbes, sujets et règles du présent des 1er et 2e groupes |
+| `conjugaison-data.js` | `ConjugaisonData` : banques de verbes, sujets et règles du présent des 1er et 2e groupes ainsi que de être/avoir |
 | `game-state.js` | `GameState` : lecture/écriture/suppression prudentes des sessions en `localStorage` et génération d'identifiants de série pour les réessais idempotents |
 | `scores.js` | `ExerciseScores` : historique compatible, date/heure, filtres, graphique SVG, suppression ciblée confirmée |
 | `daily-exercises.js` | `DailyExercises` : crédits d’exercices quotidiens, minutes autorisées, progression des jeux continus et lecture inter-sites de même origine |

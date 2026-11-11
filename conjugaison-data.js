@@ -50,6 +50,22 @@ window.ConjugaisonData = (() => {
       ["promener", "le chien."],
       ["geler", "dans le froid."],
     ],
+    // Several complements make exercises less repetitive. Every verb/person
+    // remains a single weighted combination, independently of the sentence.
+    aux: [
+      ["être", "à la maison."],
+      ["être", "à l’école."],
+      ["être", "dans la cour."],
+      ["être", "en avance."],
+      ["être", "en vacances."],
+      ["être", "sur la photo."],
+      ["avoir", "un livre."],
+      ["avoir", "un vélo."],
+      ["avoir", "une question."],
+      ["avoir", "faim."],
+      ["avoir", "soif."],
+      ["avoir", "de la chance."],
+    ],
     ir: [
       ["finir", "mes devoirs."],
       ["choisir", "un livre."],
@@ -97,10 +113,21 @@ window.ConjugaisonData = (() => {
     je: "is", tu: "is", il: "it", elle: "it", on: "it",
     nous: "issons", vous: "issez", ils: "issent", elles: "issent",
   };
+  const irregularForms = {
+    être: {
+      je: "suis", tu: "es", il: "est", elle: "est", on: "est",
+      nous: "sommes", vous: "êtes", ils: "sont", elles: "sont",
+    },
+    avoir: {
+      je: "ai", tu: "as", il: "a", elle: "a", on: "a",
+      nous: "avons", vous: "avez", ils: "ont", elles: "ont",
+    },
+  };
   function conjugate(type, verb, person) {
     if (!Object.hasOwn(groups, type) ||
         !groups[type].some((entry) => entry[0] === verb) ||
         !Object.hasOwn(personEndings, person)) return null;
+    if (type === "aux") return irregularForms[verb]?.[person] ?? null;
     if (type === "ir") return verb.slice(0, -2) + secondGroupEndings[person];
     let stem = verb.slice(0, -2);
     if (person === "nous" && type === "ger") stem += "e";
@@ -128,17 +155,26 @@ window.ConjugaisonData = (() => {
       ? "J’"
       : subject + " ";
   }
+  function inMode(mode, type) {
+    if (!Object.hasOwn(groups, type)) return false;
+    if (mode === "all") return true;
+    if (mode === "present-1") return type !== "ir" && type !== "aux";
+    if (mode === "present-2") return type === "ir";
+    return mode === "etre-avoir" && type === "aux";
+  }
   function possibleQuestions(mode = "present-1") {
     const grouped = new Map();
     for (const [type, entries] of Object.entries(groups)) {
-      if (mode !== "all" && (type === "ir") !== (mode === "present-2")) continue;
+      if (!inMode(mode, type)) continue;
       for (const [verb, complement] of entries)
         for (const [person, variants] of Object.entries(subjects)) {
           const answer = conjugate(type, verb, person);
           const questions = variants.map((subject) => ({
             type, verb, person, subject, complement, answer,
           }));
-          grouped.set(key(questions[0]), questions);
+          const questionKey = key(questions[0]);
+          if (grouped.has(questionKey)) grouped.get(questionKey).push(...questions);
+          else grouped.set(questionKey, questions);
         }
     }
     return grouped;
@@ -147,9 +183,11 @@ window.ConjugaisonData = (() => {
     if (!question || typeof question !== "object" ||
         !Object.hasOwn(subjects, question.person) ||
         !subjects[question.person].includes(question.subject)) return false;
-    const entry = groups[question.type]?.find((item) => item[0] === question.verb);
-    return Boolean(entry && entry[1] === question.complement &&
+    const entry = groups[question.type]?.some(
+      ([verb, complement]) => verb === question.verb && complement === question.complement,
+    );
+    return Boolean(entry &&
       conjugate(question.type, question.verb, question.person) === question.answer);
   }
-  return { groups, subjects, conjugate, matchesAnswer, key, prefix, possibleQuestions, valid };
+  return { groups, subjects, conjugate, matchesAnswer, key, prefix, inMode, possibleQuestions, valid };
 })();

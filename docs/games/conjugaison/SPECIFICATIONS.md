@@ -1,8 +1,8 @@
 # Conjugaison — Spécifications fonctionnelles
 
-## Présent de l’indicatif — 1er et 2e groupes
+## Présent de l’indicatif — 1er, 2e groupes et être/avoir
 
-Trois onglets sont disponibles : « Présent - 1er », « Présent - 2e » et « Tout ». « Tout » mélange les questions des deux groupes. Chaque onglet propose une série de dix questions propre au groupe. Un clic sur l’onglet actif ne modifie rien. Changer d’onglet demande confirmation si le joueur a commencé à saisir, valider ou avancer dans la série. Annuler préserve exactement la réponse, la question, le score et le délai de passage automatique ; confirmer abandonne la série sans score ni crédit quotidien, et commence la nouvelle. Avant toute saisie et une fois la série terminée, le changement est immédiat. L’onglet sélectionné est restauré après rechargement, avec sa série en cours.
+Quatre onglets sont disponibles : « Présent - 1er », « Présent - 2e », « Être et avoir » et « Tout ». « Tout » mélange les questions de ces trois catégories. Chaque onglet propose une série de dix questions propre au groupe. Un clic sur l’onglet actif ne modifie rien. Changer d’onglet demande confirmation si le joueur a commencé à saisir, valider ou avancer dans la série. Annuler préserve exactement la réponse, la question, le score et le délai de passage automatique ; confirmer abandonne la série sans score ni crédit quotidien, et commence la nouvelle. Avant toute saisie et une fois la série terminée, le changement est immédiat. L’onglet sélectionné est restauré après rechargement, avec sa série en cours.
 
 ### 1er groupe
 
@@ -14,18 +14,22 @@ Six familles : **-er** régulier, **-ger**, **-cer**, **-guer**, **-yer** (passa
 
 Une banque de 22 verbes réguliers en **-ir** (notamment finir, choisir, réussir, grandir, rougir, remplir, réfléchir, obéir, applaudir, ralentir, bondir, bâtir, avertir, réunir et nourrir) utilise les terminaisons **-is, -is, -it, -issons, -issez, -issent**. Les neuf personnes et leurs variantes de sujets sont communes au 1er groupe. Les verbes en -ir du 3e groupe (comme partir) sont exclus.
 
+### Être et avoir
+
+Les deux verbes irréguliers **être** et **avoir** sont proposés au présent de l'indicatif pour les neuf personnes et leurs sujets équivalents. Les formes attendues sont « suis, es, est, sommes, êtes, sont » et « ai, as, a, avons, avez, ont ». Chaque verbe dispose de plusieurs compléments pour varier les phrases sans changer la pondération du couple (verbe, personne). La formule « Je » est élidée devant « ai » (« J’ai »), mais pas devant « suis ».
+
 La zone de phrase réserve la hauteur de deux lignes et centre verticalement les phrases plus courtes. Le cadre peut s’agrandir si la phrase dépasse deux lignes, sans limiter son contenu.
 
 ## Score et correction
 
-La session comporte 10 combinaisons distinctes (famille, infinitif, personne) du groupe choisi (ou des deux groupes sous « Tout »). Après saisie, « Vérifier » signale la justesse. Le bouton bleu est centré et volontairement plus étroit que le clavier, avec un libellé large et une icône de baguette ; ses variantes de correction sont légèrement plus larges avec des caractères plus grands, tout en conservant la même hauteur. Une erreur au premier essai empêche de gagner le point sur cette question ; une bonne correction permet d’avancer mais ne rapporte pas de point. Après réussite, la question suivante arrive automatiquement au bout d’environ 3 secondes ou immédiatement avec « Suivant ».
+La session comporte 10 combinaisons distinctes (famille, infinitif, personne) de la catégorie choisie (ou des trois catégories sous « Tout »). Après saisie, « Vérifier » signale la justesse. Le bouton bleu est centré et volontairement plus étroit que le clavier, avec un libellé large et une icône de baguette ; ses variantes de correction sont légèrement plus larges avec des caractères plus grands, tout en conservant la même hauteur. Une erreur au premier essai empêche de gagner le point sur cette question ; une bonne correction permet d’avancer mais ne rapporte pas de point. Après réussite, la question suivante arrive automatiquement au bout d’environ 3 secondes ou immédiatement avec « Suivant ».
 
 Une série terminée produit un score sur 10 dans l’historique commun et donne **1 point d’exercice quotidien**, soit actuellement **3 minutes de jeu autorisées** quel que soit le résultat. Une session interrompue ne crédite rien. Le bouton d’icône « Recommencer la série », placé dans l’en-tête juste à gauche des scores, demande confirmation : annuler reprend le jeu, confirmer recrée une série de dix questions avec un score nul, sans enregistrer ni créditer la série abandonnée.
 
 ## Pondération et sauvegarde
 
-La probabilité de réapparition dépend du triplet **(type de terminaison, verbe, personne grammaticale)**. Chaque apparition avec réussite au premier essai la diminue ; une erreur au premier essai l’augmente. Les différents sujets d’un même triplet ne modifient pas son poids. Les trois onglets utilisent les mêmes compteurs par triplet : une apparition ou une erreur dans « Tout » change également son poids dans l'onglet d'origine, et inversement. Un triplet ne se répète pas au sein des 10 questions.
+La probabilité de réapparition dépend du triplet **(famille, verbe, personne grammaticale)**. Chaque apparition avec réussite au premier essai la diminue ; une erreur au premier essai l’augmente. Les différents sujets d’un même triplet ne modifient pas son poids. Les quatre onglets utilisent les mêmes compteurs par triplet : une apparition ou une erreur dans « Tout » change également son poids dans l'onglet d'origine, et inversement. Un triplet ne se répète pas au sein des 10 questions.
 
-Mode, question, saisie, score, état de correction et délai restant sont conservés au rechargement et lors de la consultation des scores. L’historique distingue les scores du 1er groupe, du 2e groupe et de « Tout » ; les anciens scores demeurent inchangés.
+Mode, question, saisie, score, état de correction et délai restant sont conservés au rechargement et lors de la consultation des scores. L’historique distingue les scores du 1er groupe, du 2e groupe, de « Être et avoir » et de « Tout » ; les anciens scores demeurent inchangés.
 
 Voir l’[architecture](ARCHITECTURE.md) et le [backlog](BACKLOG.md).

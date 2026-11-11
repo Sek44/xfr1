@@ -146,6 +146,54 @@ test("second-group present conjugates all grammatical persons and filters its qu
   assert.equal(new Set(selected.map(data.key)).size, 10);
 });
 
+test("être and avoir conjugate every person with shared keys and varied sentences", () => {
+  const { context } = load(["conjugaison-data.js", "exercise-weighting.js"]);
+  const data = context.ConjugaisonData;
+  const forms = {
+    être: {
+      je: "suis", tu: "es", il: "est", elle: "est", on: "est",
+      nous: "sommes", vous: "êtes", ils: "sont", elles: "sont",
+    },
+    avoir: {
+      je: "ai", tu: "as", il: "a", elle: "a", on: "a",
+      nous: "avons", vous: "avez", ils: "ont", elles: "ont",
+    },
+  };
+  const pool = data.possibleQuestions("etre-avoir");
+  assert.equal(pool.size, 2 * 9);
+  for (const [verb, persons] of Object.entries(forms)) {
+    for (const [person, expected] of Object.entries(persons)) {
+      assert.equal(data.conjugate("aux", verb, person), expected);
+      const key = JSON.stringify(["aux", verb, person]);
+      const variants = pool.get(key);
+      assert.ok(variants.length >= 6);
+      assert.equal(new Set(variants.map(q => q.complement)).size, 6);
+      for (const q of variants) {
+        assert.equal(data.valid(q), true);
+        assert.equal(data.matchesAnswer(q, " " + expected.toUpperCase() + " "), true);
+        assert.equal(data.key(q), key);
+      }
+    }
+  }
+  assert.equal(data.prefix("Je", "ai"), "J’");
+  assert.equal(data.prefix("Je", "suis"), "Je ");
+  assert.equal(data.conjugate("aux", "faire", "je"), null);
+  assert.equal(data.conjugate("aux", "être", "autre"), null);
+  assert.equal(data.inMode("etre-avoir", "aux"), true);
+  assert.equal(data.inMode("present-1", "aux"), false);
+  assert.equal(data.inMode("present-2", "aux"), false);
+  assert.equal(data.inMode("all", "aux"), true);
+  assert.equal(data.inMode("inconnu", "aux"), false);
+  const first = pool.values().next().value[0];
+  assert.equal(data.valid({ ...first, complement: "une invention." }), false);
+  const tracker = context.ExerciseWeighting.create({
+    appearancesKey: "aux-counts", errorsKey: "aux-errors",
+  });
+  const session = tracker.choose(pool, 10, () => 0.5);
+  assert.equal(session.length, 10);
+  assert.equal(new Set(session.map(data.key)).size, 10);
+});
+
 test("conjugaison uses the shared tab component for both present groups", () => {
   const html = fs.readFileSync(path.join(__dirname, "..", "conjugaison.html"), "utf8");
   const controller = fs.readFileSync(path.join(__dirname, "..", "conjugaison.js"), "utf8");
@@ -161,9 +209,10 @@ test("Tout draws both conjugation groups with their original shared weights", ()
   const data = context.ConjugaisonData;
   const first = data.possibleQuestions("present-1");
   const second = data.possibleQuestions("present-2");
+  const irregular = data.possibleQuestions("etre-avoir");
   const mixed = data.possibleQuestions("all");
-  assert.equal(mixed.size, first.size + second.size);
-  for (const [key, variants] of [...first, ...second]) {
+  assert.equal(mixed.size, first.size + second.size + irregular.size);
+  for (const [key, variants] of [...first, ...second, ...irregular]) {
     assert.ok(mixed.has(key), key);
     assert.equal(mixed.get(key).length, variants.length);
   }
@@ -185,5 +234,6 @@ test("Tout draws both conjugation groups with their original shared weights", ()
   assert.equal(new Set(series.map(data.key)).size, 10);
   const controller = fs.readFileSync(path.join(__dirname, "../conjugaison.js"), "utf8");
   assert.match(controller, /\["all", "Tout"\]/);
-  assert.match(controller, /state\.mode === "all"/);
+  assert.match(controller, /\["etre-avoir", "Être et avoir"\]/);
+  assert.match(controller, /ConjugaisonData\.inMode\(state\.mode, q\.type\)/);
 });

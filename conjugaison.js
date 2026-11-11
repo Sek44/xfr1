@@ -4,11 +4,13 @@
   const MODES = {
     "present-1": "Présent de l’indicatif · 1er groupe",
     "present-2": "Présent de l’indicatif · 2e groupe",
+    "etre-avoir": "Présent de l’indicatif · être et avoir",
     all: "Tout",
   };
   const TABS = [
     ["present-1", "Présent - 1er"],
     ["present-2", "Présent - 2e"],
+    ["etre-avoir", "Être et avoir"],
     ["all", "Tout"],
   ];
   const tracker = ExerciseWeighting.create({
@@ -64,8 +66,7 @@
         state.questions.length !== SESSION_SIZE ||
         !state.questions.every((q) =>
           ConjugaisonData.valid(q) &&
-          (state.mode === "all" ||
-             (q.type === "ir") === (state.mode === "present-2"))) ||
+          ConjugaisonData.inMode(state.mode, q.type)) ||
         new Set(state.questions.map(ConjugaisonData.key)).size !== SESSION_SIZE ||
         typeof state.answer !== "string" ||
         !GameUI.validWordAnswer(state.answer, 24) ||
