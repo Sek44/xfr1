@@ -186,16 +186,15 @@
         : "Aucun élément sélectionné";
       const customerMessage = game.correct
         ? model.customerThanks(current)
-        : showRetry ? model.customerRemark(current, selection) : "";
-      remark.replaceChildren();
-      if (customerMessage) {
-        remark.append(
-          MonnaieCustomers.create(current),
-          element("span", "money-customer-text", customerMessage),
-        );
-      }
-      remark.classList.toggle("is-visible", !!customerMessage);
-      remark.classList.toggle("is-success", game.correct && !!customerMessage);
+        : showRetry
+          ? model.customerRemark(current, selection)
+          : model.customerWaiting(current);
+      remark.replaceChildren(
+        MonnaieCustomers.create(current),
+        element("span", "money-customer-text", customerMessage),
+      );
+      remark.classList.toggle("is-visible", true);
+      remark.classList.toggle("is-success", game.correct);
       button.disabled = !game.correct && !selection.length;
       if (edited) {
         if (!game.correct) {
