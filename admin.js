@@ -43,7 +43,15 @@
     const range = window.RewardRules.gainRange(info.difficulty, info.mastery);
     if (!range) return "Gain indisponible";
     const compact = (seconds) => formatGain(seconds).replace(/\s+/g, "");
-    return "Gain " + compact(range.minSeconds) + "-" + compact(range.maxSeconds);
+    const mission = key === "space:base" || key === "magic:base";
+    const score = range.maxSeconds === 0 ? "" :
+      mission ? " · palier complet" :
+      " · min. dès " + range.minScore + "/10 · max. dès " + range.maxScore + "/10";
+    const limit = range.dailyLimit === null
+      ? "sans limite quotidienne d’essais"
+      : range.dailyLimit + (mission ? " partie(s)" : " essai(s)") + "/jour";
+    return "Gain " + compact(range.minSeconds) + "-" +
+      compact(range.maxSeconds) + score + " · 1 point d’exercice · " + limit;
   }
 
   function renderGainMatrix() {

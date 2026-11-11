@@ -157,9 +157,11 @@ idempotentes et limitées à 120 minutes par action au contrat quotidien partag�
 avec GMR, en dehors du plafond des exercices. L'historique des scores et les
 données de joueur ne sont pas envoyés à GitHub.
 
-La page d'administration affiche sous chaque sous-catégorie uniquement
-« Gain Xmin-Ymin » (ou en secondes pour les petits gains), sans les seuils,
-paliers, points d'exercice ni limites d'essais. Un tableau final croise
+La page d'administration affiche sous chaque sous-catégorie « Gain Xmin-Ymin »
+(ou en secondes pour les petits gains), les seuils de score ou « palier complet »
+pour les missions, le point d'exercice et la limite quotidienne d'essais.
+Le nombre de questions par série n'est pas répété dans cette ligne.
+Un tableau final croise
 les 10 difficultés avec les 11 maîtrises de 0 à 10 ; les cellules indiquent
 le gain minimum positif et maximum pour une série homogène de 10 réponses.
 L'affichage est recalculé dès que le bonus de maîtrise change.
