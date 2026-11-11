@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr" data-theme="magical-academy">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#081c42" />
+    <title>Administration — Entraînement</title>
+    <link rel="stylesheet" href="./styles/typography.css?v=1" />
+    <link rel="stylesheet" href="./school-base.css?v=20261107" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=width-lock-20261107" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/components.css?v=20261107-css-consolidation" />
+    <link rel="stylesheet" href="./admin.css?v=20261111-1" />
+  </head>
+  <body class="school-page academy-page admin-page">
+    <main class="academy-global-frame">
+      <div class="admin-shell">
+        <header class="admin-header">
+          <h1>Administration</h1>
+          <a href="./index.html">Retour à l’accueil</a>
+        </header>
+
+        <section id="login-panel" class="admin-card" aria-labelledby="admin-login-title">
+          <h2 id="admin-login-title">Accès réservé</h2>
+          <form id="login-form">
+            <label for="admin-password">Mot de passe</label>
+            <div class="admin-form-line">
+              <input id="admin-password" type="password" autocomplete="off" required />
+              <button type="submit">Entrer</button>
+            </div>
+          </form>
+          <p id="login-status" class="admin-status" role="alert"></p>
+          <p class="admin-hint">Ce mot de passe est stocké en clair dans un dépôt public. Il évite un accès accidentel, mais ne constitue pas une sécurité.</p>
+        </section>
+
+        <div id="admin-dashboard" hidden>
+          <section class="admin-card" aria-labelledby="admin-levels-title">
+            <h2 id="admin-levels-title">Difficultés et maîtrise</h2>
+            <p class="admin-hint">La difficulté est commune à tous les joueurs et doit être publiée sur GitHub. La maîtrise est locale à cet appareil : « Auto » réactive son calcul à partir des exercices.</p>
+            <div id="admin-category-list"></div>
+            <p id="mastery-status" class="admin-status" role="status" aria-live="polite"></p>
+            <div class="admin-publish">
+              <h3>Publier les difficultés</h3>
+              <p id="difficulty-status" class="admin-status" role="status" aria-live="polite"></p>
+              <label for="github-token">Jeton GitHub temporaire (permission Contents : lecture/écriture)</label>
+              <input id="github-token" type="password" autocomplete="off" spellcheck="false"
+                     placeholder="github_pat_… ou ghp_…" />
+              <div class="admin-actions">
+                <button type="button" id="github-save">Enregistrer sur GitHub</button>
+                <button type="button" id="github-copy" class="admin-secondary">Copier la configuration</button>
+                <a href="https://github.com/Sek44/xfr1/edit/main/reward-difficulties.js"
+                   target="_blank" rel="noopener noreferrer">Modifier dans GitHub</a>
+              </div>
+              <p class="admin-hint">Pour une connexion GitHub classique, utilisez « Modifier dans GitHub » après avoir copié la configuration. Pour enregistrer directement depuis cette page, saisissez un jeton personnel limité au dépôt xfr1 : il est utilisé une seule fois et n’est jamais conservé.</p>
+            </div>
+          </section>
+
+          <section class="admin-card" aria-labelledby="admin-bonus-title">
+            <h2 id="admin-bonus-title">Bonus de temps ponctuel</h2>
+            <form id="bonus-form">
+              <label for="bonus-minutes">Minutes à ajouter aujourd’hui sur cet appareil</label>
+              <div class="admin-form-line">
+                <input id="bonus-minutes" type="number" min="1" max="120" step="1" value="5" required />
+                <button type="submit">Ajouter le bonus</button>
+              </div>
+            </form>
+            <p id="bonus-status" class="admin-status" role="status" aria-live="polite"></p>
+            <p class="admin-hint">Le bonus est ajouté en secondes aux crédits quotidiens partagés avec GMR, sans ajouter de score ni d’exercice. Il expire avec les crédits du jour.</p>
+          </section>
+
+          <section class="admin-card" aria-labelledby="admin-data-title">
+            <h2 id="admin-data-title">Données locales du joueur</h2>
+            <div id="admin-local-summary" class="admin-local-summary"></div>
+            <p class="admin-hint">Ces données appartiennent au navigateur actuel. Elles ne sont pas sauvegardées sur GitHub et ne sont pas synchronisées avec d’autres appareils.</p>
+            <button id="admin-refresh" type="button" class="admin-secondary">Actualiser les données</button>
+            <div id="admin-storage-list" class="admin-storage-list"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <script src="./reward-difficulties.js?v=20261111-admin1"></script>
+    <script src="./reward-rules.js?v=20261111-admin2"></script>
+    <script src="./daily-exercises.js?v=20261111-admin2"></script>
+    <script src="./admin.js?v=20261111-1"></script>
+  </body>
+</html>

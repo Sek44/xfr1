@@ -126,3 +126,33 @@ même temps que la maîtrise ; il empêche une deuxième importation. Les erreur
 de stockage permettent un essai ultérieur. Aucune minute rétroactive ni aucune
 modification de l'historique des scores n'est effectuée. Supprimer un ancien score
 après migration ne supprime pas une maîtrise déjà estimée.
+
+## Administration locale et configuration des difficultés
+
+La page `admin.html` n'est liée depuis aucune navigation publique. Elle
+demande un mot de passe constant présent **en clair** dans `admin.js` : il
+ne constitue pas une authentification réelle sur GitHub Pages, où tous les
+fichiers HTML/JS sont publics et les protections côté client contournables.
+La page est également marquée `noindex,nofollow`.
+
+Les 29 niveaux publiés sont définis dans `reward-difficulties.js`, chargé
+avant `reward-rules.js` sur toutes les pages. Chaque niveau représente une
+sous-catégorie jouable, y compris les 20 combinaisons plage/niveau de Calcul.
+Une difficulté modifiée dans l'interface n'est **pas** stockée localement :
+elle est publiée dans le dépôt avec l'API GitHub Contents et un jeton personnel
+`Contents: read/write` saisi ponctuellement (jamais persisté), ou manuellement
+via l'éditeur GitHub qui demande la connexion habituelle. L'API lit le SHA et
+refuse de remplacer une configuration modifiée entre-temps. Le déploiement et
+le rechargement appliquent les nouveaux niveaux à tous les joueurs ; les scores
+historiques restent inchangés.
+
+Sur l'appareil présent, `RewardRules.setMastery(id, niveau|null)` enregistre
+un `manualMastery` optionnel dans le profil de maîtrise et garde les preuves
+de pratique (total/recent/days), qui continuent d'évoluer. Choisir « Auto »
+supprime uniquement l'override. `DailyExercises.grantAdminBonus(secondes,
+jeton)` ajoute un bonus ponctuel, idempotent et limité à 120 minutes par
+action, dans `seconds`, `minutes` et `bonusSeconds` du contrat quotidien
+déjà partagé avec GMR. Ce bonus ne consomme pas le plafond des gains
+d'exercices, ne crée ni point ni score, et expire au changement de date locale.
+Une lecture JSON repliable expose les clés du site dans le localStorage du
+navigateur, sans téléverser les données du joueur.

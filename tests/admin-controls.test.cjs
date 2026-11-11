@@ -1,0 +1,105 @@
+"use strict";
+const { test } = require("node:test");
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+const root = path.join(__dirname, "..");
+
+function fixture(initial = {}) {
+  const data = new Map(Object.entries(initial));
+  const storage = {
+    getItem: (key) => data.has(key) ? data.get(key) : null,
+    setItem: (key, value) => data.set(key, value),
+  };
+  const window = { addEventListener() {}, setInterval() {} };
+  const document = { addEventListener() {}, hidden: false };
+  const context = vm.createContext({
+    window, document, localStorage: storage, Date, Math,
+  });
+  for (const file of ["reward-difficulties.js", "reward-rules.js", "daily-exercises.js"])
+    vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context);
+  return { window, storage, data, rules: window.RewardRules, daily: window.DailyExercises };
+}
+
+test("published difficulty configuration covers every exercise and preserves initial difficulty", () => {
+  const { rules, window } = fixture();
+  assert.equal(Object.keys(window.RewardDifficultyLevels).length, 29);
+  assert.equal(rules.difficulty("monnaie:base"), 10);
+  assert.equal(rules.difficulty("calcul:0-10:1"), 1);
+  assert.equal(rules.difficulty("calcul:1000-10000:5"), 10);
+  assert.equal(rules.difficulty("francais:s"), 4);
+  for (const [key, level] of Object.entries(window.RewardDifficultyLevels)) {
+    assert.equal(rules.difficulty(key), level, key);
+    assert.ok(level >= 1 && level <= 10);
+  }
+});
+
+test("manual mastery overrides only the requested category and can revert to automatic", () => {
+  const { rules, data } = fixture();
+  const key = "monnaie:base";
+  const history = JSON.stringify([{ tab: "monnaie", score: 8 }]);
+  data.set("exercices_francais_scores", history);
+  assert.equal(rules.setMastery(key, 9), true);
+  assert.equal(rules.inspect(key).mastery, 9);
+  assert.equal(rules.read().categories[key].manualMastery, 9);
+  assert.equal(rules.setMastery("francais:g", 0), true);
+  assert.equal(rules.inspect("francais:g").mastery, 0);
+  assert.equal(rules.inspect(key).mastery, 9);
+  assert.equal(rules.setMastery(key, null), true);
+  assert.equal(rules.inspect(key).mastery, 0);
+  assert.equal(data.get("exercices_francais_scores"), history);
+  assert.equal(rules.setMastery("arbitrary:base", 5), false);
+  assert.equal(rules.setMastery(key, -1), false);
+  assert.equal(rules.setMastery(key, 11), false);
+  assert.equal(rules.setMastery(key, 3.5), false);
+});
+
+test("manual mastery is not lost when answering more questions", () => {
+  const { rules } = fixture();
+  assert.equal(rules.setMastery("francais:c", 7), true);
+  assert.equal(rules.record("sample-1", [
+    { key: "francais:c", correct: true },
+    { key: "francais:c", correct: false },
+  ]), true);
+  assert.equal(rules.inspect("francais:c").mastery, 7);
+  assert.equal(rules.read().categories["francais:c"].total, 2);
+});
+
+test("admin bonus is measured in seconds, is idempotent and leaves scores unchanged", () => {
+  const { daily, data } = fixture();
+  const scores = '[{"tab":"g","score":10}]';
+  data.set("exercices_francais_scores", scores);
+  assert.equal(daily.grantAdminBonus(5 * 60, "test-unique-1"), true);
+  assert.equal(daily.grantAdminBonus(5 * 60, "test-unique-1"), true);
+  assert.equal(daily.grantAdminBonus(2 * 60, "test-unique-2"), true);
+  assert.equal(daily.read().seconds, 420);
+  assert.equal(daily.read().bonusSeconds, 420);
+  assert.equal(daily.read().minutes, 7);
+  assert.equal(daily.read().points, 0);
+  assert.equal(data.get("exercices_francais_scores"), scores);
+  assert.equal(daily.grantAdminBonus(0, "test-unique-3"), false);
+  assert.equal(daily.grantAdminBonus(121 * 60, "test-unique-3"), false);
+  assert.equal(daily.grantAdminBonus(90, "test-unique-3"), false);
+});
+
+test("broken local storage is not overwritten by admin mutations", () => {
+  const { rules, daily, data } = fixture({
+    entrainement_mastery_v1: "{broken",
+    entrainement_daily_exercises_v1: "{broken",
+  });
+  assert.equal(rules.setMastery("monnaie:base", 6), false);
+  assert.equal(daily.grantAdminBonus(60, "test-unique-1"), false);
+  assert.equal(data.get(rules.KEY), "{broken");
+  assert.equal(data.get(daily.KEY), "{broken");
+});
+
+test("the administration page has no public navigation link, and every game loads difficulties first", () => {
+  const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  assert.doesNotMatch(home, /href=["'][^"']*admin\.html/);
+  for (const name of ["index", "francais", "conjugaison", "calcul", "monnaie", "scores", "space", "magic"]) {
+    const html = fs.readFileSync(path.join(root, name + ".html"), "utf8");
+    assert.ok(html.indexOf("reward-difficulties.js") < html.indexOf("reward-rules.js"));
+  }
+  assert.match(fs.readFileSync(path.join(root, "admin.html"), "utf8"), /name="robots" content="noindex,nofollow"/);
+});
