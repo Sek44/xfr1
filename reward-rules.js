@@ -3,7 +3,7 @@ window.RewardRules = (() => {
   // All reward tuning lives here. Category identifiers are stable across tabs.
   const KEY = "entrainement_mastery_v1";
   const CONFIG = Object.freeze({
-    minSeconds: 60, maxSeconds: 180, roundingSeconds: 15,
+    minSeconds: 60, maxSeconds: 600, roundingSeconds: 15,
     dailySecondsCap: 3600, recentQuestions: 50,
     requiredQuestions: 50, requiredDays: 3,
     legacyMissionAccuracy: 0.85,
@@ -114,6 +114,25 @@ window.RewardRules = (() => {
     return { seconds: Math.round(seconds / CONFIG.roundingSeconds) *
       CONFIG.roundingSeconds, parts };
   }
+  // Reprice an archived receipt using its ORIGINAL mastery and results.
+  // The score archive itself is never modified during a credit migration.
+  function repriceParts(parts) {
+    if (!Array.isArray(parts) || !parts.length) return null;
+    const total = parts.reduce((sum, part) => sum + part.total, 0);
+    if (!Number.isSafeInteger(total) || total <= 0 || total > 100) return null;
+    let seconds = 0;
+    for (const part of parts) {
+      if (!part || typeof part.key !== "string" ||
+          !Number.isInteger(part.mastery) || part.mastery < 0 || part.mastery > 10 ||
+          !Number.isSafeInteger(part.score) || !Number.isSafeInteger(part.total) ||
+          part.total <= 0 || part.score < 0 || part.score > part.total) return null;
+      seconds += maxSeconds(part.key) * part.total / total *
+        noteFactor(part.score, part.total, part.mastery) *
+        CONFIG.multipliers[part.mastery];
+    }
+    return Math.round(seconds / CONFIG.roundingSeconds) * CONFIG.roundingSeconds;
+  }
+
   // Applied only after the daily ledger has durably recorded the reward.
   // Per-series event IDs make failures and checkpoint retries idempotent.
   function record(eventId, answers) {
@@ -187,6 +206,25 @@ window.RewardRules = (() => {
         : [key("calcul", band + ":" + level)];
     }
     return [];
+  }
+
+  // Only used for same-day fixed-credit scores whose result ID is present
+  // in the existing daily ledger. Mixed tabs are estimates, never duplicates.
+  function estimateHistoricalParts(record, date) {
+    if (!record || typeof record !== "object" ||
+        !Number.isSafeInteger(record.score) || record.score < 0) return null;
+    const total = record.total === undefined || record.total === null
+      ? 10 : record.total;
+    if (!Number.isSafeInteger(total) || total < 1 || total > 100 ||
+        record.score > total) return null;
+    const categories = historyCategory(record, date);
+    if (!categories.length || categories.some((id) =>
+      id === "space:base" || id === "magic:base")) return null;
+    const answers = Array.from({ length: total }, (_, i) => ({
+      key: categories[i % categories.length],
+      correct: Boolean(estimatedCorrect(i, record.score, total)),
+    }));
+    return forecast(answers)?.parts || null;
   }
 
   // Distributed correctly/incorrectly outcomes approximate a historical
@@ -308,7 +346,8 @@ window.RewardRules = (() => {
   }
 
   const api = { KEY, CONFIG, key, difficulty, maxSeconds, mastery, inspect,
-    noteFactor, forecast, record, read, validAnswers, initializeLegacy };
+    noteFactor, forecast, repriceParts, estimateHistoricalParts,
+    record, read, validAnswers, initializeLegacy };
   initializeLegacy(); // Runs once when any xfr1 page first loads.
   return api;
 })();

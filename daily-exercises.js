@@ -26,6 +26,7 @@ window.DailyExercises = (() => {
       starts: {},
       sessions: {},
       receipts: {},
+      rewardScaleVersion: 2,
     };
   }
 
@@ -39,6 +40,7 @@ window.DailyExercises = (() => {
       Number.isSafeInteger(state.minutes) &&
       state.minutes >= 0 &&
       (state.seconds === undefined || (Number.isSafeInteger(state.seconds) && state.seconds >= 0)) &&
+      (state.rewardScaleVersion === undefined || state.rewardScaleVersion === 2) &&
       (state.starts === undefined || (state.starts && typeof state.starts === "object" &&
         !Array.isArray(state.starts) && Object.values(state.starts).every((value) =>
           Array.isArray(value) && value.every((id) => typeof id === "string")))) &&
@@ -65,6 +67,79 @@ window.DailyExercises = (() => {
     }
   }
 
+  // Revalue existing credits once per local day, without rewriting archived
+  // scores or replaying mastery updates. Untracked older credits stay intact.
+  function repriceToday(state) {
+    const rules = window.RewardRules;
+    if (!rules?.repriceParts || !rules?.estimateHistoricalParts) return state;
+    const receipts = state.receipts || (state.receipts = {});
+    const oldSeconds = state.seconds === undefined ? state.minutes * 60 : state.seconds;
+    let tracked = 0;
+    for (const receipt of Object.values(receipts)) {
+      if (!receipt || !Number.isSafeInteger(receipt.seconds) || receipt.seconds < 0 ||
+          !Number.isSafeInteger(tracked + receipt.seconds)) return null;
+      tracked += receipt.seconds;
+    }
+    let legacySeconds = oldSeconds - tracked;
+    if (!Number.isSafeInteger(legacySeconds) || legacySeconds < 0) return null;
+
+    // Before variable rewards, each finished classic series earned 180 s.
+    // Reconstruct only scores provably credited in this day's event ledger.
+    let history;
+    try {
+      const raw = localStorage.getItem("exercices_francais_scores");
+      history = raw === null ? [] : JSON.parse(raw);
+      if (!Array.isArray(history)) return null;
+    } catch { return null; }
+    for (const record of history) {
+      if (!record || typeof record !== "object" ||
+          typeof record.resultId !== "string" || !record.resultId ||
+          typeof record.date !== "string" || legacySeconds < MINUTES_PER_POINT * 60)
+        continue;
+      const date = new Date(record.date);
+      if (!Number.isFinite(date.getTime()) ||
+          [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"),
+            String(date.getDate()).padStart(2, "0")].join("-") !== state.date)
+        continue;
+      const game = ["g", "c", "s", "all"].includes(record.tab) ? "francais"
+        : record.tab === "math" || record.tab === "calcul" ? "calcul"
+        : record.tab === "conjugaison" ? "conjugaison"
+        : record.tab === "monnaie" ? "monnaie" : null;
+      if (!game) continue;
+      const event = game + ":" + record.resultId;
+      if (!state.events.includes(event) || receipts[event]) continue;
+      const parts = rules.estimateHistoricalParts(record, state.date);
+      if (!parts) continue;
+      receipts[event] = { seconds: MINUTES_PER_POINT * 60,
+        parts, eligible: true, legacyEstimate: true };
+      legacySeconds -= MINUTES_PER_POINT * 60;
+    }
+
+    const order = new Map(state.events.map((event, i) => [event, i]));
+    const entries = Object.entries(receipts).map(([event, receipt], i) => ({
+      event, receipt, i,
+      index: order.get(event.replace(/#\d+$/, "")) ?? Number.MAX_SAFE_INTEGER,
+    })).sort((a, b) => a.index - b.index || a.i - b.i);
+    let seconds = legacySeconds;
+    for (const { receipt } of entries) {
+      const price = rules.repriceParts(receipt.parts);
+      // A zero-credit result may have been blocked by a mastery limit.
+      // Never turn such an already-blocked attempt into a new award.
+      const eligible = receipt.eligible === true ||
+        (receipt.eligible !== false && receipt.seconds > 0);
+      const target = price === null ? receipt.seconds : eligible ? price : 0;
+      const amount = Math.max(0, Math.min(target,
+        Math.max(0, rules.CONFIG.dailySecondsCap - seconds)));
+      if (!Number.isSafeInteger(seconds + amount)) return null;
+      receipt.seconds = amount;
+      seconds += amount;
+    }
+    state.seconds = seconds;
+    state.minutes = Math.floor(seconds / 60);
+    state.rewardScaleVersion = 2;
+    return write(state) ? state : null;
+  }
+
   function read() {
     try {
       const raw = localStorage.getItem(KEY);
@@ -76,17 +151,18 @@ window.DailyExercises = (() => {
       // Never destroy unreadable or unsupported data.
       if (!valid(state)) return null;
       if (state.date === today()) {
-        // Older records keep the historical 3 min / point conversion.
-        // Once seconds exists, minutes are no longer inferred from points.
-        if (state.seconds !== undefined) {
-          return state.minutes === Math.floor(state.seconds / 60) ? state : null;
-        }
-        const minutes = state.points * MINUTES_PER_POINT;
-        if (!Number.isSafeInteger(minutes)) return null;
-        if (state.minutes !== minutes) {
+        // Fixed-credit legacy states did not have a seconds field.
+        if (state.seconds !== undefined &&
+            state.minutes !== Math.floor(state.seconds / 60)) return null;
+        if (state.seconds === undefined) {
+          const minutes = state.points * MINUTES_PER_POINT;
+          if (!Number.isSafeInteger(minutes)) return null;
           state.minutes = minutes;
-          return write(state) ? state : null;
         }
+        if (state.rewardScaleVersion !== 2 && window.RewardRules)
+          return repriceToday(state);
+        if (state.seconds === undefined &&
+            state.minutes !== state.points * MINUTES_PER_POINT) return null;
         return state;
       }
       const fresh = empty();
@@ -208,7 +284,8 @@ window.DailyExercises = (() => {
     state.seconds = previous + amount;
     state.minutes = Math.floor(state.seconds / 60);
     state.receipts = state.receipts || {};
-    state.receipts[event] = { seconds: amount, parts: forecast.parts };
+    state.receipts[event] = { seconds: amount, parts: forecast.parts,
+      eligible: !reservation.blocked };
     state.events.push(event);
     if (!write(state)) return { ok: false };
     return { ok: rules.record(event, answers), receipt: state.receipts[event] };
@@ -257,7 +334,8 @@ window.DailyExercises = (() => {
         const amount = allowed ? Math.max(0, Math.min(
           forecast.seconds, rules.CONFIG.dailySecondsCap - seconds)) : 0;
         seconds += amount;
-        stored[creditId] = { seconds: amount, parts: forecast.parts };
+        stored[creditId] = { seconds: amount, parts: forecast.parts,
+          eligible: allowed };
         awarded.push(creditId);
       }
       state.seconds = seconds;
