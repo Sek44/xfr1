@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./school-base.css?v=20261107" />
     <link rel="stylesheet" href="./styles/themes/magical-academy/theme.css?v=width-lock-20261107" />
     <link rel="stylesheet" href="./styles/themes/magical-academy/components.css?v=20261107-css-consolidation" />
-    <link rel="stylesheet" href="./styles/themes/magical-academy/scores.css?v=20261111-subcategories" />
+    <link rel="stylesheet" href="./styles/themes/magical-academy/scores.css?v=20261111-subcategory-buttons" />
   </head>
   <body class="school-page academy-page scores-page">
     <main class="academy-global-frame">
@@ -29,10 +29,7 @@
           <a class="academy-tab" href="./scores.html?game=magic" data-game="magic">Mission magique</a>
         </div>
       </nav>
-      <div id="score-subcategory-filter" class="score-subcategory-filter" hidden>
-        <label for="score-subcategory">Sous-catégorie</label>
-        <select id="score-subcategory" aria-label="Choisir une sous-catégorie de scores"></select>
-      </div>
+      <nav id="score-subcategory-filter" class="score-subcategory-filter" aria-label="Filtrer par sous-catégorie" hidden></nav>
       <section
         id="score-chart"
         class="history-panel score-chart-panel"
@@ -120,24 +117,24 @@
         ? savedSub : null;
       if (choices.length) {
         const filter = document.getElementById("score-subcategory-filter");
-        const selector = document.getElementById("score-subcategory");
         for (const choice of [
-          { value: "", label: "Toutes les sous-catégories" },
+          { value: "", label: "Toutes" },
           ...choices,
         ]) {
-          const option = document.createElement("option");
-          option.value = choice.value;
-          option.textContent = choice.label;
-          selector.append(option);
-        }
-        selector.value = selectedSub || "";
-        filter.hidden = false;
-        selector.addEventListener("change", () => {
+          const link = document.createElement("a");
           const url = new URL(location.href);
-          if (selector.value) url.searchParams.set("sub", selector.value);
+          if (choice.value) url.searchParams.set("sub", choice.value);
           else url.searchParams.delete("sub");
-          location.assign(url.href);
-        });
+          link.href = url.href;
+          link.className = "score-subcategory-tab";
+          link.textContent = choice.label;
+          if (choice.value === (selectedSub || "")) {
+            link.classList.add("active");
+            link.setAttribute("aria-current", "page");
+          }
+          filter.append(link);
+        }
+        filter.hidden = false;
       }
       ExerciseScores.render(
         document.getElementById("history"),
