@@ -2,7 +2,7 @@
 (() => {
   // Public by design: this password is only a guard against accidental access.
   // The local player state is browser-editable; GitHub updates only happen on GitHub.
-  const ADMIN_PASSWORD = "xfr1-administration";
+  const ADMIN_PASSWORD = "xfr1";
   const GROUPS = [
     { label: "Orthographe", entries: [
       ["francais:c", "c / ç"], ["francais:g", "g / gue / ge"],
