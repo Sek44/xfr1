@@ -131,6 +131,11 @@ window.FrancaisData = (() => {
         ["Nous voya","ons en train.","ge"],
         ["Nous échan","ons nos idées.","ge"],
         ["Nous corri","ons nos erreurs.","ge"],
+        // Vocabulaire de révision : compléter la graphie du mot, pas seulement le retrouver dans une phrase.
+        ["Le jardinier arrose les lé", "umes.", "g"],
+        ["Le maître corri", "e les cahiers.", "g"],
+        ["Le ", "orille vit dans la forêt.", "g"],
+        ["Il faut que tu na", "es la brasse.", "g"],
       ],
     },
     c: {
@@ -197,6 +202,13 @@ window.FrancaisData = (() => {
         ["Le ", "alendrier est accroché au mur.", "c"],
         ["Le ", "ochon dort dans la paille.", "c"],
         ["Le ", "anard nage dans l'étang.", "c"],
+        // Vocabulaire de révision : compléter la graphie du mot, pas seulement le retrouver dans une phrase.
+        ["Nous mangeons une gla", "e au chocolat.", "c"],
+        ["Mon frère a mis un hame", "on pour pêcher.", "ç"],
+        ["Nous commen", "ons notre travail.", "ç"],
+        ["Le commer", "ant ouvre sa boutique.", "ç"],
+        ["Le chien a une ", "icatrice sur la patte.", "c"],
+        ["J'aime beaucoup les le", "ons de musique.", "ç"],
       ],
     },
     s: {
@@ -383,6 +395,10 @@ window.FrancaisData = (() => {
         ["La conver", "ation se termine.", "s"],
         ["Le cur", "eur clignote sur l'écran.", "s"],
         ["Il faut ver", "er l'eau dans le verre.", "s"],
+        // Vocabulaire de révision : compléter la graphie du mot, pas seulement le retrouver dans une phrase.
+        ["Ma petite sœur aime de", "iner.", "ss"],
+        ["Le maître écrit une phra", "e au tableau.", "s"],
+        ["Je pen", "e aux prochaines vacances.", "s"],
       ],
     },
   };
