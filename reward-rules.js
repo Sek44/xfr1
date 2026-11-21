@@ -10,7 +10,7 @@ window.RewardRules = (() => {
     multipliers: [1, 1, 1, 1, 1, 1, 0.75, 0.5, 0.35, 0.15, 0],
     dailyLimits: [null, null, null, null, null, null, 6, 4, 3, 2, 1],
     french: { c: 2, g: 3, s: 4 },
-    conjugation: { "present-1": 5, "present-2": 6, "etre-avoir": 5 },
+    conjugation: { "present-1": 5, "present-2": 6, "etre-avoir": 5, "aller-venir": 6 },
     mathRanges: { "0-10": 1, "10-100": 3, "100-1000": 5, "1000-10000": 8 },
     mission: { space: 1, magic: 2 },
   });
@@ -275,6 +275,8 @@ window.RewardRules = (() => {
       }
       if (/2e|2eme|second|groupe\s*2\b/.test(name))
         return [key("conjugaison", "present-2")];
+      if (/aller|venir/.test(name))
+        return [key("conjugaison", "aller-venir")];
       if (/etre|avoir/.test(name))
         return [key("conjugaison", "etre-avoir")];
       if (!name || /1er|premier|groupe\s*1\b/.test(name))
