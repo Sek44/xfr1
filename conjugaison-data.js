@@ -66,6 +66,18 @@ window.ConjugaisonData = (() => {
       ["avoir", "soif."],
       ["avoir", "de la chance."],
     ],
+    movement: [
+      ["aller", "à l’école."],
+      ["aller", "au parc."],
+      ["aller", "chez un ami."],
+      ["aller", "à la piscine."],
+      ["aller", "en vacances."],
+      ["venir", "à la fête."],
+      ["venir", "avec nous."],
+      ["venir", "de loin."],
+      ["venir", "à la maison."],
+      ["venir", "en train."],
+    ],
     ir: [
       ["finir", "mes devoirs."],
       ["choisir", "un livre."],
@@ -122,12 +134,20 @@ window.ConjugaisonData = (() => {
       je: "ai", tu: "as", il: "a", elle: "a", on: "a",
       nous: "avons", vous: "avez", ils: "ont", elles: "ont",
     },
+    aller: {
+      je: "vais", tu: "vas", il: "va", elle: "va", on: "va",
+      nous: "allons", vous: "allez", ils: "vont", elles: "vont",
+    },
+    venir: {
+      je: "viens", tu: "viens", il: "vient", elle: "vient", on: "vient",
+      nous: "venons", vous: "venez", ils: "viennent", elles: "viennent",
+    },
   };
   function conjugate(type, verb, person) {
     if (!Object.hasOwn(groups, type) ||
         !groups[type].some((entry) => entry[0] === verb) ||
         !Object.hasOwn(personEndings, person)) return null;
-    if (type === "aux") return irregularForms[verb]?.[person] ?? null;
+    if (type === "aux" || type === "movement") return irregularForms[verb]?.[person] ?? null;
     if (type === "ir") return verb.slice(0, -2) + secondGroupEndings[person];
     let stem = verb.slice(0, -2);
     if (person === "nous" && type === "ger") stem += "e";
@@ -158,9 +178,10 @@ window.ConjugaisonData = (() => {
   function inMode(mode, type) {
     if (!Object.hasOwn(groups, type)) return false;
     if (mode === "all") return true;
-    if (mode === "present-1") return type !== "ir" && type !== "aux";
+    if (mode === "present-1") return type !== "ir" && type !== "aux" && type !== "movement";
     if (mode === "present-2") return type === "ir";
-    return mode === "etre-avoir" && type === "aux";
+    if (mode === "etre-avoir") return type === "aux";
+    return mode === "aller-venir" && type === "movement";
   }
   function possibleQuestions(mode = "present-1") {
     const grouped = new Map();
