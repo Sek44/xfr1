@@ -8,6 +8,7 @@ window.RewardDifficultyLevels = Object.freeze({
   "conjugaison:present-1": 5,
   "conjugaison:present-2": 6,
   "conjugaison:etre-avoir": 5,
+  "conjugaison:aller-venir": 6,
   "calcul:0-10:1": 1,
   "calcul:0-10:2": 2,
   "calcul:0-10:3": 3,
