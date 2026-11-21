@@ -5,12 +5,14 @@
     "present-1": "Présent de l’indicatif · 1er groupe",
     "present-2": "Présent de l’indicatif · 2e groupe",
     "etre-avoir": "Présent de l’indicatif · être et avoir",
+    "aller-venir": "Présent de l’indicatif · aller et venir",
     all: "Tout",
   };
   const TABS = [
     ["present-1", "Présent - 1er"],
     ["present-2", "Présent - 2e"],
     ["etre-avoir", "Être et avoir"],
+    ["aller-venir", "Aller et venir"],
     ["all", "Tout"],
   ];
   const tracker = ExerciseWeighting.create({
@@ -33,7 +35,8 @@
   let showRetry = false;
   const rewardCategory = (index) => window.RewardRules
     ? RewardRules.key("conjugaison", questions[index].type === "ir" ?
-    "present-2" : questions[index].type === "aux" ? "etre-avoir" : "present-1") : "conjugaison:base";
+    "present-2" : questions[index].type === "aux" ? "etre-avoir" :
+      questions[index].type === "movement" ? "aller-venir" : "present-1") : "conjugaison:base";
   function configureRewards() {
     result.configure?.(questions.map((_, index) => rewardCategory(index)));
   }
